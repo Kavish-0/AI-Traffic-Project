@@ -14,7 +14,7 @@ from pydantic import BaseModel, Field
 
 Level = Literal["free", "moderate", "high", "severe"]
 RiskLevel = Literal["low", "medium", "high", "critical"]
-SourceKind = Literal["file", "webcam", "stream", "synthetic", "unknown"]
+SourceKind = Literal["file", "webcam", "stream", "synthetic", "sensor_replay", "unknown"]
 
 
 class TrafficStateOut(BaseModel):
@@ -231,6 +231,9 @@ class SnapshotOut(BaseModel):
     incident_score: float | None               # latest fused score (also when no incident is open)
     risk: RiskOut | None
     synthetic: bool
+    # road sensor (e.g. PEMS-BAY loop detector): speed is measured, counts / density / queue are NOT
+    speed_only: bool = False
+    source_note: str | None = None
 
 
 class SummaryOut(BaseModel):
@@ -242,6 +245,8 @@ class SummaryOut(BaseModel):
     fresh_approaches: int
     active_incidents: int
     synthetic_approaches: int
+    speed_only_approaches: int = 0             # fed by road sensors that measure speed only (no counts)
+    sensor_source: str | None = None           # e.g. "PEMS-BAY loop detectors (recorded, replayed)"
 
 
 class ComponentStatus(BaseModel):

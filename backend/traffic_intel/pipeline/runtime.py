@@ -38,6 +38,7 @@ from traffic_intel.core.config import (
 )
 from traffic_intel.core.schemas import TrafficState
 from traffic_intel.pipeline.bus import InMemoryEventBus, Topics
+from traffic_intel.pipeline.sensor_worker import SensorReplayConfig
 
 log = logging.getLogger(__name__)
 
@@ -65,7 +66,15 @@ class CameraRef(BaseModel):
 class Profile(BaseModel):
     model_config = ConfigDict(extra="forbid")
     description: str = ""
-    cameras: list[CameraRef]
+    cameras: list[CameraRef] = []
+    sensors: SensorReplayConfig | None = None    # recorded road-sensor data replayed as live (sensor_worker.py)
+    pipeline_file: str | None = None             # the profile needs this TI_PIPELINE_FILE (checked at start)
+
+    @model_validator(mode="after")
+    def _has_source(self) -> Profile:
+        if not self.cameras and self.sensors is None:
+            raise ValueError("a runtime profile needs `cameras` and/or `sensors`")
+        return self
 
 
 class LiveReplay(BaseModel):
@@ -167,11 +176,19 @@ class Runtime:
             raise ValueError(f"unknown runtime profile '{self.profile_name}' ({', '.join(self.cfg.profiles)})")
         self.profile = self.cfg.profiles[self.profile_name]
         s = get_settings()
+        if pipeline is None and self.profile.pipeline_file and self.profile.pipeline_file != s.pipeline_file:
+            raise ValueError(
+                f"profile '{self.profile_name}' runs with {self.profile.pipeline_file}, but TI_PIPELINE_FILE is "
+                f"{s.pipeline_file}. Set it for BOTH the pipeline and the API, e.g. in PowerShell: "
+                f"$env:TI_PIPELINE_FILE=\"{self.profile.pipeline_file}\"")
         self.pipeline = pipeline or load_pipeline_config(s)
         self.network: NetworkConfig = load_network(s.config_dir / self.pipeline.network_file)
         self.store = store or TrafficStore()
         self.max_seconds = max_seconds
         self.handles: list[WorkerHandle] = []
+        self.sensors: Any = None                      # SensorReplayWorker when the profile has `sensors`
+        self.sensor_thread: threading.Thread | None = None
+        self.sensor_state = "starting"
         self._stop = threading.Event()
         self._last_live: dict[str, float] = {}
 
@@ -254,7 +271,48 @@ class Runtime:
         while not self._stop.is_set():
             for h in self.handles:
                 await asyncio.to_thread(self._heartbeat, h)
+            if self.sensors is not None:
+                await asyncio.to_thread(self._sensor_heartbeat)
             await asyncio.sleep(self.cfg.heartbeat_s)
+
+    def _sensor_heartbeat(self) -> None:
+        from traffic_intel.pipeline.sensor_worker import CAMERA_ID
+
+        w = self.sensors
+        st = w.status()
+        try:
+            self.store.upsert_camera_status(
+                CAMERA_ID, next(iter(w.approaches)), state=self.sensor_state, run_id=st["run_id"],
+                last_frame_at=st["last_frame_at"], frames=int(st["frames"]), processing_fps=None,
+                detector=st["detector"], device=None, source_kind="sensor_replay", preview_path=None,
+                error=w.error, details={"name": f"{w.cfg.dataset.upper().replace('_', '-')} loop detectors "
+                                                "(recorded, replayed)",
+                                        "source": w.cfg.dataset, "profile": self.profile_name,
+                                        "replay_week": w.cfg.replay_week, "recorded_at": st["recorded_at"],
+                                        "stations": len(w.approaches)})
+        except Exception:  # noqa: BLE001
+            log.exception("heartbeat for sensor replay failed")
+
+    def _run_sensors(self) -> None:
+        self.sensor_state = "running"
+        try:
+            self.sensors.run(max_seconds=self.max_seconds)
+            self.sensor_state = "stopped"
+        except Exception as exc:  # noqa: BLE001 - reported to the dashboard
+            self.sensor_state, self.sensors.error = "error", f"{type(exc).__name__}: {exc}"
+            log.exception("sensor replay failed")
+        finally:
+            self._sensor_heartbeat()
+
+    def _build_sensors(self, loop: asyncio.AbstractEventLoop, bus: InMemoryEventBus, analytics: Any) -> None:
+        from traffic_intel.pipeline.publish import BusPublisher
+        from traffic_intel.pipeline.sensor_worker import SensorReplayWorker, load_replay_speeds
+
+        cfg = self.profile.sensors
+        assert cfg is not None
+        speeds = load_replay_speeds(cfg, [a.id for a in self.network.approaches])
+        self.sensors = SensorReplayWorker(cfg, self.network, self.pipeline, speeds,
+                                          publisher=BusPublisher(bus, loop), processed=lambda: analytics.updates)
 
     async def _weather(self) -> None:
         from traffic_intel.context.interfaces import WEATHER_PROVIDERS
@@ -316,14 +374,28 @@ class Runtime:
             self.handles.append(h)
             h.thread.start()
             log.info("camera %s (%s) -> approach %s started", h.camera.id, h.source_kind, h.camera.approach_id)
+        if self.profile.sensors is not None:
+            try:
+                await asyncio.to_thread(self._build_sensors, loop, bus, analytics)
+                self.sensor_thread = threading.Thread(target=self._run_sensors, name="sensor-replay", daemon=True)
+                self.sensor_thread.start()
+            except Exception as exc:  # noqa: BLE001 - e.g. dataset not on disk
+                log.error("sensor replay not started: %s", exc)
+
+        def alive() -> bool:
+            return any(t is not None and t.is_alive()
+                       for t in [*(h.thread for h in self.handles), self.sensor_thread])
+
         try:
-            while not self._stop.is_set() and any(h.thread and h.thread.is_alive() for h in self.handles):
+            while not self._stop.is_set() and alive():
                 await asyncio.sleep(0.5)
         finally:
             self.stop()
             for h in self.handles:
                 if h.thread:
                     await asyncio.to_thread(h.thread.join, 15)
+            if self.sensor_thread:
+                await asyncio.to_thread(self.sensor_thread.join, 15)
             await asyncio.sleep(0.5)                      # let analytics drain the last windows
             for t in tasks:
                 t.cancel()
@@ -344,6 +416,8 @@ class Runtime:
         for h in self.handles:
             if h.worker is not None:
                 h.worker._stop.set()
+        if self.sensors is not None:
+            self.sensors._stop.set()
 
     def run(self) -> None:
         try:

@@ -55,8 +55,16 @@ export function IncidentBlock({ incident, score }: { incident: Incident | null; 
 }
 
 function current(snap: Snapshot): { s: TrafficState | null; label: string; stale: boolean } {
-  if (snap.live && !snap.live_stale) return { s: snap.live, label: `live (${snap.live.window_s.toFixed(0)} s rolling)`, stale: false };
-  if (snap.window) return { s: snap.window, label: `last 60 s window ended ${time(snap.window.timestamp, false)}`, stale: snap.window_stale };
+  if (snap.live && !snap.live_stale)
+    return {
+      s: snap.live,
+      label: snap.speed_only ? `latest ${(snap.live.window_s / 60).toFixed(0)}-min sensor reading` : `live (${snap.live.window_s.toFixed(0)} s rolling)`,
+      stale: false,
+    };
+  if (snap.window) {
+    const w = snap.window.window_s >= 120 ? `${(snap.window.window_s / 60).toFixed(0)}-min` : `${snap.window.window_s.toFixed(0)} s`;
+    return { s: snap.window, label: `last ${w} window ended ${time(snap.window.timestamp, false)}`, stale: snap.window_stale };
+  }
   return { s: null, label: "", stale: true };
 }
 
@@ -90,16 +98,25 @@ export function RoadPanel({ snapshot }: { snapshot: Resource<Snapshot> }) {
       ) : (
         <>
           {stale && <StateMessage tone="warn">Data is stale - last update {ago(s.timestamp)}. Camera or pipeline may be offline.</StateMessage>}
-          <div className="mt-2 grid grid-cols-3 gap-3">
-            <Stat label="Vehicles" value={num(s.vehicle_count)} />
-            <Stat label="Avg speed" value={num(s.average_speed_kmh, 0, "km/h")} />
-            <Stat label="Density" value={num(s.density_pct, 0, "%")} />
-            <Stat label="Occupancy" value={num(s.occupancy_pct, 0, "%")} />
-            <Stat label="Flow" value={num(s.flow_veh_h, 0, "veh/h")} />
-            <Stat label="Queue" value={num(s.queue_length_m, 0, "m")} />
-            <Stat label="Stopped" value={num(s.stopped_vehicle_count)} />
-            <Stat label="Data quality" value={pct(s.quality)} />
-          </div>
+          {snap.speed_only ? (
+            <div className="mt-2 grid grid-cols-3 gap-3">
+              <Stat label="Avg speed" value={num(s.average_speed_kmh, 0, "km/h")} />
+              <Stat label="Speed limit" value={num(snap.road?.speed_limit_kmh ?? null, 0, "km/h")} />
+              <Stat label="Data quality" value={pct(s.quality)} />
+            </div>
+          ) : (
+            <div className="mt-2 grid grid-cols-3 gap-3">
+              <Stat label="Vehicles" value={num(s.vehicle_count)} />
+              <Stat label="Avg speed" value={num(s.average_speed_kmh, 0, "km/h")} />
+              <Stat label="Density" value={num(s.density_pct, 0, "%")} />
+              <Stat label="Occupancy" value={num(s.occupancy_pct, 0, "%")} />
+              <Stat label="Flow" value={num(s.flow_veh_h, 0, "veh/h")} />
+              <Stat label="Queue" value={num(s.queue_length_m, 0, "m")} />
+              <Stat label="Stopped" value={num(s.stopped_vehicle_count)} />
+              <Stat label="Data quality" value={pct(s.quality)} />
+            </div>
+          )}
+          {snap.source_note && <p className="mt-2 text-[11px] text-cyan-300/80">{snap.source_note}</p>}
           <p className="mt-1 text-[11px] text-slate-500">{label}</p>
         </>
       )}

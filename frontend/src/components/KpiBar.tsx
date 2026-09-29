@@ -20,11 +20,17 @@ export function KpiBar({ summary }: { summary: Resource<Summary> }) {
   if (summary.loading) return <StateMessage>Loading traffic summary…</StateMessage>;
   if (!s) return <StateMessage tone="error">Traffic summary unavailable: {summary.error?.detail}</StateMessage>;
   const live = s.fresh_approaches > 0;
+  const sensors = s.speed_only_approaches ?? 0;
+  const sensorOnly = sensors > 0 && sensors === s.monitored_approaches;
   return (
     <div className="space-y-2">
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <Kpi label="Vehicles in view" value={live ? num(s.vehicles) : "—"} sub={`${s.fresh_approaches}/${s.monitored_approaches} approaches live`} />
-        <Kpi label="Avg speed" value={num(s.avg_speed_kmh, 0, "km/h")} sub="vehicle-weighted, live" />
+        {sensorOnly ? (
+          <Kpi label="Road sensors live" value={live ? String(s.fresh_approaches) : "—"} sub={`of ${s.monitored_approaches} · vehicle counts not measured`} />
+        ) : (
+          <Kpi label="Vehicles in view" value={live ? num(s.vehicles) : "—"} sub={`${s.fresh_approaches}/${s.monitored_approaches} approaches live`} />
+        )}
+        <Kpi label="Avg speed" value={num(s.avg_speed_kmh, 0, "km/h")} sub={sensorOnly ? "mean over road sensors, live" : "vehicle-weighted, live"} />
         <Kpi label="Congested" value={String(s.congested_approaches)} sub="approaches HIGH / SEVERE" accent={s.congested_approaches ? "#f97316" : undefined} />
         <Kpi label="Incidents" value={String(s.active_incidents)} sub="active (possible, unverified)" accent={s.active_incidents ? "#ef4444" : undefined} />
       </div>
@@ -35,6 +41,13 @@ export function KpiBar({ summary }: { summary: Resource<Summary> }) {
         </StateMessage>
       )}
       {!live && !summary.error && <StateMessage tone="warn">Waiting for traffic data… (start the pipeline: python -m traffic_intel.pipeline run)</StateMessage>}
+      {sensors > 0 && (
+        <StateMessage tone="info">
+          REAL DATA: {sensors} approach(es) are {s.sensor_source ?? "road sensors"} - real measured speeds, recorded in
+          the past and replayed as live at the same weekday and time of day. Speed only: vehicle counts, density and
+          queues are not measured, and there is no video.
+        </StateMessage>
+      )}
       {s.synthetic_approaches > 0 && (
         <StateMessage tone="info">
           {s.synthetic_approaches} approach(es) are fed by SYNTHETIC test scenes (simulated traffic and detections) to

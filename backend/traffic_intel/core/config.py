@@ -37,6 +37,11 @@ class AppSettings(BaseSettings):
     # SQLAlchemy URL. None = local SQLite file <data_dir>/db/traffic.db (zero setup). For PostgreSQL /
     # PostGIS: postgresql+psycopg://user:password@host:5432/dbname  (set it in .env - never commit secrets)
     database_url: str | None = None
+    database_file: str = "traffic.db"           # SQLite file name under <data_dir>/db when database_url is unset
+    # Which pipeline composition to run (configs/<file>). A pipeline file may set defaults for the settings
+    # below in a top-level `settings:` block (e.g. pipeline_pems_bay.yaml: own database, 5-min freshness);
+    # values given explicitly (environment / .env) always win.
+    pipeline_file: str = "pipeline.yaml"
     # "memory" = single-process dev mode; "redis" = distributed workers.
     bus_backend: Literal["memory", "redis"] = "memory"
     redis_url: str = "redis://localhost:6379/0"
@@ -50,6 +55,17 @@ class AppSettings(BaseSettings):
     live_stale_s: float = 10.0                  # 1 s live values
     window_stale_s: float = 180.0               # 60 s windows (3 missed windows)
     camera_offline_s: float = 15.0              # camera heartbeat
+
+    @model_validator(mode="after")
+    def _pipeline_defaults(self) -> AppSettings:
+        path = self.config_dir / self.pipeline_file
+        overrides = (load_yaml(path).get("settings") or {}) if path.is_file() else {}
+        for key, value in overrides.items():
+            if key not in type(self).model_fields or key in ("pipeline_file", "config_dir"):
+                raise ValueError(f"{self.pipeline_file}: unknown or non-overridable setting '{key}'")
+            if key not in self.model_fields_set:
+                setattr(self, key, value)
+        return self
 
 
 @lru_cache
@@ -231,11 +247,19 @@ class PipelineConfig(BaseModel):
     weather_provider: ComponentSpec
     calendar_provider: ComponentSpec
     outputs: OutputsConfig = OutputsConfig()
+    settings: dict[str, Any] = {}                # AppSettings defaults for this composition (see AppSettings)
 
 
 def load_pipeline_config(settings: AppSettings | None = None) -> PipelineConfig:
+    """``settings.pipeline_file`` (default pipeline.yaml). ``extends: <file>`` takes every top-level key
+    from that file and replaces the ones this file sets (e.g. pipeline_pems_bay.yaml reuses the camera
+    stack of pipeline.yaml and only swaps network, forecaster and calendar)."""
     settings = settings or get_settings()
-    return PipelineConfig.model_validate(load_yaml(settings.config_dir / "pipeline.yaml"))
+    raw = load_yaml(settings.config_dir / settings.pipeline_file)
+    base = raw.pop("extends", None)
+    if base:
+        raw = {**load_yaml(settings.config_dir / base), **raw}
+    return PipelineConfig.model_validate(raw)
 
 
 def load_network(path: Path) -> NetworkConfig:

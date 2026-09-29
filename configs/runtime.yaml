@@ -47,6 +47,20 @@ profiles:
     cameras:
       - {camera: public_highway_01}
 
+  pems_bay:
+    description: >
+      REAL DATA: the 325 PEMS-BAY loop-detector stations (South Bay freeways, 2017) replayed as live road
+      sensors on their real map. Speeds only (no video, counts or queues). Needs the PEMS-BAY files in
+      data/raw/pems_bay and TI_PIPELINE_FILE=pipeline_pems_bay.yaml for BOTH this process and the API.
+    pipeline_file: pipeline_pems_bay.yaml
+    sensors:
+      dataset: pems_bay
+      replay_week: "2017-06-05"   # Monday; a test-split week (the served forecaster never trained on it)
+      timezone: America/Los_Angeles
+      step_s: 300
+      backfill_steps: 13          # 65 min of history at start: forecasts need a 1 h look-back (12 steps)
+      live_tick_s: 5
+
 live_replay:            # recorded files / synthetic scenes are replayed as live cameras
   realtime: true        # pace at source speed
   loop: true            # restart at the end

@@ -104,8 +104,21 @@ def main() -> None:
     pr.add_argument("--max-sequences", type=int)
     pr.add_argument("--every-k", type=int)
     pr.add_argument("--max-sensors", type=int)
+    pb = sub.add_parser("pems-bay-network", help="PEMS-BAY stations -> configs/network/pems_bay.yaml")
+    pb.add_argument("--out", default=None)
     a = p.parse_args()
     configure_logging()
+
+    if a.cmd == "pems-bay-network":
+        from traffic_intel.core.config import get_settings
+        from traffic_intel.datasets.pems_bay_network import write_network
+
+        out = Path(a.out) if a.out else get_settings().config_dir / "network" / "pems_bay.yaml"
+        net = write_network(out)
+        conn = sum(s["id"].startswith("conn_") for s in net["segments"])
+        print(f"{len(net['approaches'])} stations, {len(net['junctions'])} freeway directions, "
+              f"{conn} assumed connectors -> {out}")
+        return
 
     if a.cmd == "status":
         sys.exit(cmd_status(a.ids))

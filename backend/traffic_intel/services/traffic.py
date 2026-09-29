@@ -50,25 +50,41 @@ def summary(ctx: ServiceContext) -> SummaryOut:
     wins = {s["approach_id"]: s for s in ctx.store.latest_traffic_states()}
     cams = net.camera_views(ctx)
     synth = {c.approach_id for c in cams if c.synthetic}
+    sensors = net.sensor_sources(ctx)
+    # counted vehicles and vehicle-weighted speed come from cameras; speed-only road sensors add a plain
+    # mean speed (they cannot count) and are never added to the vehicle total
     vehicles, speed_w, n_speed, fresh, congested, latest = 0, 0.0, 0, 0, 0, None
+    sensor_speeds: list[float] = []
+    counted = 0
     for aid in {a.id for a in ctx.network.approaches}:
         p = lv.get(aid)
         if p is not None and (ctx.age_s(p["_ts"]) or 1e9) <= ctx.settings.live_stale_s:
             fresh += 1
-            vehicles += int(p["vehicle_count"])
-            if p.get("average_speed_kmh") is not None and p["vehicle_count"]:
-                speed_w += p["average_speed_kmh"] * p["vehicle_count"]
-                n_speed += p["vehicle_count"]
+            if p.get("camera_id") in sensors:
+                if p.get("average_speed_kmh") is not None:
+                    sensor_speeds.append(p["average_speed_kmh"])
+            else:
+                counted += 1
+                vehicles += int(p["vehicle_count"])
+                if p.get("average_speed_kmh") is not None and p["vehicle_count"]:
+                    speed_w += p["average_speed_kmh"] * p["vehicle_count"]
+                    n_speed += p["vehicle_count"]
             latest = max(latest, p["_ts"]) if latest else p["_ts"]
         w = wins.get(aid)
         if w and (ctx.age_s(w["timestamp"]) or 1e9) <= ctx.settings.window_stale_s and w["traffic_state"] in (
                 "high", "severe"):
             congested += 1
-    return SummaryOut(timestamp=latest, vehicles=vehicles if fresh else None,
-                      avg_speed_kmh=round(speed_w / n_speed, 1) if n_speed else None, congested_approaches=congested,
-                      monitored_approaches=len({c.approach_id for c in cams}), fresh_approaches=fresh,
+    speed = (round(speed_w / n_speed, 1) if n_speed else
+             round(sum(sensor_speeds) / len(sensor_speeds), 1) if sensor_speeds and not counted else None)
+    sensor_approaches = {w["approach_id"] for w in wins.values() if w.get("camera_id") in sensors}
+    monitored = {c.approach_id for c in cams if c.source_kind != "sensor_replay"} | sensor_approaches
+    note = next((((st.get("details") or {}).get("name")) for st in sensors.values()), None)
+    return SummaryOut(timestamp=latest, vehicles=vehicles if counted else None,
+                      avg_speed_kmh=speed, congested_approaches=congested,
+                      monitored_approaches=len(monitored), fresh_approaches=fresh,
                       active_incidents=len(ctx.store.list_incidents(active_only=True, limit=1000)),
-                      synthetic_approaches=len(synth))
+                      synthetic_approaches=len(synth), speed_only_approaches=len(sensor_approaches),
+                      sensor_source=note)
 
 
 # --------------------------------------------------------------------------- forecasts
@@ -88,10 +104,11 @@ def forecast(ctx: ServiceContext, approach_id: str) -> ForecastOut:
     fc = ctx.store.latest_forecast(approach_id)
     need = model.required_history or 0
     last_end = hist[-1]["timestamp"]
-    if fc is None or (last_end - fc.issued_at).total_seconds() > 2 * 60:
+    res_s = model.resolution_s or 60
+    if fc is None or (last_end - fc.issued_at).total_seconds() > 2 * res_s:
         if n < need:
             return ForecastOut(status="insufficient_history", message=f"Forecast unavailable - insufficient "
-                               f"historical data ({n}/{need} consecutive 1-min windows).", **base)
+                               f"historical data ({n}/{need} consecutive {res_s // 60}-min windows).", **base)
         return ForecastOut(status="stale", message="Forecast unavailable for the latest window (see pipeline log).",
                            **base)
     by_h: dict[int, dict[str, float]] = {}
@@ -138,7 +155,16 @@ def snapshot(ctx: ServiceContext, approach_id: str) -> SnapshotOut | None:
     win = next((s for s in ctx.store.latest_traffic_states() if s["approach_id"] == approach_id), None)
     risk = ctx.store.latest_risk(approach_id=approach_id)
     incs = ctx.store.list_incidents(approach_id=approach_id, active_only=True, limit=1)
-    mine = [c for c in cams if c.approach_id == approach_id]
+    sensors = net.sensor_sources(ctx)
+    # the sensor-replay pseudo-camera is not a camera of this road (it has no video)
+    mine = [c for c in cams if c.approach_id == approach_id and c.id not in sensors]
+    src = (win or lv or {}).get("camera_id")
+    speed_only = src is not None and src in sensors
+    note = None
+    if src is not None and speed_only:
+        det = sensors[src].get("details") or {}
+        note = (f"{det.get('name', 'Road sensor')}: measures speed only - vehicle counts, density, occupancy "
+                f"and queue are not measured. {(win or lv or {}).get('explanation', [''])[-1]}")
     live_age = ctx.age_s(lv["_ts"]) if lv else None
     win_age = ctx.age_s(win["timestamp"]) if win else None
     return SnapshotOut(
@@ -147,4 +173,5 @@ def snapshot(ctx: ServiceContext, approach_id: str) -> SnapshotOut | None:
         window=_state(win), window_stale=win_age is None or win_age > ctx.settings.window_stale_s,
         forecast=forecast(ctx, approach_id), incident=incident_svc.view(incs[0]) if incs else None,
         incident_score=risk[0].get("incident_score") if risk else None,
-        risk=incident_svc.risk_view(risk[0]) if risk else None, synthetic=any(c.synthetic for c in mine))
+        risk=incident_svc.risk_view(risk[0]) if risk else None, synthetic=any(c.synthetic for c in mine),
+        speed_only=speed_only, source_note=note)

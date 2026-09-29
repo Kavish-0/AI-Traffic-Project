@@ -185,7 +185,7 @@ class ForecastingService:
                 lvl, why = self._classify(sid, last, vals)
                 forecast[key], expl[key] = lvl, why
             missing = {"density_ratio", "occupancy_pct", "queue_length_m"} - set(targets)
-            if missing:
+            if missing and not set(self.pre.spec.dynamic) <= {"avg_speed_kmh"}:
                 notes.append(f"levels use last observed values for {sorted(missing)} (not forecast by this model)")
         else:
             forecast = {f"{h}_min": None for h in self.horizons_min}
@@ -240,6 +240,9 @@ class ForecastingService:
             stopped_vehicles=int(overrides.get("stopped_vehicles", _num(last, "stopped_vehicles",
                                                                          "stopped_vehicle_count"))),
             avg_gap_m=None, pedestrian_count=0, quality=1.0,
+            # a model that only ever saw speed (PEMS-BAY) gets speed-only levels: the other indicators
+            # of its history are "not measured", not zero
+            extra={"speed_only": 1.0} if set(self.pre.spec.dynamic) <= {"avg_speed_kmh"} else {},
         )
         a = self.classifier.classify(feats)
         return a.level, a.explanation

@@ -64,7 +64,7 @@ def camera_views(ctx: ServiceContext) -> list[CameraOut]:
         out.append(CameraOut(
             id=cid, name=(cfg.name if cfg else details.get("name") or row.get("name") or cid), approach_id=approach_id,
             junction_id=appr[approach_id].junction_id if approach_id in appr else None,
-            source_kind=kind if kind in ("file", "webcam", "stream", "synthetic") else "unknown",
+            source_kind=kind if kind in ("file", "webcam", "stream", "synthetic", "sensor_replay") else "unknown",
             synthetic=kind == "synthetic", configured=cfg is not None,
             lon=cfg.location[0] if cfg else row.get("lon"), lat=cfg.location[1] if cfg else row.get("lat"),
             status=status,
@@ -73,6 +73,11 @@ def camera_views(ctx: ServiceContext) -> list[CameraOut]:
             frames=(st or {}).get("frames"), detector=(st or {}).get("detector"), device=(st or {}).get("device"),
             error=(st or {}).get("error"), preview_available=bool(preview and Path(preview).exists())))
     return out
+
+
+def sensor_sources(ctx: ServiceContext) -> dict[str, dict[str, Any]]:
+    """camera id -> status row of road-sensor replays (source_kind "sensor_replay": speed only, no video)."""
+    return {cid: st for cid, st in ctx.store.camera_statuses().items() if st.get("source_kind") == "sensor_replay"}
 
 
 def _kind(source: str, source_type: str) -> str:

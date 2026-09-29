@@ -16,7 +16,7 @@ const STATUS_TEXT: Record<Camera["status"], string> = {
  * refreshed about once per second. This is a low-rate preview, not a video stream; if no processed
  * frame exists, the panel says so rather than showing anything else.
  */
-export function CameraPanel({ camera }: { camera: Camera | null }) {
+export function CameraPanel({ camera, sensorNote }: { camera: Camera | null; sensorNote?: string | null }) {
   const [tick, setTick] = useState(0);
   const [imgError, setImgError] = useState(false);
   const online = camera?.status === "online";
@@ -28,6 +28,13 @@ export function CameraPanel({ camera }: { camera: Camera | null }) {
     return () => clearInterval(id);
   }, [camera, online]);
 
+  if (!camera && sensorNote)
+    return (
+      <Card title="Road sensor">
+        <StateMessage tone="info">No video on this road: it is measured by a loop detector in the road surface (speed only).</StateMessage>
+        <p className="mt-2 text-[11px] text-slate-400">{sensorNote}</p>
+      </Card>
+    );
   if (!camera) return <Card title="Camera"><StateMessage>Select a camera (junction list or map) to see its processed view.</StateMessage></Card>;
   return (
     <Card title="Camera" subtitle={camera.name} right={camera.synthetic ? <SyntheticBadge /> : null}>

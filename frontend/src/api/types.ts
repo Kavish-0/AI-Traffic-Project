@@ -5,7 +5,7 @@
 export type CongestionLevel = "free" | "moderate" | "high" | "severe";
 export type RiskLevel = "low" | "medium" | "high" | "critical";
 export type IncidentStatus = "open" | "acknowledged" | "resolved" | "dismissed";
-export type SourceKind = "file" | "webcam" | "stream" | "synthetic" | "unknown";
+export type SourceKind = "file" | "webcam" | "stream" | "synthetic" | "sensor_replay" | "unknown";
 export type CameraStatus = "online" | "offline" | "error" | "never_started";
 
 export interface TrafficState {
@@ -222,6 +222,9 @@ export interface Snapshot {
   incident_score: number | null;
   risk: Risk | null;
   synthetic: boolean;
+  /** road sensor (e.g. PEMS-BAY loop detector): speed measured; counts, density, occupancy, queue are not */
+  speed_only?: boolean;
+  source_note?: string | null;
 }
 
 export interface Summary {
@@ -233,6 +236,8 @@ export interface Summary {
   fresh_approaches: number;
   active_incidents: number;
   synthetic_approaches: number;
+  speed_only_approaches?: number;
+  sensor_source?: string | null;
 }
 
 export interface ComponentStatus {

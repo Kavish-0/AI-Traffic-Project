@@ -179,7 +179,11 @@ class RuleBasedCongestionClassifier(CongestionClassifier):
 
     # ------------------------------------------------------------------ #
     def _indicators(self, f: TrafficFeatures, ff: float) -> list[tuple[str, float, float, str]]:
-        """(name, value 0..1, weight, explanation) for each available indicator."""
+        """(name, value 0..1, weight, explanation) for each available indicator.
+
+        ``extra["speed_only"]``: the source measures speed and nothing else (e.g. PEMS-BAY loop-detector
+        speeds) - its zero density / occupancy / queue are "not measured", not "empty road", so only the
+        speed indicator is used."""
         out = []
         ind = self.cfg.indicators
         if "speed" in ind and f.avg_speed_kmh is not None:
@@ -187,6 +191,8 @@ class RuleBasedCongestionClassifier(CongestionClassifier):
             v = min(1.0, max(0.0, (1.0 - ratio) / ind["speed"].saturation))
             out.append(("speed", v, ind["speed"].weight,
                         f"speed {f.avg_speed_kmh:.1f} km/h = {ratio:.0%} of free-flow {ff:.0f} km/h"))
+        if f.extra.get("speed_only"):
+            return out
         if "density" in ind:
             v = min(1.0, f.density_ratio / ind["density"].saturation)
             out.append(("density", v, ind["density"].weight,

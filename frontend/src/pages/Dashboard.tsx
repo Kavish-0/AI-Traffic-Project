@@ -48,13 +48,15 @@ export function Dashboard({ shared, onOpenIncidents }: { shared: SharedData; onO
   const windowKey = live.windowKey ?? undefined;
   const aid = sel.approachId;
 
-  // default selection: the first approach that has a camera
+  // default selection: real footage first (an online, non-synthetic camera), then any road with data
   useEffect(() => {
     if (aid || !shared.junctions.data) return;
     const all = shared.junctions.data.flatMap((j) => j.approaches);
-    const first = all.find((a) => a.level) ?? all.find((a) => a.cameras.length) ?? all[0];
+    const realCam = shared.cameras.find((c) => c.status === "online" && !c.synthetic && c.source_kind !== "sensor_replay");
+    const first =
+      (realCam && all.find((a) => a.id === realCam.approach_id)) ?? all.find((a) => a.level) ?? all.find((a) => a.cameras.length) ?? all[0];
     if (first) sel.selectApproach(first.id, first.junction_id);
-  }, [aid, shared.junctions.data, sel]);
+  }, [aid, shared.junctions.data, shared.cameras, sel]);
 
   // selected road: live values (1 s rolling) at the live polling rate
   const snapshot = useResource(aid ? () => api.snapshot(aid) : null, `snap:${aid}`, { intervalMs: POLL.liveMs });
@@ -72,7 +74,8 @@ export function Dashboard({ shared, onOpenIncidents }: { shared: SharedData; onO
   );
   const camera = useMemo(() => {
     if (sel.cameraId) return shared.cameras.find((c) => c.id === sel.cameraId) ?? null;
-    const mine = shared.cameras.filter((c) => c.approach_id === aid);
+    // the sensor-replay pseudo-camera has no video and belongs to no single road
+    const mine = shared.cameras.filter((c) => c.approach_id === aid && c.source_kind !== "sensor_replay");
     return mine.find((c) => c.status === "online") ?? mine.find((c) => c.preview_available) ?? mine[0] ?? null;
   }, [sel.cameraId, shared.cameras, aid]);
 
@@ -113,7 +116,7 @@ export function Dashboard({ shared, onOpenIncidents }: { shared: SharedData; onO
         </div>
         <div className="space-y-4">
           <JunctionTree junctions={shared.junctions} cameras={shared.cameras} />
-          <CameraPanel camera={camera} />
+          <CameraPanel camera={camera} sensorNote={snapshot.data?.speed_only ? snapshot.data.source_note ?? "Road sensor" : null} />
         </div>
       </div>
 

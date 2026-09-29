@@ -39,7 +39,10 @@ class ServiceContext:
     def build(cls, store: TrafficStore | None = None) -> ServiceContext:
         s = get_settings()
         network = load_network(s.config_dir / load_pipeline_config(s).network_file)
-        cams = {c.id: c for c in (load_camera(p) for p in sorted((s.config_dir / "cameras").glob("*.yaml")))}
+        known = {a.id for a in network.approaches}
+        # only cameras on this network (a mode without video, e.g. pipeline_pems_bay.yaml, lists none)
+        cams = {c.id: c for c in (load_camera(p) for p in sorted((s.config_dir / "cameras").glob("*.yaml")))
+                if c.approach_id in known}
         return cls(store=store or TrafficStore(), network=network, cameras=cams, settings=s)
 
     # ------------------------------------------------------------------ lookups

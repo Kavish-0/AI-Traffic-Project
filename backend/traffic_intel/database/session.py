@@ -25,7 +25,7 @@ def database_url(settings: AppSettings | None = None) -> str:
     s = settings or get_settings()
     if s.database_url:
         return s.database_url
-    path = Path(s.data_dir) / "db" / "traffic.db"
+    path = Path(s.data_dir) / "db" / s.database_file
     path.parent.mkdir(parents=True, exist_ok=True)
     return f"sqlite:///{path.as_posix()}"
 

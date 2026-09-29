@@ -1,0 +1,45 @@
+# Forecasting model SERVED by the PEMS-BAY real-data mode (configs/pipeline_pems_bay.yaml).
+#   python -m traffic_intel.ai.training train forecasting --config ../configs/training/forecasting_pems_bay_live.yaml
+#   python -m traffic_intel.ai.training promote forecasting pems_bay_xgboost_d8 <experiment id>
+# Same data and split as forecasting_pems_bay_context.yaml, but only features the replay can supply at
+# inference time: past speeds + calendar (no weather - the replayed readings are from 2017, today's
+# weather would not match them). The chronological test split (last 20%, from late May 2017) is what
+# the runtime replays, so the served model never saw the readings it forecasts on the dashboard.
+# Model names carry a pems_bay_ prefix so they never replace the live-domain (synthetic) models.
+name: pems_bay_live
+description: >
+  PEMS-BAY speed forecasting at +5/+15/+30 min for the real-data runtime mode (speed + calendar).
+  Chronological split, fit-on-train scaling, identical windows for every model.
+seed: 0
+
+dataset:
+  source: pems_bay
+  params:
+    every_k: 3                       # 109 of 325 sensors (a global model serves every sensor)
+    weather: false
+
+features:
+  dynamic: [avg_speed_kmh]
+  targets: [avg_speed_kmh]
+  calendar: [hour, day_of_week, holiday, rush_hour]
+  weather: []
+  rush_hours: [[6, 10], [15, 19]]
+  max_gap_fill_steps: 2
+  lags: [1, 2, 3, 6, 11]
+  rolling: [3, 12]
+
+horizons_min: [5, 15, 30]
+season: 1D
+split: {train: 0.7, val: 0.1, test: 0.2}
+train_stride: 1
+eval_stride: 1
+primary_target: avg_speed_kmh
+
+models:
+  - {name: persistence, type: persistence}
+  - {name: seasonal_naive, type: seasonal_naive}
+  - {name: pems_bay_linear, type: linear, params: {alpha: 0.0}}
+  - {name: pems_bay_random_forest, type: random_forest,
+     params: {n_estimators: 200, max_depth: 24, min_samples_leaf: 2, max_features: 0.5, max_samples: 0.3}}
+  - {name: pems_bay_xgboost_d8, type: xgboost,
+     params: {n_estimators: 1500, learning_rate: 0.05, max_depth: 8, early_stopping_rounds: 50}}
