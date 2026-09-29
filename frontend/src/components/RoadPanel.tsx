@@ -40,7 +40,7 @@ export function IncidentBlock({ incident, score }: { incident: Incident | null; 
   return (
     <div className="space-y-2">
       <div className="flex flex-wrap items-center gap-2">
-        <Badge color="#ef4444">{incident.label || titleCase(incident.incident_type)}</Badge>
+        <Badge color="#F43F5E">{incident.label || titleCase(incident.incident_type)}</Badge>
         <span className="text-sm text-slate-200">
           {scoreLabel(incident.calibrated)} — <b className="tabular-nums">{pct(incident.probability)}</b>
         </span>

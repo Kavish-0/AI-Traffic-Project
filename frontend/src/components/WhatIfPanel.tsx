@@ -67,7 +67,7 @@ export function WhatIfPanel({ junctions, roads }: { junctions: Resource<Junction
     <Card
       title="What-if simulation"
       subtitle="Simulation / Decision Support - static macroscopic re-assignment, NOT a guaranteed real-world prediction"
-      right={<Badge color="#38bdf8">decision support</Badge>}
+      right={<Badge color="#E879F9">decision support</Badge>}
     >
       {roads.loading || junctions.loading ? (
         <StateMessage>Loading road network…</StateMessage>

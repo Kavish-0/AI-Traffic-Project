@@ -3,7 +3,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useMemo, useRef } from "react";
 import type { NetworkGeoJSON } from "../api/types";
 import { mapLabels } from "../lib/mapLabels";
-import { CONGESTION_COLORS, UNKNOWN_COLOR } from "../theme/congestion";
+import { AURORA, CONGESTION_COLORS, ROAD_CASING, ROAD_STYLE, UNKNOWN_COLOR } from "../theme/congestion";
 
 const MAX_ROAD_LABELS_ALWAYS = 40;
 const ROAD_LABEL_MIN_ZOOM = 13;
@@ -13,18 +13,40 @@ const STYLE_URL = import.meta.env.VITE_MAP_STYLE_URL as string | undefined;
 const BLANK_STYLE: StyleSpecification = {
   version: 8,
   sources: {},
-  layers: [{ id: "bg", type: "background", paint: { "background-color": "#0b1220" } }],
+  layers: [{ id: "bg", type: "background", paint: { "background-color": AURORA.mapGround } }],
 };
 
+// effective level of a road: its backend level, or "none" when there is no fresh level
+const LEVEL: maplibregl.ExpressionSpecification = [
+  "case",
+  ["any", ["==", ["get", "stale"], true], ["!", ["to-boolean", ["get", "level"]]]],
+  "none",
+  ["to-string", ["get", "level"]],
+];
 const LEVEL_COLOR: maplibregl.ExpressionSpecification = [
-  "match",
-  ["get", "level"],
+  "match", LEVEL,
   "free", CONGESTION_COLORS.free,
   "moderate", CONGESTION_COLORS.moderate,
   "high", CONGESTION_COLORS.high,
   "severe", CONGESTION_COLORS.severe,
   UNKNOWN_COLOR,
 ];
+const LEVEL_WIDTH: maplibregl.ExpressionSpecification = [
+  "+",
+  ["case", ["==", ["get", "selected"], true], 3, 0],
+  ["match", LEVEL,
+    "free", ROAD_STYLE.free.width,
+    "moderate", ROAD_STYLE.moderate.width,
+    "high", ROAD_STYLE.high.width,
+    "severe", ROAD_STYLE.severe.width,
+    ROAD_STYLE.none.width],
+];
+const OPEN_ROAD: maplibregl.ExpressionSpecification = ["all", ["==", ["get", "kind"], "road"], ["!=", ["get", "closed"], true]];
+/** MapLibre dash lengths are in line widths; the Aurora spec gives them in px. */
+const dashFor = (level: "high" | "severe" | "none"): number[] => {
+  const s = ROAD_STYLE[level];
+  return (s.dash ?? [1, 0]).map((px) => px / s.width);
+};
 
 export interface MapProps {
   network: NetworkGeoJSON | undefined;
@@ -88,35 +110,39 @@ export function MapView(props: MapProps) {
       map.addSource("net", { type: "geojson", data: { type: "FeatureCollection", features: [] }, promoteId: "id" });
       map.addLayer({
         id: "roads-casing", type: "line", source: "net", filter: ["==", ["get", "kind"], "road"],
-        paint: { "line-color": "#020617", "line-width": ["case", ["get", "selected"], 13, 9] },
+        paint: { "line-color": ROAD_CASING, "line-width": ["+", LEVEL_WIDTH, 4] },
         layout: { "line-cap": "round" },
       });
       map.addLayer({
         id: "roads-whatif", type: "line", source: "net",
         filter: ["all", ["==", ["get", "kind"], "road"], [">", ["get", "whatif"], 0]],
-        paint: { "line-color": "#38bdf8", "line-opacity": 0.35, "line-width": ["+", 10, ["/", ["get", "whatif"], 6]] },
+        paint: { "line-color": AURORA.data, "line-opacity": 0.35, "line-width": ["+", 10, ["/", ["get", "whatif"], 6]] },
       });
+      // solid levels share one layer; each dashed level has its own (line-dasharray cannot be data-driven)
       map.addLayer({
-        id: "roads", type: "line", source: "net", filter: ["==", ["get", "kind"], "road"],
-        paint: {
-          "line-color": ["case", ["get", "closed"], "#111827", LEVEL_COLOR],
-          "line-width": ["case", ["get", "selected"], 8, ["get", "monitored"], 5, 3],
-          "line-opacity": ["case", ["get", "stale"], 0.55, 1],
-        },
+        id: "roads", type: "line", source: "net",
+        filter: ["all", OPEN_ROAD, ["match", LEVEL, ["free", "moderate"], true, false]],
+        paint: { "line-color": LEVEL_COLOR, "line-width": LEVEL_WIDTH },
         layout: { "line-cap": "round" },
       });
+      for (const lvl of ["high", "severe", "none"] as const) {
+        map.addLayer({
+          id: `roads-${lvl}`, type: "line", source: "net", filter: ["all", OPEN_ROAD, ["==", LEVEL, lvl]],
+          paint: { "line-color": LEVEL_COLOR, "line-width": LEVEL_WIDTH, "line-dasharray": dashFor(lvl) },
+        });
+      }
       map.addLayer({
         id: "roads-closed", type: "line", source: "net",
         filter: ["all", ["==", ["get", "kind"], "road"], ["==", ["get", "closed"], true]],
-        paint: { "line-color": "#ef4444", "line-width": 3, "line-dasharray": [1, 1.5] },
+        paint: { "line-color": CONGESTION_COLORS.severe, "line-width": 3, "line-dasharray": [1, 1.5] },
       });
       map.addLayer({
         id: "incidents", type: "circle", source: "net", filter: ["==", ["get", "kind"], "incident"],
         paint: {
           "circle-radius": 9,
-          "circle-color": "#ef4444",
-          "circle-opacity": 0.85,
-          "circle-stroke-color": "#fecaca",
+          "circle-color": CONGESTION_COLORS.severe,
+          "circle-opacity": 0.9,
+          "circle-stroke-color": "#F3F0FF",
           "circle-stroke-width": 2,
         },
       });
@@ -124,8 +150,8 @@ export function MapView(props: MapProps) {
         id: "junctions", type: "circle", source: "net", filter: ["==", ["get", "kind"], "junction"],
         paint: {
           "circle-radius": ["case", ["get", "selected"], 11, 8],
-          "circle-color": "#e2e8f0",
-          "circle-stroke-color": ["case", ["get", "selected"], "#38bdf8", "#0f172a"],
+          "circle-color": "#F3F0FF",
+          "circle-stroke-color": ["case", ["get", "selected"], AURORA.data, ROAD_CASING],
           "circle-stroke-width": 3,
         },
       });
@@ -134,17 +160,19 @@ export function MapView(props: MapProps) {
         paint: {
           "circle-radius": 5,
           "circle-color": [
-            "match", ["get", "status"], "online", "#22d3ee", "error", "#ef4444", "offline", "#f59e0b", "#64748b",
+            "match", ["get", "status"],
+            "online", AURORA.data, "error", CONGESTION_COLORS.severe, "offline", CONGESTION_COLORS.high, UNKNOWN_COLOR,
           ],
-          "circle-stroke-color": "#020617",
+          "circle-stroke-color": ROAD_CASING,
           "circle-stroke-width": 1.5,
         },
       });
-      for (const layer of ["roads", "junctions", "cameras", "incidents"]) {
+      // the casing is under every road and wider than it, so it is the click / hover target for all levels
+      for (const layer of ["roads-casing", "junctions", "cameras", "incidents"]) {
         map.on("mouseenter", layer, () => (map.getCanvas().style.cursor = "pointer"));
         map.on("mouseleave", layer, () => (map.getCanvas().style.cursor = ""));
       }
-      map.on("click", "roads", (e) => {
+      map.on("click", "roads-casing", (e) => {
         const p = e.features?.[0]?.properties;
         if (p) cb.current.onRoad((p.approach_id as string) || null, p.id as string);
       });

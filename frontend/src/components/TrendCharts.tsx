@@ -18,15 +18,15 @@ function Chart({ title, unit, series, yMax }: { title: string; unit: string; ser
     animation: false,
     grid: { left: 44, right: 12, top: 30, bottom: 26 },
     tooltip: { trigger: "axis", valueFormatter: (v: number | null) => (v === null ? "—" : `${v.toFixed(1)} ${unit}`) },
-    legend: series.length > 1 ? { top: 0, right: 0, textStyle: { color: "#94a3b8", fontSize: 10 } } : undefined,
-    xAxis: { type: "time", axisLabel: { color: "#64748b", fontSize: 10 }, axisLine: { lineStyle: { color: "#334155" } } },
+    legend: series.length > 1 ? { top: 0, right: 0, textStyle: { color: "#A49DC4", fontSize: 10 } } : undefined,
+    xAxis: { type: "time", axisLabel: { color: "#8A83AD", fontSize: 10 }, axisLine: { lineStyle: { color: "#2F2A4D" } } },
     yAxis: {
       type: "value",
       max: yMax,
       name: unit,
-      nameTextStyle: { color: "#64748b", fontSize: 10 },
-      axisLabel: { color: "#64748b", fontSize: 10 },
-      splitLine: { lineStyle: { color: "#1e293b" } },
+      nameTextStyle: { color: "#8A83AD", fontSize: 10 },
+      axisLabel: { color: "#8A83AD", fontSize: 10 },
+      splitLine: { lineStyle: { color: "#1D1933" } },
     },
     series: series.map((s) => ({
       name: s.name,
@@ -99,7 +99,7 @@ export function TrendCharts({
     >
       {insufficient && <StateMessage tone="warn">Insufficient data - only {h.length} window(s) so far; trends become meaningful after a few minutes.</StateMessage>}
       <div className="mt-2 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
-        <Chart title="Speed vs time" unit="km/h" series={[{ name: "avg speed", color: "#38bdf8", data: pick(h, (s) => s.average_speed_kmh) }]} />
+        <Chart title="Speed vs time" unit="km/h" series={[{ name: "avg speed", color: "#E879F9", data: pick(h, (s) => s.average_speed_kmh) }]} />
         {speedOnly ? (
           <div className="rounded-lg border border-slate-800 p-3 text-xs text-slate-400 md:col-span-2 xl:col-span-2">
             Density, vehicle count, queue length and flow are not measured by this road sensor (it reports speed only),
@@ -107,7 +107,7 @@ export function TrendCharts({
           </div>
         ) : (
           <>
-            <Chart title="Density vs time" unit="%" series={[{ name: "density", color: "#f97316", data: pick(h, (s) => s.density_pct) }]} />
+            <Chart title="Density vs time" unit="%" series={[{ name: "density", color: "#FB923C", data: pick(h, (s) => s.density_pct) }]} />
             <Chart title="Vehicle count vs time" unit="veh" series={[{ name: "vehicles", color: "#a3e635", data: pick(h, (s) => s.vehicle_count) }]} />
             <Chart title="Queue length vs time" unit="m" series={[{ name: "queue", color: "#f43f5e", data: pick(h, (s) => s.queue_length_m) }]} />
             <Chart title="Traffic flow vs time" unit="veh/h" series={[{ name: "flow", color: "#c084fc", data: pick(h, (s) => s.flow_veh_h) }]} />
@@ -118,7 +118,7 @@ export function TrendCharts({
             title={`Forecast vs actual speed (+${horizon} min)`}
             unit="km/h"
             series={[
-              { name: "actual", color: "#38bdf8", data: fc.actual.map((a) => [a.timestamp, a.value]) },
+              { name: "actual", color: "#E879F9", data: fc.actual.map((a) => [a.timestamp, a.value]) },
               { name: `forecast +${horizon}`, color: "#facc15", dashed: true, data: fc.forecast.map((f) => [f.target_time, f.value]) },
             ]}
           />
@@ -137,7 +137,7 @@ export function TrendCharts({
             title="Incident score vs time (uncalibrated)"
             unit="score"
             yMax={1}
-            series={[{ name: "incident score", color: "#ef4444", data: riskRows.map((r) => [r.timestamp, r.incident_score]) }]}
+            series={[{ name: "incident score", color: "#F43F5E", data: riskRows.map((r) => [r.timestamp, r.incident_score]) }]}
           />
         ) : (
           <div className="rounded-lg border border-slate-800 p-3">

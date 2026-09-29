@@ -10,13 +10,13 @@ import { scoreLabel } from "../components/RoadPanel";
 import { Badge, Card, RiskBadge, StateMessage } from "../components/ui";
 
 const TYPE_COLOR: Record<string, string> = {
-  possible_incident: "#ef4444",
-  stopped_vehicle: "#f97316",
+  possible_incident: "#F43F5E",
+  stopped_vehicle: "#FB923C",
   wrong_way: "#e11d48",
-  abnormal_queue: "#eab308",
-  sudden_slowdown: "#f59e0b",
+  abnormal_queue: "#FDE047",
+  sudden_slowdown: "#FDE047",
   abnormal_trajectory: "#a855f7",
-  normal: "#22c55e",
+  normal: "#2DD4BF",
 };
 
 function Detail({ incident, onChanged }: { incident: Incident; onChanged: () => void }) {
@@ -155,7 +155,7 @@ export function IncidentCenter() {
                         <td className="py-1.5 text-slate-300">{time(i.timestamp, false)}</td>
                         <td className="text-slate-200">{i.road_id ?? i.approach_id}</td>
                         <td className="text-slate-400">{i.junction_id ?? "—"}</td>
-                        <td><span style={{ color: TYPE_COLOR[i.incident_type] ?? "#cbd5e1" }}>{i.label || titleCase(i.incident_type)}</span></td>
+                        <td><span style={{ color: TYPE_COLOR[i.incident_type] ?? "#C7C0E6" }}>{i.label || titleCase(i.incident_type)}</span></td>
                         <td className="pr-4 text-right text-slate-100 tabular-nums" title={scoreLabel(i.calibrated)}>
                           {pct(i.probability)}{!i.calibrated && <span className="text-slate-500">*</span>}
                         </td>

@@ -53,7 +53,7 @@ export function Badge({ children, color, title }: { children: ReactNode; color?:
     <span
       title={title}
       className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-semibold tracking-wide uppercase"
-      style={{ background: `${color ?? UNKNOWN_COLOR}26`, color: color ?? "#cbd5e1", border: `1px solid ${color ?? UNKNOWN_COLOR}66` }}
+      style={{ background: `${color ?? UNKNOWN_COLOR}26`, color: color ?? "#C7C0E6", border: `1px solid ${color ?? UNKNOWN_COLOR}66` }}
     >
       {children}
     </span>

@@ -10,7 +10,7 @@ function Row({ name, s }: { name: string; s: ComponentStatus | { ok: boolean | n
     <li className="flex items-start gap-3 border-t border-slate-800 py-2 first:border-t-0">
       <span className="mt-1.5"><Dot ok={s.ok} /></span>
       <span className="w-32 shrink-0 font-semibold text-slate-200">{name}</span>
-      <span className="w-40 shrink-0 text-xs font-bold tracking-wider uppercase" style={{ color: s.ok ? "#6ee7b7" : s.ok === null ? "#94a3b8" : "#fca5a5" }}>
+      <span className="w-40 shrink-0 text-xs font-bold tracking-wider uppercase" style={{ color: s.ok ? "#6ee7b7" : s.ok === null ? "#A49DC4" : "#fca5a5" }}>
         {s.status.replace(/_/g, " ")}
       </span>
       <span className="min-w-0 text-xs break-words text-slate-400">{s.detail}</span>

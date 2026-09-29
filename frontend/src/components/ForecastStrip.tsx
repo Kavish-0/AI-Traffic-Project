@@ -8,7 +8,7 @@ function Tile({ label, level, sub }: { label: string; level: CongestionLevel | n
   return (
     <div className="rounded-lg border px-3 py-2 text-center" style={{ borderColor: `${color}88`, background: `${color}14` }}>
       <div className="text-[11px] tracking-widest text-slate-400 uppercase">{label}</div>
-      <div className="text-base font-bold uppercase" style={{ color: level ? color : "#94a3b8" }}>
+      <div className="text-base font-bold uppercase" style={{ color: level ? color : "#A49DC4" }}>
         {level ?? "—"}
       </div>
       {sub && <div className="text-[11px] text-slate-400 tabular-nums">{sub}</div>}

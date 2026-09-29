@@ -7,7 +7,7 @@ function Kpi({ label, value, sub, accent }: { label: string; value: string; sub?
   return (
     <div className="rounded-xl border border-slate-800 bg-slate-900/70 px-4 py-3">
       <div className="text-[11px] tracking-widest text-slate-500 uppercase">{label}</div>
-      <div className="text-2xl font-bold tabular-nums" style={{ color: accent ?? "#f1f5f9" }}>
+      <div className="text-2xl font-bold tabular-nums" style={{ color: accent ?? "#F3F0FF" }}>
         {value}
       </div>
       {sub && <div className="text-[11px] text-slate-500">{sub}</div>}
@@ -31,8 +31,8 @@ export function KpiBar({ summary }: { summary: Resource<Summary> }) {
           <Kpi label="Vehicles in view" value={live ? num(s.vehicles) : "—"} sub={`${s.fresh_approaches}/${s.monitored_approaches} approaches live`} />
         )}
         <Kpi label="Avg speed" value={num(s.avg_speed_kmh, 0, "km/h")} sub={sensorOnly ? "mean over road sensors, live" : "vehicle-weighted, live"} />
-        <Kpi label="Congested" value={String(s.congested_approaches)} sub="approaches HIGH / SEVERE" accent={s.congested_approaches ? "#f97316" : undefined} />
-        <Kpi label="Incidents" value={String(s.active_incidents)} sub="active (possible, unverified)" accent={s.active_incidents ? "#ef4444" : undefined} />
+        <Kpi label="Congested" value={String(s.congested_approaches)} sub="approaches HIGH / SEVERE" accent={s.congested_approaches ? "#FB923C" : undefined} />
+        <Kpi label="Incidents" value={String(s.active_incidents)} sub="active (possible, unverified)" accent={s.active_incidents ? "#F43F5E" : undefined} />
       </div>
       {summary.error && (
         <StateMessage tone="error">

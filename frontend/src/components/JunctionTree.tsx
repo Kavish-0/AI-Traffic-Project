@@ -4,7 +4,7 @@ import { useSelection } from "../state/selection";
 import { CONGESTION_COLORS, UNKNOWN_COLOR } from "../theme/congestion";
 import { Card, LevelBadge, StateMessage } from "./ui";
 
-const CAM_COLOR: Record<string, string> = { online: "#22d3ee", offline: "#f59e0b", error: "#ef4444", never_started: "#64748b" };
+const CAM_COLOR: Record<string, string> = { online: "#E879F9", offline: "#FDE047", error: "#F43F5E", never_started: "#8A83AD" };
 
 /** Junction -> approaches (roads) -> cameras. Selecting updates map, panels, charts and video. */
 export function JunctionTree({ junctions, cameras }: { junctions: Resource<Junction[]>; cameras: Camera[] }) {
