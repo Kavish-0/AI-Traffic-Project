@@ -1,0 +1,41 @@
+name: aic21_track4
+description: 'How well do stationary-vehicle rules and unsupervised outlier models
+  detect real traffic anomalies (stalled vehicles, crashes) in freeway video processed
+  by the production perception pipeline?
+
+  '
+dataset: aicity21_anomaly
+extract:
+  weights: models/detection/yolo11m.pt
+  imgsz: 832
+  conf_threshold: 0.25
+  target_fps: 5.0
+  batch: 8
+  out_dir: data/interim/aic21_track4
+windows:
+  window_s: 10.0
+  step_s: 5.0
+  stationary_lag_s: 5.0
+  stationary_rel: 0.25
+  baseline_s: 120.0
+split:
+  val_fraction: 0.2
+  test_fraction: 0.2
+  seed: 0
+isolation_forest:
+  n_estimators: 300
+  max_samples: 2048
+autoencoder:
+  hidden:
+  - 16
+  - 4
+  - 16
+  max_iter: 400
+event_tolerance_s: 10.0
+videos:
+- '2'
+- '9'
+- '11'
+- '3'
+- '4'
+- '5'

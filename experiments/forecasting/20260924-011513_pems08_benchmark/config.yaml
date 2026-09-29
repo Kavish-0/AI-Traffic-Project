@@ -1,0 +1,140 @@
+name: pems08_benchmark
+description: 'Real freeway data (12 detector stations, Jul-Aug 2016, San Bernardino
+  CA) with real hourly weather (Open-Meteo archive). Question: do tree / deep models
+  beat the linear and naive baselines at +5, +15, +30 minutes, and by how much?
+
+  '
+seed: 0
+dataset:
+  source: pems08
+  params:
+    every_k: 14
+    weather:
+      lat: 34.06
+      lon: -117.34
+    holiday_country: US
+features:
+  dynamic:
+  - flow_veh_h
+  - avg_speed_kmh
+  - occupancy_pct
+  targets:
+  - flow_veh_h
+  - avg_speed_kmh
+  - occupancy_pct
+  weather:
+  - temperature_c
+  - humidity_pct
+  - rain_mm
+  - visibility_km
+  - weather_condition
+  calendar:
+  - hour
+  - day_of_week
+  - holiday
+  - rush_hour
+  rush_hours:
+  - - 6.0
+    - 9.0
+  - - 15.0
+    - 19.0
+  max_gap_fill_steps: 2
+  lags:
+  - 1
+  - 2
+  - 3
+  - 6
+  - 11
+  rolling:
+  - 3
+  - 12
+horizons_min:
+- 5
+- 15
+- 30
+season: 1D
+split:
+  train: 0.6
+  val: 0.2
+  test: 0.2
+  val_start: null
+  test_start: null
+train_stride: 1
+eval_stride: 1
+primary_target: flow_veh_h
+deep_seeds:
+- 0
+- 1
+- 2
+models:
+- name: persistence
+  type: persistence
+  params: {}
+- name: seasonal_naive
+  type: seasonal_naive
+  params: {}
+- name: linear
+  type: linear
+  params:
+    alpha: 0.0
+- name: random_forest
+  type: random_forest
+  params:
+    n_estimators: 200
+    max_depth: 16
+    min_samples_leaf: 5
+    max_features: 0.5
+    max_samples: 0.3
+- name: xgboost
+  type: xgboost
+  params:
+    n_estimators: 1500
+    learning_rate: 0.05
+    max_depth: 6
+    early_stopping_rounds: 50
+- name: lstm
+  type: lstm
+  params:
+    lookback_steps: 12
+    hidden: 64
+    layers: 2
+    dropout: 0.1
+    max_epochs: 40
+    batch_size: 512
+    lr: 0.001
+- name: gru
+  type: gru
+  params:
+    lookback_steps: 12
+    hidden: 64
+    layers: 2
+    dropout: 0.1
+    max_epochs: 40
+    batch_size: 512
+    lr: 0.001
+- name: transformer
+  type: transformer
+  params:
+    lookback_steps: 12
+    d_model: 64
+    heads: 4
+    layers: 2
+    ff: 128
+    dropout: 0.1
+    max_epochs: 40
+    batch_size: 512
+    lr: 0.0005
+- name: lstm_L24
+  type: lstm
+  params:
+    lookback_steps: 24
+    hidden: 64
+    layers: 2
+    dropout: 0.1
+    max_epochs: 40
+    batch_size: 512
+    lr: 0.001
+plots:
+  series: pems08_014
+  days: 1.0
+  start_offset_days: 2.0

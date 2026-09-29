@@ -1,0 +1,41 @@
+# Explainable rule-based congestion baseline (Module 3).
+#
+# Each indicator is normalised to 0..1 (1 = worst), combined with weights into a
+# score, and the score is mapped to a level. Every rule that pushes the level up
+# is recorded in CongestionAssessment.explanation.
+#
+#   speed     = 1 - avg_speed / free_flow_speed        (saturation: ratio drop that counts as 1.0)
+#   density   = density_ratio / saturation             (density_ratio = density / jam density)
+#   occupancy = occupancy_pct / saturation             (percent)
+#   queue     = queue_length_m / min(saturation, ROI length)
+# Missing indicators (e.g. no reliable speed) are skipped and weights renormalised.
+
+free_flow_speed_kmh: 50        # default; per-approach values come from the road network config
+
+indicators:
+  speed:      {weight: 0.40, saturation: 0.8}   # 80% below free-flow -> fully congested
+  density:    {weight: 0.30, saturation: 0.8}   # 80% of jam density -> fully congested
+  occupancy:  {weight: 0.15, saturation: 60}    # 60% occupancy -> fully congested
+  queue:      {weight: 0.15, saturation: 60}    # 60 m queue (or the full ROI) -> fully congested
+
+levels:           # score upper bounds; FREE <= 0.30 < MODERATE <= 0.55 < HIGH <= 0.75 < SEVERE
+  free: 0.30
+  moderate: 0.55
+  high: 0.75
+  severe: 1.00
+
+overrides:        # applied after scoring; can only raise the level
+  - if: "stopped_vehicles >= 5 and avg_speed_kmh < 5"
+    level: severe
+    reason: "Standstill: >=5 stopped vehicles and speed below 5 km/h"
+  - if: "density_ratio >= 0.8"
+    level: severe
+    reason: "Density above 80% of jam density"
+  - if: "queue_exceeds_view_fraction >= 0.5"
+    level: high
+    reason: "Queue reaches the edge of the camera view for most of the window"
+
+hysteresis:
+  min_windows_before_downgrade: 2   # avoid flicker at level boundaries
+
+min_quality: 0.3                    # below: explanation warns about data quality

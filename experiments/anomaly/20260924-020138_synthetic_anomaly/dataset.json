@@ -1,0 +1,22 @@
+{
+  "generator": {
+    "days": 35,
+    "seed": 11,
+    "incident_rate_per_day": 0.5
+  },
+  "train_until": "2025-06-15 18:30:00+00:00",
+  "train_rows": 80640,
+  "train_normal_rows": 78349,
+  "test_rows": 120960,
+  "test_events": 40,
+  "features": [
+    "z_avg_speed_kmh",
+    "z_density_ratio",
+    "z_occupancy_pct",
+    "z_queue_length_m",
+    "z_flow_veh_h",
+    "dz_avg_speed_kmh",
+    "dz_queue_length_m",
+    "flow_imbalance"
+  ]
+}

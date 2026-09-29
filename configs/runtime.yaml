@@ -1,0 +1,66 @@
+# Local full-system runtime:  python -m traffic_intel.pipeline run [--profile NAME]
+#
+# One process runs the camera workers (one thread each), the in-memory event bus and the analytics
+# worker (anomaly detection -> incident fusion -> forecasting -> risk) and persists every closed
+# window, live value, forecast, incident and risk assessment to the database (TI_DATABASE_URL).
+# The API (uvicorn, a separate process without torch) reads that database and pushes updates over
+# WebSocket. Redis Streams / separate camera processes are FUTURE scope (docs/ARCHITECTURE.md Phase 9).
+#
+# Camera entries:
+#   {camera: <id>}                        a camera from configs/cameras/*.yaml (real footage / webcam / RTSP)
+#   {synthetic: <scenario>, ...}          a SYNTHETIC scene (test fixture: simulated traffic + simulated
+#                                         detections). The UI labels these cameras "SYNTHETIC" - their numbers
+#                                         are pipeline demonstrations, never real-world measurements.
+
+default_profile: demo
+
+profiles:
+  demo:
+    description: >
+      Junction A with four synthetic approaches (test fixture, no GPU needed) plus the real public
+      highway footage through YOLO + ByteTrack (needs the cv extra; CUDA if available, else CPU).
+    cameras:
+      - {synthetic: congested, camera_id: synth_a_north, approach_id: junction_a_north, name: "Junction A north (synthetic)",
+         duration_s: 1200, seed: 21}
+      - {synthetic: default, camera_id: synth_a_east, approach_id: junction_a_east, name: "Junction A east (synthetic)",
+         duration_s: 1200, seed: 22}
+      - {synthetic: free_flow, camera_id: synth_a_south, approach_id: junction_a_south, name: "Junction A south (synthetic)",
+         duration_s: 1200, seed: 23}
+      - {synthetic: default, camera_id: synth_a_west, approach_id: junction_a_west, name: "Junction A west (synthetic)",
+         duration_s: 1200, seed: 24, arrival_rate_veh_h_per_lane: 350}
+      - {camera: public_highway_01}
+
+  synthetic:
+    description: "Only the four synthetic approaches (fast, CPU only)."
+    cameras:
+      - {synthetic: congested, camera_id: synth_a_north, approach_id: junction_a_north, name: "Junction A north (synthetic)",
+         duration_s: 1200, seed: 21}
+      - {synthetic: default, camera_id: synth_a_east, approach_id: junction_a_east, name: "Junction A east (synthetic)",
+         duration_s: 1200, seed: 22}
+      - {synthetic: free_flow, camera_id: synth_a_south, approach_id: junction_a_south, name: "Junction A south (synthetic)",
+         duration_s: 1200, seed: 23}
+      - {synthetic: default, camera_id: synth_a_west, approach_id: junction_a_west, name: "Junction A west (synthetic)",
+         duration_s: 1200, seed: 24, arrival_rate_veh_h_per_lane: 350}
+
+  public:
+    description: "Real public footage only (YOLO + ByteTrack)."
+    cameras:
+      - {camera: public_highway_01}
+
+live_replay:            # recorded files / synthetic scenes are replayed as live cameras
+  realtime: true        # pace at source speed
+  loop: true            # restart at the end
+  wall_clock: true      # stamp frames with the current time (not the recording time)
+
+record_parquet: false   # frame-level detections/tracks to data/interim (off for long live runs)
+heartbeat_s: 2.0        # camera status -> database
+live_persist_s: 1.0     # latest live value per approach -> database (upsert)
+forecast: true          # PRODUCTION forecasting model (models/forecasting/*/PRODUCTION); unavailable -> reported
+preview:                # latest annotated frame per camera (boxes, class, track id, speed) for the dashboard
+  enabled: true
+  interval_s: 1.0
+  max_width: 960
+  dir: runs/live_preview
+weather:                # current weather for the network location (optional context; never required)
+  enabled: true
+  interval_s: 900

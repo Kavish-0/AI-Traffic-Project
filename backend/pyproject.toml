@@ -1,0 +1,79 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "traffic-intel"
+version = "0.1.0"
+description = "AI Urban Traffic & Incident Intelligence - backend"
+requires-python = ">=3.11"
+readme = "README.md"
+# Core = what the API process and analytics worker need. No torch here.
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "pydantic>=2.8",
+    "pydantic-settings>=2.4",
+    "pyyaml>=6.0",
+    "numpy>=1.26",
+    "pandas>=2.2",
+    "pyarrow>=16",
+    "opencv-python-headless>=4.10",
+    "sqlalchemy>=2.0.30",
+    "geoalchemy2>=0.15",
+    "psycopg[binary]>=3.2",
+    "alembic>=1.13",
+    "shapely>=2.0",
+    "networkx>=3.3",
+    "scipy>=1.13",                 # Hungarian assignment in the tracker
+    "httpx>=0.27",
+]
+
+[project.optional-dependencies]
+# Perception workers (Phase 1). Ultralytics is AGPL-3.0 - fine for academic use,
+# relevant if the project is ever distributed commercially.
+cv = ["ultralytics>=8.3"]
+# Learned models (Phases 5-7).
+ml = ["scikit-learn>=1.5", "xgboost>=2.1", "torch>=2.4", "holidays>=0.57", "joblib>=1.4", "matplotlib>=3.8"]
+# Distributed mode only (Phase 9).
+distributed = ["redis>=5.0"]
+# Public dataset readers: METR-LA / PEMS-BAY HDF5 (pandas HDFStore).
+datasets = ["tables>=3.9"]
+dev = ["pytest>=8", "pytest-asyncio>=0.24", "ruff>=0.6", "mypy>=1.11"]
+
+[tool.setuptools.packages.find]
+include = ["traffic_intel*"]
+
+[tool.setuptools.package-data]
+"traffic_intel.database.migrations" = ["script.py.mako"]
+
+[tool.pytest.ini_options]
+testpaths = ["../tests/backend"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+pythonpath = ["../tests/backend"]
+markers = [
+    "integration: needs PostgreSQL/PostGIS (docker compose up db)",
+    "gpu: needs a CUDA device",
+    "cv: needs the cv extra (ultralytics) and downloaded weights",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "ANN"]
+ignore = ["ANN401"]
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Query"]   # FastAPI dependency-injection idiom
+
+[tool.ruff.lint.per-file-ignores]
+"../tests/**" = ["ANN"]
+
+[tool.mypy]
+python_version = "3.12"          # installed numpy stubs use 3.12 syntax; the code itself targets 3.11+
+strict = true
+plugins = ["pydantic.mypy"]
+ignore_missing_imports = true    # untyped third-party libs (yaml, scipy, cv2, ultralytics, networkx, ...)

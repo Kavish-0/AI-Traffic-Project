@@ -1,0 +1,121 @@
+name: congestion_level_synthetic
+description: 'Future congestion level on the live feature set (synthetic junction,
+  1-min windows).
+
+  '
+seed: 0
+dataset:
+  source: synthetic
+  params:
+    start: '2025-06-02T00:00:00+05:30'
+    days: 42
+    seed: 7
+    weather:
+      lat: 12.97
+      lon: 77.59
+    holiday_country: IN
+features:
+  dynamic:
+  - avg_speed_kmh
+  - density_ratio
+  - occupancy_pct
+  - queue_length_m
+  - flow_veh_h
+  - vehicle_count
+  - inflow
+  - outflow
+  - stopped_vehicles
+  targets:
+  - avg_speed_kmh
+  - density_ratio
+  - occupancy_pct
+  - queue_length_m
+  weather:
+  - temperature_c
+  - humidity_pct
+  - rain_mm
+  - visibility_km
+  - weather_condition
+  calendar:
+  - hour
+  - day_of_week
+  - holiday
+  - rush_hour
+  rush_hours:
+  - - 7.0
+    - 10.0
+  - - 16.0
+    - 19.0
+  max_gap_fill_steps: 3
+  lags:
+  - 1
+  - 2
+  - 3
+  - 5
+  - 10
+  - 15
+  - 29
+  rolling:
+  - 5
+  - 15
+  - 30
+horizons_min:
+- 5
+- 15
+- 30
+split:
+  train: 0.6
+  val: 0.2
+  test: 0.2
+  val_start: null
+  test_start: null
+train_stride: 2
+eval_stride: 1
+free_flow:
+  method: network
+  quantile: 0.85
+rules_file: congestion_rules.yaml
+models:
+- name: persistence_level
+  type: persistence_level
+  params: {}
+  grid: {}
+- name: regression_to_rules
+  type: regression_to_rules
+  params: {}
+  grid: {}
+- name: logistic_regression
+  type: logistic_regression
+  params: {}
+  grid:
+    C:
+    - 0.1
+    - 1.0
+    - 10.0
+    class_weight:
+    - null
+    - balanced
+- name: random_forest
+  type: random_forest
+  params:
+    n_estimators: 150
+    min_samples_leaf: 5
+    max_samples: 0.3
+  grid:
+    max_depth:
+    - 12
+    - 20
+    class_weight:
+    - null
+    - balanced_subsample
+- name: xgboost
+  type: xgboost
+  params:
+    n_estimators: 400
+    learning_rate: 0.1
+  grid:
+    max_depth:
+    - 4
+    - 6
+    - 8
+register: true

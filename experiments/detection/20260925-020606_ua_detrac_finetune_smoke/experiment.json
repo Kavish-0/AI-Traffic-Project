@@ -1,0 +1,271 @@
+{
+  "experiment_id": "20260925-020606_ua_detrac_finetune_smoke",
+  "config": {
+    "name": "ua_detrac_finetune_smoke",
+    "description": "Does fine-tuning COCO-pretrained YOLO11 on traffic-camera footage improve vehicle detection on held-out sequences, and at what cost in latency?\n",
+    "seed": 0,
+    "dataset": {
+      "id": "ua_detrac",
+      "val_sequences": 10,
+      "frame_step_train": 10,
+      "frame_step_eval": 10,
+      "mask_ignored": true,
+      "output": "data/processed/ua_detrac_yolo"
+    },
+    "classes": [
+      "car",
+      "bus",
+      "truck"
+    ],
+    "models": [
+      {
+        "name": "yolo11s_ua_detrac",
+        "weights": "models/detection/yolo11s.pt",
+        "batch": 8
+      },
+      {
+        "name": "yolo11m_ua_detrac",
+        "weights": "models/detection/yolo11m.pt",
+        "batch": 4
+      }
+    ],
+    "train": {
+      "epochs": 1,
+      "imgsz": 960,
+      "batch": 8,
+      "patience": 8,
+      "optimizer": "auto",
+      "cos_lr": true,
+      "close_mosaic": 5,
+      "workers": 2,
+      "amp": true,
+      "fraction": 0.05
+    },
+    "eval_imgsz": [
+      960
+    ],
+    "eval_conf": 0.001,
+    "operating_conf": 0.25,
+    "baselines": true
+  },
+  "dataset_split": {
+    "dataset": "ua_detrac",
+    "train_sequences": [
+      "MVI_20012",
+      "MVI_20032",
+      "MVI_20033",
+      "MVI_20034",
+      "MVI_20035",
+      "MVI_20052",
+      "MVI_20061",
+      "MVI_20062",
+      "MVI_20063",
+      "MVI_20064",
+      "MVI_39761",
+      "MVI_39771",
+      "MVI_39801",
+      "MVI_39811",
+      "MVI_39821",
+      "MVI_39851",
+      "MVI_39861",
+      "MVI_39931",
+      "MVI_40131",
+      "MVI_40141",
+      "MVI_40161",
+      "MVI_40162",
+      "MVI_40171",
+      "MVI_40172",
+      "MVI_40181",
+      "MVI_40192",
+      "MVI_40201",
+      "MVI_40204",
+      "MVI_40211",
+      "MVI_40212",
+      "MVI_40241",
+      "MVI_40243",
+      "MVI_40244",
+      "MVI_40751",
+      "MVI_40752",
+      "MVI_40871",
+      "MVI_40962",
+      "MVI_40963",
+      "MVI_40981",
+      "MVI_40992",
+      "MVI_41063",
+      "MVI_41073",
+      "MVI_63521",
+      "MVI_63525",
+      "MVI_63544",
+      "MVI_63553",
+      "MVI_63554",
+      "MVI_63561",
+      "MVI_63562",
+      "MVI_63563"
+    ],
+    "val_sequences": [
+      "MVI_40152",
+      "MVI_40191",
+      "MVI_40213",
+      "MVI_39781",
+      "MVI_40732",
+      "MVI_40991",
+      "MVI_63552",
+      "MVI_20011",
+      "MVI_20051",
+      "MVI_20065"
+    ],
+    "test_sequences": [
+      "MVI_39031",
+      "MVI_39051",
+      "MVI_39211",
+      "MVI_39271",
+      "MVI_39311",
+      "MVI_39361",
+      "MVI_39371",
+      "MVI_39401",
+      "MVI_39501",
+      "MVI_39511",
+      "MVI_40701",
+      "MVI_40711",
+      "MVI_40712",
+      "MVI_40714",
+      "MVI_40742",
+      "MVI_40743",
+      "MVI_40761",
+      "MVI_40762",
+      "MVI_40763",
+      "MVI_40771",
+      "MVI_40772",
+      "MVI_40773",
+      "MVI_40774",
+      "MVI_40775",
+      "MVI_40792",
+      "MVI_40793",
+      "MVI_40851",
+      "MVI_40852",
+      "MVI_40853",
+      "MVI_40854",
+      "MVI_40855",
+      "MVI_40863",
+      "MVI_40864",
+      "MVI_40891",
+      "MVI_40892",
+      "MVI_40901",
+      "MVI_40902",
+      "MVI_40903",
+      "MVI_40904",
+      "MVI_40905"
+    ],
+    "stats": {
+      "train": {
+        "sequences": 50,
+        "images": 6669,
+        "boxes": 47971,
+        "dropped_in_ignored": 2102
+      },
+      "val": {
+        "sequences": 10,
+        "images": 1563,
+        "boxes": 11274,
+        "dropped_in_ignored": 739
+      },
+      "test": {
+        "sequences": 40,
+        "images": 5625,
+        "boxes": 63377,
+        "dropped_in_ignored": 5024
+      }
+    },
+    "frame_step": {
+      "train": 10,
+      "eval": 10
+    },
+    "classes": [
+      "car",
+      "bus",
+      "truck"
+    ],
+    "mask_ignored": true,
+    "created": "2026-09-24T20:31:43.998513+00:00"
+  },
+  "started": "2026-09-24T20:36:06.041742+00:00",
+  "models": [
+    {
+      "name": "yolo11s_ua_detrac",
+      "artifact": "None",
+      "best": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\experiments\\detection\\20260925-020606_ua_detrac_finetune_smoke\\runs\\yolo11s_ua_detrac\\weights\\best.pt",
+      "train_seconds": 101.0,
+      "epochs_run": 1,
+      "best_epoch": 1,
+      "hyperparameters": {
+        "epochs": 1,
+        "imgsz": 960,
+        "batch": 8,
+        "patience": 8,
+        "optimizer": "auto",
+        "cos_lr": true,
+        "close_mosaic": 5,
+        "workers": 2,
+        "amp": true,
+        "fraction": 0.05
+      },
+      "val_mAP50-95": 0.44679,
+      "base_weights": "models/detection/yolo11s.pt",
+      "test": [
+        {
+          "model": "yolo11s_ua_detrac",
+          "weights": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\experiments\\detection\\20260925-020606_ua_detrac_finetune_smoke\\runs\\yolo11s_ua_detrac\\weights\\best.pt",
+          "imgsz": 960,
+          "test_images": 160,
+          "instances": 1812,
+          "precision": 0.865,
+          "recall": 0.7743,
+          "operating_conf": 0.25,
+          "mAP50": 0.6907,
+          "mAP50-95": 0.4573,
+          "ms_per_image": 12.09,
+          "device": "cuda:0 [NVIDIA GeForce RTX 4060 Laptop GPU, CUDA 13.0, torch 2.14.0+cu130, fp16]",
+          "per_class": {
+            "car": {
+              "P_maxF1": 0.8782,
+              "R_maxF1": 0.7854,
+              "mAP50": 0.8488,
+              "mAP50-95": 0.5696,
+              "instances": 1580
+            },
+            "bus": {
+              "P_maxF1": 0.8112,
+              "R_maxF1": 0.8242,
+              "mAP50": 0.8396,
+              "mAP50-95": 0.5336,
+              "instances": 182
+            },
+            "truck": {
+              "P_maxF1": 0.3803,
+              "R_maxF1": 0.44,
+              "mAP50": 0.3837,
+              "mAP50-95": 0.2687,
+              "instances": 50
+            }
+          },
+          "confusion_iou50": {
+            "background->car": 149,
+            "background->bus": 24,
+            "background->truck": 17,
+            "car->background": 331,
+            "car->car": 1225,
+            "car->bus": 7,
+            "car->truck": 17,
+            "bus->background": 32,
+            "bus->bus": 150,
+            "truck->background": 17,
+            "truck->car": 12,
+            "truck->bus": 1,
+            "truck->truck": 20
+          }
+        }
+      ]
+    }
+  ],
+  "finished": "2026-09-24T20:39:17.867448+00:00"
+}

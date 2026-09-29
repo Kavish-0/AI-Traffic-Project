@@ -1,0 +1,24 @@
+# Incident / anomaly detection evaluated on REAL labelled video (AI City 2021 Track 4 training videos).
+#   python -m traffic_intel.ai.training train incident --config ../configs/training/incident_aic21.yaml [--smoke]
+# Uncalibrated freeway cameras -> pixel-space, scale-normalised motion features. The fitted models are
+# evaluation artefacts (experiments/incident/<id>/), NOT deployed: the live anomaly models consume the
+# canonical metric features (configs/training/anomaly.yaml). Split BY VIDEO; test labels never tune anything.
+name: aic21_track4
+description: >
+  How well do stationary-vehicle rules and unsupervised outlier models detect real traffic anomalies
+  (stalled vehicles, crashes) in freeway video processed by the production perception pipeline?
+dataset: aicity21_anomaly
+extract:
+  weights: models/detection/yolo11m.pt   # = configs/pipeline.yaml detector (production perception)
+  imgsz: 1280                            # = the pipeline's inference size (keeps distant vehicles)
+  conf_threshold: 0.1                    # low: ByteTrack's second round uses low-score boxes
+  tracker_params: {track_high_thresh: 0.5, match_thresh: 0.8, new_track_thresh: 0.4}   # tuned on UA-DETRAC validation (experiments/tracking/20260925-023637)
+  target_fps: 5.0                        # stalls develop over tens of seconds
+  batch: 8
+  out_dir: data/interim/aic21_track4     # frame-level tracks stay in Parquet
+windows: {window_s: 10.0, step_s: 5.0, stationary_lag_s: 5.0, stationary_rel: 0.25, baseline_s: 120.0,
+          persist_step_s: 2.0, persist_iou: 0.5, persist_conf: 0.25, persist_min_s: 30.0}
+split: {val_fraction: 0.2, test_fraction: 0.2, seed: 0}
+isolation_forest: {n_estimators: 300, max_samples: 2048}
+autoencoder: {hidden: [16, 4, 16], max_iter: 400}
+event_tolerance_s: 10.0

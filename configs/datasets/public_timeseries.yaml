@@ -1,0 +1,13 @@
+# Public traffic TIME SERIES for forecasting research (python -m traffic_intel.datasets download --catalog timeseries pems08)
+
+files:
+  pems08:
+    url: https://github.com/wanhuaiyu/ASTGCN/raw/master/data/PEMS08/pems08.npz
+    file: data/external/pems08/pems08.npz
+    source: >-
+      Caltrans Performance Measurement System (PeMS), District 8 (San Bernardino, CA), 170 freeway
+      detector stations, 5-minute aggregates of flow, occupancy and speed, 2016-07-01 .. 2016-08-31.
+      Pre-processed and redistributed by the ASTGCN authors (Guo et al., AAAI 2019).
+    license: "Caltrans PeMS public data; mirror repository states no licence - cite PeMS (Chen et al., 2001) and ASTGCN (Guo et al., 2019)"
+    description: "npz key 'data': array (17856 steps, 170 sensors, 3) = [flow veh/5min, occupancy 0-1, speed mph]"
+    sha256: e1d03ce74e9fb79149e6e7c37c680214822c4a285baa2f42278cacabcd25c075

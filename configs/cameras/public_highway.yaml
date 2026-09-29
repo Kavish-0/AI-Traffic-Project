@@ -1,0 +1,51 @@
+# Development camera: PUBLIC footage, left carriageway (traffic approaching the camera).
+#   video : data/raw/public/roboflow_vehicles.mp4  (python -m traffic_intel.datasets download roboflow_vehicles)
+#   3840x2160 @ 25 fps, 21.5 s, divided motorway seen from an overpass.
+#
+# To use other footage: copy this file, change `id`, `source` (and `replay_start`), then re-pick
+# `calibration` + `zones` on a frame of the new video (docs/TRAFFIC_STATE_ESTIMATION.md section 8).
+# Without `calibration` the camera still runs in PERCEPTION-ONLY mode (detections, tracks,
+# annotated video, Parquet; no metric features / live values / 60 s windows).
+
+id: public_highway_01
+name: "Public footage - motorway, carriageway towards camera"
+approach_id: dev_highway_approach
+
+source: data/raw/public/roboflow_vehicles.mp4   # file | webcam:N | rtsp://... | http(s)://...
+source_type: auto
+source_fps: null
+process_fps: 25                     # analyse every frame (fast motorway traffic); lower for speed
+resolution: [1920, 1080]            # decode 4K, analyse at 1080p; zones/calibration rescale automatically
+replay_start: "2026-09-01T08:00:00+02:00"   # the recording time is unknown - placeholder
+realtime: false
+loop: false
+location: [77.6200, 12.9800]        # PLACEHOLDER (site of the public video is not published)
+
+# APPROXIMATE calibration, derived from the road markings of this video (not surveyed):
+#  * lateral: left edge line x=0, lane divider x=3.75, median-side line x=7.5 m (2 x 3.75 m motorway lanes)
+#  * longitudinal: y = k * 18 m, where k counts divider dash periods from the dash starting at image
+#    row 1870. Dash starts were measured on a vehicle-free median background; their image rows follow a
+#    projective progression exactly (cross-ratio 1.33 vs 4/3 expected), dash:gap = 1:1.92.
+#    The dash period (18 m) was chosen so that heavy trucks (EU speed limiter 90 km/h) measure
+#    80-90 km/h - see docs/PHASE1_PERCEPTION.md. Speeds are therefore INDICATIVE (+-10-15%).
+calibration:
+  image_size: [3840, 2160]
+  image_points_px: [[420.4, 1870], [1065.6, 1870], [1733.1, 1870], [843.2, 1408], [1270.2, 1408], [1711.1, 1408], [1051.8, 1180], [1371.1, 1180], [1700.3, 1180], [1177.2, 1043], [1431.8, 1043], [1693.8, 1043]]
+  ground_points_m: [[0.0, 0.00], [3.75, 0.00], [7.5, 0.00], [0.0, 36.00], [3.75, 36.00], [7.5, 36.00], [0.0, 72.00], [3.75, 72.00], [7.5, 72.00], [0.0, 108.00], [3.75, 108.00], [7.5, 108.00]]
+  origin_lonlat: [77.6200, 12.9800]  # placeholder
+  bearing_deg: 0                     # placeholder: +y = away from camera
+
+zones_image_size: [3840, 2160]
+zones:
+  - {id: roi, type: roi, points_px: [[1176, 1000], [1707, 1000], [1761, 2150], [114, 2150]]}
+  - {id: lane_1, type: lane, lane_index: 1, direction: [0.0, -1.0],
+     points_px: [[1216, 1000], [1451, 1000], [942, 2150], [164, 2150]]}
+  - {id: lane_2, type: lane, lane_index: 2, direction: [0.0, -1.0],
+     points_px: [[1451, 1000], [1692, 1000], [1746, 2150], [942, 2150]]}
+  - {id: entry, type: entry_line, points_px: [[1081, 1104], [1712, 1104]]}
+  - {id: exit, type: exit_line, points_px: [[380, 1870], [1748, 1870]]}
+  - {id: loop, type: virtual_loop, points_px: [[675, 1592], [1720, 1592], [1726, 1720], [558, 1720]]}
+
+lanes: 2
+travel_direction: [0.0, -1.0]
+roi_length_m: null

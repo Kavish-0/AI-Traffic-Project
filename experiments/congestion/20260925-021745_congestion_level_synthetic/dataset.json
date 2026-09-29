@@ -1,0 +1,233 @@
+{
+  "source": "synthetic",
+  "dataset": "synthetic",
+  "resolution_s": 60,
+  "series": [
+    "junction_a_east",
+    "junction_a_north",
+    "junction_a_south",
+    "junction_a_west"
+  ],
+  "periods": {
+    "train": {
+      "start": "2025-06-01T18:30:00+00:00",
+      "end": "2025-06-26T23:18:00+00:00"
+    },
+    "val": {
+      "start": "2025-06-26T23:18:00+00:00",
+      "end": "2025-07-05T08:54:00+00:00"
+    },
+    "test": {
+      "start": "2025-07-05T08:54:00+00:00",
+      "end": "2025-07-13T18:30:00+00:00"
+    }
+  },
+  "samples": {
+    "train": 71809,
+    "val": 47994,
+    "test": 48185
+  },
+  "features": [
+    "avg_speed_kmh_t",
+    "density_ratio_t",
+    "occupancy_pct_t",
+    "queue_length_m_t",
+    "flow_veh_h_t",
+    "vehicle_count_t",
+    "inflow_t",
+    "outflow_t",
+    "stopped_vehicles_t",
+    "avg_speed_kmh_lag1",
+    "density_ratio_lag1",
+    "occupancy_pct_lag1",
+    "queue_length_m_lag1",
+    "flow_veh_h_lag1",
+    "vehicle_count_lag1",
+    "inflow_lag1",
+    "outflow_lag1",
+    "stopped_vehicles_lag1",
+    "avg_speed_kmh_lag2",
+    "density_ratio_lag2",
+    "occupancy_pct_lag2",
+    "queue_length_m_lag2",
+    "flow_veh_h_lag2",
+    "vehicle_count_lag2",
+    "inflow_lag2",
+    "outflow_lag2",
+    "stopped_vehicles_lag2",
+    "avg_speed_kmh_lag3",
+    "density_ratio_lag3",
+    "occupancy_pct_lag3",
+    "queue_length_m_lag3",
+    "flow_veh_h_lag3",
+    "vehicle_count_lag3",
+    "inflow_lag3",
+    "outflow_lag3",
+    "stopped_vehicles_lag3",
+    "avg_speed_kmh_lag5",
+    "density_ratio_lag5",
+    "occupancy_pct_lag5",
+    "queue_length_m_lag5",
+    "flow_veh_h_lag5",
+    "vehicle_count_lag5",
+    "inflow_lag5",
+    "outflow_lag5",
+    "stopped_vehicles_lag5",
+    "avg_speed_kmh_lag10",
+    "density_ratio_lag10",
+    "occupancy_pct_lag10",
+    "queue_length_m_lag10",
+    "flow_veh_h_lag10",
+    "vehicle_count_lag10",
+    "inflow_lag10",
+    "outflow_lag10",
+    "stopped_vehicles_lag10",
+    "avg_speed_kmh_lag15",
+    "density_ratio_lag15",
+    "occupancy_pct_lag15",
+    "queue_length_m_lag15",
+    "flow_veh_h_lag15",
+    "vehicle_count_lag15",
+    "inflow_lag15",
+    "outflow_lag15",
+    "stopped_vehicles_lag15",
+    "avg_speed_kmh_lag29",
+    "density_ratio_lag29",
+    "occupancy_pct_lag29",
+    "queue_length_m_lag29",
+    "flow_veh_h_lag29",
+    "vehicle_count_lag29",
+    "inflow_lag29",
+    "outflow_lag29",
+    "stopped_vehicles_lag29",
+    "avg_speed_kmh_mean5",
+    "density_ratio_mean5",
+    "occupancy_pct_mean5",
+    "queue_length_m_mean5",
+    "flow_veh_h_mean5",
+    "vehicle_count_mean5",
+    "inflow_mean5",
+    "outflow_mean5",
+    "stopped_vehicles_mean5",
+    "avg_speed_kmh_mean15",
+    "density_ratio_mean15",
+    "occupancy_pct_mean15",
+    "queue_length_m_mean15",
+    "flow_veh_h_mean15",
+    "vehicle_count_mean15",
+    "inflow_mean15",
+    "outflow_mean15",
+    "stopped_vehicles_mean15",
+    "avg_speed_kmh_mean30",
+    "density_ratio_mean30",
+    "occupancy_pct_mean30",
+    "queue_length_m_mean30",
+    "flow_veh_h_mean30",
+    "vehicle_count_mean30",
+    "inflow_mean30",
+    "outflow_mean30",
+    "stopped_vehicles_mean30",
+    "avg_speed_kmh_diff1",
+    "density_ratio_diff1",
+    "occupancy_pct_diff1",
+    "queue_length_m_diff1",
+    "flow_veh_h_diff1",
+    "vehicle_count_diff1",
+    "inflow_diff1",
+    "outflow_diff1",
+    "stopped_vehicles_diff1",
+    "hour_sin",
+    "hour_cos",
+    "dow_sin",
+    "dow_cos",
+    "is_weekend",
+    "is_holiday",
+    "is_rush_hour",
+    "temperature_c",
+    "humidity_pct",
+    "rain_mm",
+    "weather_clear",
+    "weather_cloudy",
+    "weather_drizzle",
+    "weather_rain"
+  ],
+  "label_indicators": [
+    "avg_speed_kmh",
+    "density_ratio",
+    "occupancy_pct",
+    "queue_length_m"
+  ],
+  "free_flow_kmh": {
+    "junction_a_east": 50.0,
+    "junction_a_north": 50.0,
+    "junction_a_south": 50.0,
+    "junction_a_west": 40.0
+  },
+  "free_flow_method": {
+    "method": "network",
+    "quantile": 0.85
+  },
+  "class_distribution": {
+    "train": {
+      "5": {
+        "free": 65762,
+        "moderate": 1728,
+        "high": 578,
+        "severe": 3741
+      },
+      "15": {
+        "free": 65757,
+        "moderate": 1728,
+        "high": 578,
+        "severe": 3746
+      },
+      "30": {
+        "free": 65725,
+        "moderate": 1679,
+        "high": 617,
+        "severe": 3788
+      }
+    },
+    "val": {
+      "5": {
+        "free": 44322,
+        "moderate": 1021,
+        "high": 411,
+        "severe": 2240
+      },
+      "15": {
+        "free": 44332,
+        "moderate": 1021,
+        "high": 411,
+        "severe": 2230
+      },
+      "30": {
+        "free": 44340,
+        "moderate": 1026,
+        "high": 411,
+        "severe": 2217
+      }
+    },
+    "test": {
+      "5": {
+        "free": 44889,
+        "moderate": 949,
+        "high": 361,
+        "severe": 1986
+      },
+      "15": {
+        "free": 44889,
+        "moderate": 949,
+        "high": 361,
+        "severe": 1986
+      },
+      "30": {
+        "free": 44889,
+        "moderate": 949,
+        "high": 361,
+        "severe": 1986
+      }
+    }
+  },
+  "preprocessor_spec_hash": "d5d17646c8f98852"
+}

@@ -1,0 +1,10 @@
+detector,pr_auc,incident_share,events,event_recall,impactful_events,event_recall_impact,false_alarms_per_h,median_delay_min
+isolation_forest,0.0091,0.0085,40,0.0,12,0.0,0.0,
+autoencoder,0.0093,0.0085,40,0.05,12,0.167,0.026,7.5
+sudden_slowdown,0.0102,0.0085,40,0.4,12,0.833,0.493,3.0
+queue_growth,0.0109,0.0085,40,0.275,12,0.917,0.248,2.0
+density_zscore,0.011,0.0085,40,0.375,12,0.833,0.408,2.0
+flow_imbalance,0.062,0.0085,40,0.125,12,0.417,0.013,2.0
+ewma,0.009,0.0085,40,0.5,12,0.833,0.681,4.0
+zscore,0.0093,0.0085,40,0.55,12,0.833,0.653,4.0
+fused_probability,0.0154,0.0085,40,0.375,12,0.833,0.312,2.0

@@ -1,0 +1,17 @@
+tracker,params,MOTA,MOTP_iou,precision,recall,id_switches,fn,fp,gt,frames,ms_per_frame
+bytetrack,"{""track_high_thresh"": 0.4, ""match_thresh"": 0.7, ""new_track_thresh"": 0.4}",0.8252,0.8606,0.8881,0.9482,389,5677,13100,109629,15591,1.117
+bytetrack,"{""track_high_thresh"": 0.4, ""match_thresh"": 0.7, ""new_track_thresh"": 0.6}",0.8254,0.8618,0.9142,0.9133,242,9500,9396,109629,15591,1.028
+bytetrack,"{""track_high_thresh"": 0.4, ""match_thresh"": 0.8, ""new_track_thresh"": 0.4}",0.8278,0.8603,0.885,0.9525,104,5203,13570,109629,15591,1.064
+bytetrack,"{""track_high_thresh"": 0.4, ""match_thresh"": 0.8, ""new_track_thresh"": 0.6}",0.8291,0.8614,0.9113,0.9192,63,8863,9807,109629,15591,1.141
+bytetrack,"{""track_high_thresh"": 0.5, ""match_thresh"": 0.7, ""new_track_thresh"": 0.4}",0.8324,0.8611,0.906,0.9316,281,7497,10601,109629,15591,1.183
+bytetrack,"{""track_high_thresh"": 0.5, ""match_thresh"": 0.7, ""new_track_thresh"": 0.6}",0.826,0.8616,0.9152,0.9126,228,9577,9271,109629,15591,0.975
+bytetrack,"{""track_high_thresh"": 0.5, ""match_thresh"": 0.8, ""new_track_thresh"": 0.4}",0.8342,0.861,0.9042,0.9338,74,7259,10841,109629,15591,1.023
+bytetrack,"{""track_high_thresh"": 0.5, ""match_thresh"": 0.8, ""new_track_thresh"": 0.6}",0.828,0.8614,0.9131,0.9158,66,9234,9552,109629,15591,1.046
+bytetrack,"{""track_high_thresh"": 0.6, ""match_thresh"": 0.7, ""new_track_thresh"": 0.4}",0.8168,0.862,0.9172,0.9,217,10958,8912,109629,15591,0.978
+bytetrack,"{""track_high_thresh"": 0.6, ""match_thresh"": 0.7, ""new_track_thresh"": 0.6}",0.8168,0.862,0.9172,0.9,217,10958,8912,109629,15591,1.049
+bytetrack,"{""track_high_thresh"": 0.6, ""match_thresh"": 0.8, ""new_track_thresh"": 0.4}",0.8176,0.8619,0.9155,0.9014,62,10814,9123,109629,15591,0.897
+bytetrack,"{""track_high_thresh"": 0.6, ""match_thresh"": 0.8, ""new_track_thresh"": 0.6}",0.8176,0.8619,0.9155,0.9014,62,10814,9123,109629,15591,0.889
+botsort,"{""track_high_thresh"": 0.5, ""new_track_thresh"": 0.4}",0.8343,0.861,0.9042,0.9339,75,7250,10846,109629,15591,16.694
+botsort,"{""track_high_thresh"": 0.5, ""new_track_thresh"": 0.6}",0.8281,0.8614,0.9132,0.9159,68,9225,9549,109629,15591,16.667
+botsort,"{""track_high_thresh"": 0.6, ""new_track_thresh"": 0.4}",0.8176,0.8619,0.9156,0.9013,62,10818,9111,109629,15591,16.718
+botsort,"{""track_high_thresh"": 0.6, ""new_track_thresh"": 0.6}",0.8176,0.8619,0.9156,0.9013,62,10818,9111,109629,15591,17.224

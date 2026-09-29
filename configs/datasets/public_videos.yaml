@@ -1,0 +1,31 @@
+# Public traffic footage for development, until our own camera footage exists.
+# Download with:   python -m traffic_intel.datasets download <name>     (or --all)
+# Files go to `file` (relative to the project root; data/ is git-ignored) and an
+# attribution entry is appended to data/external/SOURCES.md.
+#
+# Licensing: check `license` before publishing any frame, clip or result video.
+
+videos:
+  roboflow_vehicles:
+    url: https://media.roboflow.com/supervision/video-examples/vehicles.mp4
+    file: data/raw/public/roboflow_vehicles.mp4
+    source: "Roboflow `supervision` example assets (media.roboflow.com)"
+    license: "Not stated by the publisher - local development/research only; do not redistribute"
+    description: "Multi-lane highway seen from an elevated camera; dense car/truck traffic in both directions"
+    sha256: ac81100d9310bd4e9c02bc0b13b6492781d009742ced347766b2601be3c44ad4
+
+  intel_car_detection:
+    url: https://github.com/intel-iot-devkit/sample-videos/raw/master/car-detection.mp4
+    file: data/raw/public/intel_car_detection.mp4
+    source: "Intel IoT DevKit sample-videos (github.com/intel-iot-devkit/sample-videos)"
+    license: "CC BY 4.0 - attribution required"
+    description: "Short clip of cars on a road"
+    sha256: d31e0ebf194cc16e50eea784e7c3b0b1bb7976a4fb9b3fec26cb92a6704cca34
+
+  intel_person_bicycle_car:
+    url: https://github.com/intel-iot-devkit/sample-videos/raw/master/person-bicycle-car-detection.mp4
+    file: data/raw/public/intel_person_bicycle_car.mp4
+    source: "Intel IoT DevKit sample-videos (github.com/intel-iot-devkit/sample-videos)"
+    license: "CC BY 4.0 - attribution required"
+    description: "Street scene with pedestrians, bicycles and cars"
+    sha256: 452b11b7e0efbd019f1d9570d0c790e90416ad4ad29eec6003872d08443140ef

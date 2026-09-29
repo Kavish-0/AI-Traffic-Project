@@ -1,0 +1,53 @@
+# Camera 01 -> Junction A -> Road A (southbound approach into the junction).
+#
+# PLACEHOLDER GEOMETRY: every pixel coordinate below must be re-picked on a real
+# frame of your footage. Workflow (docs/TRAFFIC_STATE_ESTIMATION.md, "Calibrating a camera"):
+#   python -m traffic_intel.computer_vision.calibration_tool cam_01 --frame 0
+# writes the frame, a zone overlay and a projected metric grid to runs/calibration/cam_01/.
+#
+# Ground frame used here: origin = left end of the stop line, +y = upstream (north),
+# +x = 90 deg clockwise from +y (east). Vehicles travel towards -y.
+
+id: cam_01
+name: "Junction A - north approach"
+approach_id: junction_a_north
+
+source: data/raw/cam_01.mp4         # file (relative to project root), webcam:0, or rtsp://user:pass@host/stream
+source_type: auto                   # auto | file | webcam | stream
+source_fps: null                    # override if the container reports a wrong fps
+process_fps: 10                     # analysed frames per second (sampling)
+resolution: null                    # e.g. [1280, 720] to downscale before detection; zones rescale automatically
+replay_start: "2026-09-01T08:00:00+05:30"   # timestamp of frame 0 for files (drives hour/day features)
+realtime: false                     # pace file playback at real speed
+loop: false
+
+location: [77.5946, 12.9719]        # camera position (lon, lat)
+
+calibration:
+  image_size: [1920, 1080]          # resolution the points below were picked on
+  # >= 4 (ideally 6-8, well spread) road-plane points with known real-world positions:
+  # lane-marking corners, stop-line ends, kerb corners. Dashed lane lines are often
+  # 3 m marks with 4.5-6 m gaps - measure on site or from a scaled aerial image.
+  image_points_px: [[820, 420], [1100, 420], [1500, 1000], [400, 1000], [651, 653], [1261, 653]]
+  ground_points_m: [[0.0, 60.0], [7.0, 60.0], [7.0, 0.0], [0.0, 0.0], [0.0, 16.5], [7.0, 16.5]]
+  origin_lonlat: [77.5946, 12.9721] # ground (0, 0) on the map
+  bearing_deg: 0                    # compass direction of ground +y (0 = north)
+
+zones_image_size: null              # defaults to calibration.image_size
+zones:
+  # Keep the ROI inside the calibrated, well-resolved area: far from the camera one pixel
+  # is metres on the ground and presence/speed become noisy.
+  - {id: cam_01_roi, type: roi, points_px: [[800, 440], [1120, 440], [1600, 1060], [320, 1060]]}
+  - {id: cam_01_lane_1, type: lane, lane_index: 1, direction: [0.0, -1.0],
+     points_px: [[820, 420], [960, 420], [950, 1000], [400, 1000]]}
+  - {id: cam_01_lane_2, type: lane, lane_index: 2, direction: [0.0, -1.0],
+     points_px: [[960, 420], [1100, 420], [1500, 1000], [950, 1000]]}
+  - {id: cam_01_entry, type: entry_line, points_px: [[790, 470], [1130, 470]]}
+  - {id: cam_01_stop, type: exit_line, points_px: [[380, 1000], [1520, 1000]]}
+  - {id: cam_01_queue, type: queue_zone, points_px: [[820, 420], [1100, 420], [1500, 1000], [400, 1000]]}
+  - {id: cam_01_loop, type: virtual_loop, points_px: [[520, 860], [1380, 860], [1440, 940], [460, 940]]}
+
+# Optional road facts (otherwise derived from zones + calibration):
+lanes: null                         # default: number of lane zones
+travel_direction: null              # default: mean lane direction
+roi_length_m: null                  # default: measured from ROI x calibrated area

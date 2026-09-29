@@ -1,0 +1,1022 @@
+[
+  {
+    "horizon_min": 5,
+    "model": "persistence_level",
+    "type": "persistence_level",
+    "params": "{}",
+    "val_macro_f1": 0.5581,
+    "fit_s": 0.0,
+    "accuracy": 0.9609,
+    "balanced_accuracy": 0.5621,
+    "macro_precision": 0.5621,
+    "macro_recall": 0.5621,
+    "macro_f1": 0.5621,
+    "weighted_precision": 0.961,
+    "weighted_recall": 0.9609,
+    "weighted_f1": 0.9609,
+    "per_class": {
+      "free": {
+        "precision": 0.9867893423632151,
+        "recall": 0.986767359486734,
+        "f1": 0.9867783508025441,
+        "support": 44889
+      },
+      "moderate": {
+        "precision": 0.3452631578947368,
+        "recall": 0.34562697576396206,
+        "f1": 0.3454449710373881,
+        "support": 949
+      },
+      "high": {
+        "precision": 0.08587257617728532,
+        "recall": 0.08587257617728532,
+        "f1": 0.08587257617728532,
+        "support": 361
+      },
+      "severe": {
+        "precision": 0.8303121852970795,
+        "recall": 0.8303121852970795,
+        "f1": 0.8303121852970795,
+        "support": 1986
+      }
+    },
+    "confusion": [
+      [
+        44295,
+        321,
+        154,
+        119
+      ],
+      [
+        372,
+        328,
+        97,
+        152
+      ],
+      [
+        160,
+        104,
+        31,
+        66
+      ],
+      [
+        61,
+        197,
+        79,
+        1649
+      ]
+    ]
+  },
+  {
+    "horizon_min": 5,
+    "model": "regression_to_rules",
+    "type": "regression_to_rules",
+    "params": "{\"n_estimators\": 1500, \"learning_rate\": 0.05, \"max_depth\": 6, \"early_stopping_rounds\": 50}",
+    "val_macro_f1": 0.563,
+    "fit_s": 7.0,
+    "accuracy": 0.9595,
+    "balanced_accuracy": 0.6073,
+    "macro_precision": 0.5745,
+    "macro_recall": 0.6073,
+    "macro_f1": 0.5864,
+    "weighted_precision": 0.968,
+    "weighted_recall": 0.9595,
+    "weighted_f1": 0.9635,
+    "per_class": {
+      "free": {
+        "precision": 0.9929558446234865,
+        "recall": 0.9828911314575954,
+        "f1": 0.9878978538562296,
+        "support": 44889
+      },
+      "moderate": {
+        "precision": 0.30854430379746833,
+        "recall": 0.410958904109589,
+        "f1": 0.35246272028920017,
+        "support": 949
+      },
+      "high": {
+        "precision": 0.12395309882747069,
+        "recall": 0.20498614958448755,
+        "f1": 0.1544885177453027,
+        "support": 361
+      },
+      "severe": {
+        "precision": 0.8724867724867725,
+        "recall": 0.8303121852970795,
+        "f1": 0.8508771929824561,
+        "support": 1986
+      }
+    },
+    "confusion": [
+      [
+        44121,
+        660,
+        70,
+        38
+      ],
+      [
+        188,
+        390,
+        233,
+        138
+      ],
+      [
+        102,
+        120,
+        74,
+        65
+      ],
+      [
+        23,
+        94,
+        220,
+        1649
+      ]
+    ]
+  },
+  {
+    "horizon_min": 5,
+    "model": "logistic_regression",
+    "type": "logistic_regression",
+    "params": "{\"C\": 10.0, \"class_weight\": \"balanced\"}",
+    "val_macro_f1": 0.5403,
+    "fit_s": 99.8,
+    "accuracy": 0.8963,
+    "balanced_accuracy": 0.6254,
+    "macro_precision": 0.5487,
+    "macro_recall": 0.6254,
+    "macro_f1": 0.547,
+    "weighted_precision": 0.9716,
+    "weighted_recall": 0.8963,
+    "weighted_f1": 0.9305,
+    "per_class": {
+      "free": {
+        "precision": 0.9974022190390638,
+        "recall": 0.9151908039831584,
+        "f1": 0.9545296126768744,
+        "support": 44889
+      },
+      "moderate": {
+        "precision": 0.2695462001093494,
+        "recall": 0.5194942044257113,
+        "f1": 0.3549316054715623,
+        "support": 949
+      },
+      "high": {
+        "precision": 0.03210088850673545,
+        "recall": 0.31024930747922436,
+        "f1": 0.05818181818181818,
+        "support": 361
+      },
+      "severe": {
+        "precision": 0.8957091775923719,
+        "recall": 0.756797583081571,
+        "f1": 0.8204148471615721,
+        "support": 1986
+      }
+    },
+    "confusion": [
+      [
+        41082,
+        883,
+        2875,
+        49
+      ],
+      [
+        59,
+        493,
+        309,
+        88
+      ],
+      [
+        39,
+        172,
+        112,
+        38
+      ],
+      [
+        9,
+        281,
+        193,
+        1503
+      ]
+    ]
+  },
+  {
+    "horizon_min": 5,
+    "model": "random_forest",
+    "type": "random_forest",
+    "params": "{\"n_estimators\": 150, \"min_samples_leaf\": 5, \"max_samples\": 0.3, \"max_depth\": 20, \"class_weight\": \"balanced_subsample\"}",
+    "val_macro_f1": 0.5546,
+    "fit_s": 8.5,
+    "accuracy": 0.9631,
+    "balanced_accuracy": 0.6166,
+    "macro_precision": 0.551,
+    "macro_recall": 0.6166,
+    "macro_f1": 0.5712,
+    "weighted_precision": 0.9671,
+    "weighted_recall": 0.9631,
+    "weighted_f1": 0.9641,
+    "per_class": {
+      "free": {
+        "precision": 0.9924913448136324,
+        "recall": 0.9834926151172894,
+        "f1": 0.9879714896331024,
+        "support": 44889
+      },
+      "moderate": {
+        "precision": 0.34486545853926415,
+        "recall": 0.6617492096944152,
+        "f1": 0.45342960288808665,
+        "support": 949
+      },
+      "high": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 361
+      },
+      "severe": {
+        "precision": 0.8666312433581297,
+        "recall": 0.8212487411883183,
+        "f1": 0.843329886246122,
+        "support": 1986
+      }
+    },
+    "confusion": [
+      [
+        44148,
+        659,
+        0,
+        82
+      ],
+      [
+        202,
+        628,
+        0,
+        119
+      ],
+      [
+        107,
+        204,
+        0,
+        50
+      ],
+      [
+        25,
+        330,
+        0,
+        1631
+      ]
+    ]
+  },
+  {
+    "horizon_min": 5,
+    "model": "xgboost",
+    "type": "xgboost",
+    "params": "{\"n_estimators\": 400, \"learning_rate\": 0.1, \"max_depth\": 6}",
+    "val_macro_f1": 0.5437,
+    "fit_s": 40.1,
+    "accuracy": 0.9698,
+    "balanced_accuracy": 0.5498,
+    "macro_precision": 0.6035,
+    "macro_recall": 0.5498,
+    "macro_f1": 0.5553,
+    "weighted_precision": 0.9615,
+    "weighted_recall": 0.9698,
+    "weighted_f1": 0.9649,
+    "per_class": {
+      "free": {
+        "precision": 0.9851410934744268,
+        "recall": 0.995477733966005,
+        "f1": 0.9902824408026681,
+        "support": 44889
+      },
+      "moderate": {
+        "precision": 0.443001443001443,
+        "recall": 0.32349841938883034,
+        "f1": 0.37393422655298414,
+        "support": 949
+      },
+      "high": {
+        "precision": 0.16666666666666666,
+        "recall": 0.00554016620498615,
+        "f1": 0.010723860589812333,
+        "support": 361
+      },
+      "severe": {
+        "precision": 0.8193396226415094,
+        "recall": 0.8746223564954683,
+        "f1": 0.8460789089137847,
+        "support": 1986
+      }
+    },
+    "confusion": [
+      [
+        44686,
+        132,
+        0,
+        71
+      ],
+      [
+        407,
+        307,
+        7,
+        228
+      ],
+      [
+        183,
+        92,
+        2,
+        84
+      ],
+      [
+        84,
+        162,
+        3,
+        1737
+      ]
+    ]
+  },
+  {
+    "horizon_min": 15,
+    "model": "persistence_level",
+    "type": "persistence_level",
+    "params": "{}",
+    "val_macro_f1": 0.4852,
+    "fit_s": 0.0,
+    "accuracy": 0.9488,
+    "balanced_accuracy": 0.4951,
+    "macro_precision": 0.4951,
+    "macro_recall": 0.4951,
+    "macro_f1": 0.4951,
+    "weighted_precision": 0.9488,
+    "weighted_recall": 0.9488,
+    "weighted_f1": 0.9488,
+    "per_class": {
+      "free": {
+        "precision": 0.9816877561931919,
+        "recall": 0.9816658869656263,
+        "f1": 0.9816768214576116,
+        "support": 44889
+      },
+      "moderate": {
+        "precision": 0.22842105263157894,
+        "recall": 0.22866174920969443,
+        "f1": 0.2285413375460769,
+        "support": 949
+      },
+      "high": {
+        "precision": 0.05817174515235457,
+        "recall": 0.05817174515235457,
+        "f1": 0.05817174515235457,
+        "support": 361
+      },
+      "severe": {
+        "precision": 0.7119838872104733,
+        "recall": 0.7119838872104733,
+        "f1": 0.7119838872104733,
+        "support": 1986
+      }
+    },
+    "confusion": [
+      [
+        44066,
+        338,
+        159,
+        326
+      ],
+      [
+        477,
+        217,
+        71,
+        184
+      ],
+      [
+        209,
+        69,
+        21,
+        62
+      ],
+      [
+        136,
+        326,
+        110,
+        1414
+      ]
+    ]
+  },
+  {
+    "horizon_min": 15,
+    "model": "regression_to_rules",
+    "type": "regression_to_rules",
+    "params": "{\"n_estimators\": 1500, \"learning_rate\": 0.05, \"max_depth\": 6, \"early_stopping_rounds\": 50}",
+    "val_macro_f1": 0.5256,
+    "fit_s": 7.5,
+    "accuracy": 0.9527,
+    "balanced_accuracy": 0.573,
+    "macro_precision": 0.5354,
+    "macro_recall": 0.573,
+    "macro_f1": 0.5494,
+    "weighted_precision": 0.9636,
+    "weighted_recall": 0.9527,
+    "weighted_f1": 0.9578,
+    "per_class": {
+      "free": {
+        "precision": 0.9930193154862759,
+        "recall": 0.9792153979816882,
+        "f1": 0.9860690490611751,
+        "support": 44889
+      },
+      "moderate": {
+        "precision": 0.23233794610342315,
+        "recall": 0.3361433087460485,
+        "f1": 0.2747631352282515,
+        "support": 949
+      },
+      "high": {
+        "precision": 0.115,
+        "recall": 0.19113573407202217,
+        "f1": 0.14360041623309053,
+        "support": 361
+      },
+      "severe": {
+        "precision": 0.8012326656394453,
+        "recall": 0.7854984894259819,
+        "f1": 0.7932875667429443,
+        "support": 1986
+      }
+    },
+    "confusion": [
+      [
+        43956,
+        787,
+        98,
+        48
+      ],
+      [
+        178,
+        319,
+        195,
+        257
+      ],
+      [
+        102,
+        108,
+        69,
+        82
+      ],
+      [
+        29,
+        159,
+        238,
+        1560
+      ]
+    ]
+  },
+  {
+    "horizon_min": 15,
+    "model": "logistic_regression",
+    "type": "logistic_regression",
+    "params": "{\"C\": 0.1, \"class_weight\": \"balanced\"}",
+    "val_macro_f1": 0.4976,
+    "fit_s": 107.4,
+    "accuracy": 0.8794,
+    "balanced_accuracy": 0.5972,
+    "macro_precision": 0.5064,
+    "macro_recall": 0.5972,
+    "macro_f1": 0.5099,
+    "weighted_precision": 0.9661,
+    "weighted_recall": 0.8794,
+    "weighted_f1": 0.9188,
+    "per_class": {
+      "free": {
+        "precision": 0.9976795852875833,
+        "recall": 0.900354207044042,
+        "f1": 0.9465216220330449,
+        "support": 44889
+      },
+      "moderate": {
+        "precision": 0.21734296831573097,
+        "recall": 0.41201264488935724,
+        "f1": 0.28457059679767105,
+        "support": 949
+      },
+      "high": {
+        "precision": 0.031521469347232565,
+        "recall": 0.3518005540166205,
+        "f1": 0.05785876993166287,
+        "support": 361
+      },
+      "severe": {
+        "precision": 0.779101245262588,
+        "recall": 0.7245720040281974,
+        "f1": 0.7508478998173754,
+        "support": 1986
+      }
+    },
+    "confusion": [
+      [
+        40416,
+        1005,
+        3324,
+        144
+      ],
+      [
+        49,
+        391,
+        306,
+        203
+      ],
+      [
+        36,
+        137,
+        127,
+        61
+      ],
+      [
+        9,
+        266,
+        272,
+        1439
+      ]
+    ]
+  },
+  {
+    "horizon_min": 15,
+    "model": "random_forest",
+    "type": "random_forest",
+    "params": "{\"n_estimators\": 150, \"min_samples_leaf\": 5, \"max_samples\": 0.3, \"max_depth\": 12, \"class_weight\": \"balanced_subsample\"}",
+    "val_macro_f1": 0.5201,
+    "fit_s": 15.2,
+    "accuracy": 0.9462,
+    "balanced_accuracy": 0.5869,
+    "macro_precision": 0.4886,
+    "macro_recall": 0.5869,
+    "macro_f1": 0.5231,
+    "weighted_precision": 0.959,
+    "weighted_recall": 0.9462,
+    "weighted_f1": 0.9511,
+    "per_class": {
+      "free": {
+        "precision": 0.9939552136282457,
+        "recall": 0.9670520617523224,
+        "f1": 0.9803190948816097,
+        "support": 44889
+      },
+      "moderate": {
+        "precision": 0.26455026455026454,
+        "recall": 0.5268703898840885,
+        "f1": 0.3522367030644593,
+        "support": 949
+      },
+      "high": {
+        "precision": 0.026785714285714284,
+        "recall": 0.008310249307479225,
+        "f1": 0.012684989429175475,
+        "support": 361
+      },
+      "severe": {
+        "precision": 0.6691909127142288,
+        "recall": 0.8454179254783485,
+        "f1": 0.7470522803114572,
+        "support": 1986
+      }
+    },
+    "confusion": [
+      [
+        43410,
+        940,
+        99,
+        440
+      ],
+      [
+        150,
+        500,
+        9,
+        290
+      ],
+      [
+        91,
+        167,
+        3,
+        100
+      ],
+      [
+        23,
+        283,
+        1,
+        1679
+      ]
+    ]
+  },
+  {
+    "horizon_min": 15,
+    "model": "xgboost",
+    "type": "xgboost",
+    "params": "{\"n_estimators\": 400, \"learning_rate\": 0.1, \"max_depth\": 8}",
+    "val_macro_f1": 0.5125,
+    "fit_s": 40.1,
+    "accuracy": 0.9662,
+    "balanced_accuracy": 0.51,
+    "macro_precision": 0.5308,
+    "macro_recall": 0.51,
+    "macro_f1": 0.5131,
+    "weighted_precision": 0.9546,
+    "weighted_recall": 0.9662,
+    "weighted_f1": 0.9597,
+    "per_class": {
+      "free": {
+        "precision": 0.9831727596674146,
+        "recall": 0.9957227828643989,
+        "f1": 0.989407975561975,
+        "support": 44889
+      },
+      "moderate": {
+        "precision": 0.38703339882121807,
+        "recall": 0.20758693361433087,
+        "f1": 0.27023319615912206,
+        "support": 949
+      },
+      "high": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 361
+      },
+      "severe": {
+        "precision": 0.7530584503851382,
+        "recall": 0.8368580060422961,
+        "f1": 0.7927498211304556,
+        "support": 1986
+      }
+    },
+    "confusion": [
+      [
+        44697,
+        102,
+        1,
+        89
+      ],
+      [
+        404,
+        197,
+        3,
+        345
+      ],
+      [
+        186,
+        64,
+        0,
+        111
+      ],
+      [
+        175,
+        146,
+        3,
+        1662
+      ]
+    ]
+  },
+  {
+    "horizon_min": 30,
+    "model": "persistence_level",
+    "type": "persistence_level",
+    "params": "{}",
+    "val_macro_f1": 0.4171,
+    "fit_s": 0.0,
+    "accuracy": 0.9306,
+    "balanced_accuracy": 0.4155,
+    "macro_precision": 0.4155,
+    "macro_recall": 0.4155,
+    "macro_f1": 0.4155,
+    "weighted_precision": 0.9306,
+    "weighted_recall": 0.9306,
+    "weighted_f1": 0.9306,
+    "per_class": {
+      "free": {
+        "precision": 0.9720860809124933,
+        "recall": 0.972064425583105,
+        "f1": 0.9720752531271929,
+        "support": 44889
+      },
+      "moderate": {
+        "precision": 0.12105263157894737,
+        "recall": 0.12118018967334036,
+        "f1": 0.12111637704054766,
+        "support": 949
+      },
+      "high": {
+        "precision": 0.024930747922437674,
+        "recall": 0.024930747922437674,
+        "f1": 0.024930747922437674,
+        "support": 361
+      },
+      "severe": {
+        "precision": 0.5438066465256798,
+        "recall": 0.5438066465256798,
+        "f1": 0.5438066465256798,
+        "support": 1986
+      }
+    },
+    "confusion": [
+      [
+        43635,
+        397,
+        172,
+        685
+      ],
+      [
+        617,
+        115,
+        47,
+        170
+      ],
+      [
+        254,
+        47,
+        9,
+        51
+      ],
+      [
+        382,
+        391,
+        133,
+        1080
+      ]
+    ]
+  },
+  {
+    "horizon_min": 30,
+    "model": "regression_to_rules",
+    "type": "regression_to_rules",
+    "params": "{\"n_estimators\": 1500, \"learning_rate\": 0.05, \"max_depth\": 6, \"early_stopping_rounds\": 50}",
+    "val_macro_f1": 0.5239,
+    "fit_s": 6.1,
+    "accuracy": 0.9505,
+    "balanced_accuracy": 0.5668,
+    "macro_precision": 0.5258,
+    "macro_recall": 0.5668,
+    "macro_f1": 0.5413,
+    "weighted_precision": 0.9626,
+    "weighted_recall": 0.9505,
+    "weighted_f1": 0.9562,
+    "per_class": {
+      "free": {
+        "precision": 0.9929368618839562,
+        "recall": 0.9770990665864688,
+        "f1": 0.9849543014978329,
+        "support": 44889
+      },
+      "moderate": {
+        "precision": 0.2335243553008596,
+        "recall": 0.34351949420442573,
+        "f1": 0.27803837953091687,
+        "support": 949
+      },
+      "high": {
+        "precision": 0.09365079365079365,
+        "recall": 0.1634349030470914,
+        "f1": 0.11907164480322906,
+        "support": 361
+      },
+      "severe": {
+        "precision": 0.7829808660624371,
+        "recall": 0.7829808660624371,
+        "f1": 0.7829808660624371,
+        "support": 1986
+      }
+    },
+    "confusion": [
+      [
+        43861,
+        804,
+        162,
+        62
+      ],
+      [
+        163,
+        326,
+        186,
+        274
+      ],
+      [
+        101,
+        106,
+        59,
+        95
+      ],
+      [
+        48,
+        160,
+        223,
+        1555
+      ]
+    ]
+  },
+  {
+    "horizon_min": 30,
+    "model": "logistic_regression",
+    "type": "logistic_regression",
+    "params": "{\"C\": 10.0, \"class_weight\": \"balanced\"}",
+    "val_macro_f1": 0.4634,
+    "fit_s": 108.3,
+    "accuracy": 0.8651,
+    "balanced_accuracy": 0.5839,
+    "macro_precision": 0.4664,
+    "macro_recall": 0.5839,
+    "macro_f1": 0.4765,
+    "weighted_precision": 0.9606,
+    "weighted_recall": 0.8651,
+    "weighted_f1": 0.9079,
+    "per_class": {
+      "free": {
+        "precision": 0.9975950096450134,
+        "recall": 0.8870992893581947,
+        "f1": 0.9391080819753319,
+        "support": 44889
+      },
+      "moderate": {
+        "precision": 0.15426008968609867,
+        "recall": 0.3624868282402529,
+        "f1": 0.2164202579427493,
+        "support": 949
+      },
+      "high": {
+        "precision": 0.03541147132169576,
+        "recall": 0.39335180055401664,
+        "f1": 0.0649736902310684,
+        "support": 361
+      },
+      "severe": {
+        "precision": 0.6785009861932939,
+        "recall": 0.6928499496475328,
+        "f1": 0.6856003986048829,
+        "support": 1986
+      }
+    },
+    "confusion": [
+      [
+        39821,
+        1509,
+        3183,
+        376
+      ],
+      [
+        46,
+        344,
+        346,
+        213
+      ],
+      [
+        42,
+        114,
+        142,
+        63
+      ],
+      [
+        8,
+        263,
+        339,
+        1376
+      ]
+    ]
+  },
+  {
+    "horizon_min": 30,
+    "model": "random_forest",
+    "type": "random_forest",
+    "params": "{\"n_estimators\": 150, \"min_samples_leaf\": 5, \"max_samples\": 0.3, \"max_depth\": 20, \"class_weight\": \"balanced_subsample\"}",
+    "val_macro_f1": 0.5001,
+    "fit_s": 7.5,
+    "accuracy": 0.9511,
+    "balanced_accuracy": 0.5573,
+    "macro_precision": 0.475,
+    "macro_recall": 0.5573,
+    "macro_f1": 0.5082,
+    "weighted_precision": 0.9544,
+    "weighted_recall": 0.9511,
+    "weighted_f1": 0.9514,
+    "per_class": {
+      "free": {
+        "precision": 0.9919925596588332,
+        "recall": 0.9742030341509056,
+        "f1": 0.9830173198610814,
+        "support": 44889
+      },
+      "moderate": {
+        "precision": 0.33060109289617484,
+        "recall": 0.38250790305584825,
+        "f1": 0.35466536394723985,
+        "support": 949
+      },
+      "high": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 361
+      },
+      "severe": {
+        "precision": 0.5774741752749084,
+        "recall": 0.8726082578046325,
+        "f1": 0.6950070182474434,
+        "support": 1986
+      }
+    },
+    "confusion": [
+      [
+        43731,
+        412,
+        1,
+        745
+      ],
+      [
+        194,
+        363,
+        1,
+        391
+      ],
+      [
+        113,
+        116,
+        0,
+        132
+      ],
+      [
+        46,
+        207,
+        0,
+        1733
+      ]
+    ]
+  },
+  {
+    "horizon_min": 30,
+    "model": "xgboost",
+    "type": "xgboost",
+    "params": "{\"n_estimators\": 400, \"learning_rate\": 0.1, \"max_depth\": 4}",
+    "val_macro_f1": 0.5023,
+    "fit_s": 36.5,
+    "accuracy": 0.9659,
+    "balanced_accuracy": 0.5094,
+    "macro_precision": 0.5488,
+    "macro_recall": 0.5094,
+    "macro_f1": 0.5105,
+    "weighted_precision": 0.9546,
+    "weighted_recall": 0.9659,
+    "weighted_f1": 0.9591,
+    "per_class": {
+      "free": {
+        "precision": 0.9828800281665346,
+        "recall": 0.99503219051438,
+        "f1": 0.988918778298075,
+        "support": 44889
+      },
+      "moderate": {
+        "precision": 0.39819004524886875,
+        "recall": 0.18545837723919917,
+        "f1": 0.25305535585909417,
+        "support": 949
+      },
+      "high": {
+        "precision": 0.07142857142857142,
+        "recall": 0.002770083102493075,
+        "f1": 0.005333333333333333,
+        "support": 361
+      },
+      "severe": {
+        "precision": 0.7426695842450766,
+        "recall": 0.8544813695871097,
+        "f1": 0.7946616717396394,
+        "support": 1986
+      }
+    },
+    "confusion": [
+      [
+        44666,
+        106,
+        3,
+        114
+      ],
+      [
+        404,
+        176,
+        8,
+        361
+      ],
+      [
+        186,
+        61,
+        1,
+        113
+      ],
+      [
+        188,
+        99,
+        2,
+        1697
+      ]
+    ]
+  }
+]

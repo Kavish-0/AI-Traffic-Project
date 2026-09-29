@@ -1,0 +1,134 @@
+name: metr_la_traffic_only_smoke
+description: 'METR-LA speed forecasting at +5/+15/+30 min (traffic only: past speeds
+  of the sensor). Chronological split, fit-on-train scaling, identical windows for
+  every model.
+
+  '
+seed: 0
+dataset:
+  source: metr_la
+  params:
+    every_k: 20
+    weather: false
+features:
+  dynamic:
+  - avg_speed_kmh
+  targets:
+  - avg_speed_kmh
+  weather: []
+  calendar: []
+  rush_hours:
+  - - 6.0
+    - 10.0
+  - - 15.0
+    - 19.0
+  max_gap_fill_steps: 2
+  lags:
+  - 1
+  - 2
+  - 3
+  - 6
+  - 11
+  rolling:
+  - 3
+  - 12
+horizons_min:
+- 5
+- 15
+- 30
+season: 1D
+split:
+  train: 0.7
+  val: 0.1
+  test: 0.2
+  val_start: null
+  test_start: null
+train_stride: 1
+eval_stride: 1
+primary_target: avg_speed_kmh
+deep_seeds:
+- 0
+models:
+- name: persistence
+  type: persistence
+  params: {}
+- name: seasonal_naive
+  type: seasonal_naive
+  params: {}
+- name: linear
+  type: linear
+  params:
+    alpha: 0.0
+- name: random_forest
+  type: random_forest
+  params:
+    n_estimators: 200
+    max_depth: 16
+    min_samples_leaf: 5
+    max_features: 0.5
+    max_samples: 0.3
+- name: xgboost
+  type: xgboost
+  params:
+    n_estimators: 1500
+    learning_rate: 0.05
+    max_depth: 6
+    early_stopping_rounds: 50
+- name: lstm
+  type: lstm
+  params:
+    lookback_steps: 12
+    hidden: 64
+    layers: 2
+    dropout: 0.1
+    max_epochs: 1
+    batch_size: 512
+    lr: 0.001
+- name: gru
+  type: gru
+  params:
+    lookback_steps: 12
+    hidden: 64
+    layers: 2
+    dropout: 0.1
+    max_epochs: 1
+    batch_size: 512
+    lr: 0.001
+- name: transformer
+  type: transformer
+  params:
+    lookback_steps: 12
+    d_model: 64
+    heads: 4
+    layers: 2
+    ff: 128
+    dropout: 0.1
+    max_epochs: 1
+    batch_size: 512
+    lr: 0.0005
+- name: random_forest_deep
+  type: random_forest
+  params:
+    n_estimators: 200
+    max_depth: 24
+    min_samples_leaf: 2
+    max_features: 0.5
+    max_samples: 0.3
+- name: xgboost_d4
+  type: xgboost
+  params:
+    n_estimators: 1500
+    learning_rate: 0.05
+    max_depth: 4
+    early_stopping_rounds: 50
+- name: xgboost_d8
+  type: xgboost
+  params:
+    n_estimators: 1500
+    learning_rate: 0.05
+    max_depth: 8
+    early_stopping_rounds: 50
+plots:
+  series: null
+  days: 1.0
+  start_offset_days: 1.0

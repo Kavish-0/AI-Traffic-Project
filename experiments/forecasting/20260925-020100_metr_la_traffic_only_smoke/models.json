@@ -1,0 +1,103 @@
+[
+  {
+    "name": "persistence",
+    "type": "persistence",
+    "family": "baseline",
+    "framework": "numpy",
+    "params": {},
+    "version": "20260925-020100_metr_la_traffic_only_smoke",
+    "fit_s": 0.0,
+    "predict_ms_per_sample": 0.0001,
+    "trained": false
+  },
+  {
+    "name": "seasonal_naive",
+    "type": "seasonal_naive",
+    "family": "baseline",
+    "framework": "numpy",
+    "params": {},
+    "version": "20260925-020100_metr_la_traffic_only_smoke",
+    "fit_s": 0.0,
+    "predict_ms_per_sample": 0.0002,
+    "trained": false,
+    "season_steps": 288
+  },
+  {
+    "name": "linear",
+    "type": "linear",
+    "family": "linear",
+    "framework": "sklearn",
+    "params": {
+      "target_transform": "delta",
+      "alpha": 0.0
+    },
+    "version": "20260925-020100_metr_la_traffic_only_smoke",
+    "fit_s": 2.23,
+    "predict_ms_per_sample": 0.001,
+    "n_train": 240241,
+    "n_features": 9
+  },
+  {
+    "name": "lstm",
+    "type": "lstm",
+    "family": "deep",
+    "framework": "torch",
+    "params": {
+      "target_transform": "delta",
+      "lookback_steps": 12,
+      "batch_size": 512,
+      "max_epochs": 1,
+      "lr": 0.001,
+      "weight_decay": 1e-05,
+      "patience": 5,
+      "grad_clip": 1.0,
+      "device": "auto",
+      "seed": 0,
+      "hidden": 64,
+      "layers": 2,
+      "dropout": 0.1
+    },
+    "version": "20260925-020100_metr_la_traffic_only_smoke",
+    "fit_s": 3.42,
+    "predict_ms_per_sample": 0.0015,
+    "epochs": 1,
+    "best_val_mse": 0.22276,
+    "device": "cuda",
+    "n_parameters": 50755,
+    "n_train": 240241,
+    "selected_seed": 0,
+    "seeds": [
+      0
+    ],
+    "history": [
+      {
+        "epoch": 1,
+        "train_mse": 0.24881,
+        "val_mse": 0.22276
+      }
+    ]
+  },
+  {
+    "name": "xgboost_d4",
+    "type": "xgboost",
+    "family": "tree",
+    "framework": "xgboost",
+    "params": {
+      "target_transform": "delta",
+      "n_estimators": 1500,
+      "learning_rate": 0.05,
+      "max_depth": 4,
+      "subsample": 0.8,
+      "colsample_bytree": 0.8,
+      "min_child_weight": 5.0,
+      "early_stopping_rounds": 50,
+      "device": "auto",
+      "random_state": 0
+    },
+    "version": "20260925-020100_metr_la_traffic_only_smoke",
+    "fit_s": 3.8,
+    "predict_ms_per_sample": 0.0017,
+    "n_train": 240241,
+    "n_features": 9
+  }
+]

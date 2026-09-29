@@ -1,0 +1,51 @@
+{
+  "experiment_id": "20260925-022804_tracker_ua_detrac_smoke",
+  "detector": "models/detection/yolo11m.pt",
+  "detector_imgsz": 960,
+  "val_sequences": [
+    "MVI_40152",
+    "MVI_40191"
+  ],
+  "test_sequences": [
+    "MVI_39031",
+    "MVI_39211"
+  ],
+  "results": [
+    {
+      "tracker": "bytetrack",
+      "chosen_on_validation": {
+        "track_high_thresh": 0.4,
+        "match_thresh": 0.7
+      },
+      "val_MOTA": 0.8785,
+      "MOTA": 0.938,
+      "MOTP_iou": 0.8475,
+      "precision": 0.9684,
+      "recall": 0.9702,
+      "id_switches": 6,
+      "fn": 315,
+      "fp": 334,
+      "gt": 10560,
+      "frames": 3036,
+      "ms_per_frame": 0.757
+    },
+    {
+      "tracker": "botsort",
+      "chosen_on_validation": {
+        "track_high_thresh": 0.5
+      },
+      "val_MOTA": 0.8788,
+      "MOTA": 0.9423,
+      "MOTP_iou": 0.8478,
+      "precision": 0.9714,
+      "recall": 0.9711,
+      "id_switches": 2,
+      "fn": 305,
+      "fp": 302,
+      "gt": 10560,
+      "frames": 3036,
+      "ms_per_frame": 17.434
+    }
+  ],
+  "created": "2026-09-24T21:05:50.390138+00:00"
+}

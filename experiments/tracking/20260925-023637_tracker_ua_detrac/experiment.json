@@ -1,0 +1,79 @@
+{
+  "experiment_id": "20260925-023637_tracker_ua_detrac",
+  "detector": "models/detection/yolo11m.pt",
+  "detector_imgsz": 960,
+  "val_sequences": [
+    "MVI_40152",
+    "MVI_40191",
+    "MVI_40213",
+    "MVI_39781",
+    "MVI_40732",
+    "MVI_40991",
+    "MVI_63552",
+    "MVI_20011",
+    "MVI_20051",
+    "MVI_20065"
+  ],
+  "test_sequences": [
+    "MVI_39031",
+    "MVI_39211",
+    "MVI_39311",
+    "MVI_39371",
+    "MVI_39501",
+    "MVI_40701",
+    "MVI_40712",
+    "MVI_40742",
+    "MVI_40761",
+    "MVI_40763",
+    "MVI_40772",
+    "MVI_40774",
+    "MVI_40792",
+    "MVI_40851",
+    "MVI_40853",
+    "MVI_40855",
+    "MVI_40864",
+    "MVI_40892",
+    "MVI_40902",
+    "MVI_40904"
+  ],
+  "results": [
+    {
+      "tracker": "bytetrack",
+      "chosen_on_validation": {
+        "track_high_thresh": 0.5,
+        "match_thresh": 0.8,
+        "new_track_thresh": 0.4
+      },
+      "val_MOTA": 0.8342,
+      "MOTA": 0.7492,
+      "MOTP_iou": 0.869,
+      "precision": 0.9364,
+      "recall": 0.8044,
+      "id_switches": 193,
+      "fn": 64009,
+      "fp": 17861,
+      "gt": 327191,
+      "frames": 28787,
+      "ms_per_frame": 1.057
+    },
+    {
+      "tracker": "botsort",
+      "chosen_on_validation": {
+        "track_high_thresh": 0.5,
+        "new_track_thresh": 0.4
+      },
+      "val_MOTA": 0.8343,
+      "MOTA": 0.7492,
+      "MOTP_iou": 0.869,
+      "precision": 0.9364,
+      "recall": 0.8044,
+      "id_switches": 196,
+      "fn": 63992,
+      "fp": 17885,
+      "gt": 327191,
+      "frames": 28787,
+      "ms_per_frame": 35.449
+    }
+  ],
+  "created": "2026-09-24T22:49:27.850995+00:00"
+}

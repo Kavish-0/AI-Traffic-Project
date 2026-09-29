@@ -1,0 +1,5 @@
+tracker,chosen_on_validation,val_MOTA,MOTA,MOTP_iou,precision,recall,id_switches,fn,fp,gt,frames,ms_per_frame,experiment_id,detector
+bytetrack,"{""track_high_thresh"": 0.4, ""match_thresh"": 0.7}",0.8785,0.938,0.8475,0.9684,0.9702,6,315,334,10560,3036,0.757,20260925-022804_tracker_ua_detrac_smoke,models/detection/yolo11m.pt
+botsort,"{""track_high_thresh"": 0.5}",0.8788,0.9423,0.8478,0.9714,0.9711,2,305,302,10560,3036,17.434,20260925-022804_tracker_ua_detrac_smoke,models/detection/yolo11m.pt
+bytetrack,"{""track_high_thresh"": 0.5, ""match_thresh"": 0.8, ""new_track_thresh"": 0.4}",0.8342,0.7492,0.869,0.9364,0.8044,193,64009,17861,327191,28787,1.057,20260925-023637_tracker_ua_detrac,models/detection/yolo11m.pt
+botsort,"{""track_high_thresh"": 0.5, ""new_track_thresh"": 0.4}",0.8343,0.7492,0.869,0.9364,0.8044,196,63992,17885,327191,28787,35.449,20260925-023637_tracker_ua_detrac,models/detection/yolo11m.pt

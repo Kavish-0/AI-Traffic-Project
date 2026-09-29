@@ -1,0 +1,44 @@
+# Dev stack.
+#   docker compose up -d db              # just the database (run backend/frontend locally)
+#   docker compose up --build            # db + api (+ frontend)
+#   docker compose --profile distributed up   # adds Redis for separate camera workers (Phase 9)
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    environment:
+      POSTGRES_USER: traffic
+      POSTGRES_PASSWORD: traffic
+      POSTGRES_DB: traffic
+    ports: ["5432:5432"]
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./infra/db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U traffic -d traffic"]
+      interval: 5s
+      retries: 10
+
+  api:
+    build: {context: ., dockerfile: backend/Dockerfile, args: {EXTRAS: ""}}
+    environment:
+      TI_DATABASE_URL: postgresql+psycopg://traffic:traffic@db:5432/traffic
+      TI_BUS_BACKEND: memory
+    ports: ["8000:8000"]
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+    depends_on:
+      db: {condition: service_healthy}
+
+  frontend:
+    build: {context: ./frontend}
+    ports: ["8080:80"]
+    depends_on: [api]
+
+  redis:
+    image: redis:7-alpine
+    profiles: ["distributed"]
+    ports: ["6379:6379"]
+
+volumes:
+  pgdata:

@@ -1,0 +1,19 @@
+# Tracker comparison on UA-DETRAC: ByteTrack vs BoT-SORT (registered Tracker implementations).
+#   python -m traffic_intel.ai.training train tracking --config ../configs/training/tracking_ua_detrac.yaml
+# Trackers are not learned: association thresholds are tuned with a small grid on the 10 VALIDATION
+# sequences held out by the detection experiment; the chosen setting is scored once on TEST sequences.
+# Parameters not in a grid come from configs/pipeline.yaml (tracker.params).
+name: tracker_ua_detrac
+description: ByteTrack vs BoT-SORT on held-out UA-DETRAC sequences with the production detector.
+dataset: ua_detrac
+detector_weights: models/detection/yolo11m.pt      # replaced by the selected detector after fine-tuning
+detector_imgsz: 960
+detector_conf: 0.1
+val_split_file: data/processed/ua_detrac_yolo/split.json
+test_sequences: 20                                  # every 2nd official test sequence (compute budget)
+cache_dir: data/interim/ua_detrac_detections        # frame-level detections stay in Parquet
+trackers:
+  - type: bytetrack
+    grid: {track_high_thresh: [0.4, 0.5, 0.6], match_thresh: [0.7, 0.8], new_track_thresh: [0.4, 0.6]}
+  - type: botsort
+    grid: {track_high_thresh: [0.5, 0.6], new_track_thresh: [0.4, 0.6]}

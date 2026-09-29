@@ -1,0 +1,44 @@
+# Vehicle detector fine-tuning on UA-DETRAC (transfer learning from COCO-pretrained YOLO11).
+#   python -m traffic_intel.ai.training train detection --config ../configs/training/detection_ua_detrac.yaml --smoke
+#   python -m traffic_intel.ai.training train detection --config ../configs/training/detection_ua_detrac.yaml
+#
+# Splits: official UA-DETRAC train (60 sequences) / test (40 sequences). Validation = 10 WHOLE train
+# sequences (weather-stratified, deterministic) - frames of one sequence are never in two splits.
+# Every 10th annotated frame is kept (adjacent frames are near-duplicates, median box IoU 0.85-0.94).
+# Classes: the project's car / bus / truck (manifest class_map: van -> car, others -> truck).
+# UA-DETRAC has no pedestrian / bicycle / motorcycle labels, so a fine-tuned model cannot detect them.
+name: ua_detrac_finetune
+description: >
+  Does fine-tuning COCO-pretrained YOLO11 on traffic-camera footage improve vehicle detection on
+  held-out sequences, and at what cost in latency?
+seed: 0
+
+dataset:
+  id: ua_detrac
+  val_sequences: 10
+  frame_step_train: 10
+  frame_step_eval: 10
+  mask_ignored: true
+  output: data/processed/ua_detrac_yolo
+
+classes: [car, bus, truck]
+
+models:
+  - {name: yolo11s_ua_detrac, weights: models/detection/yolo11s.pt, batch: 8}
+  - {name: yolo11m_ua_detrac, weights: models/detection/yolo11m.pt, batch: 4}
+
+train:                          # Ultralytics train() arguments (recorded in the model metadata)
+  epochs: 30
+  imgsz: 960                    # native UA-DETRAC width
+  batch: 8                     # 8 GB GPU; Ultralytics accumulates gradients to a nominal batch of 64
+  patience: 8                   # early stopping on validation mAP50-95
+  optimizer: auto
+  cos_lr: true
+  close_mosaic: 5
+  workers: 2                    # Windows: every loader worker loads CUDA torch (commit charge); val uses 2x
+  amp: true
+
+eval_imgsz: [960, 1280]         # 1280 = the pipeline's current inference size
+eval_conf: 0.001
+operating_conf: 0.25            # = configs/pipeline.yaml detector.conf_threshold
+baselines: true
