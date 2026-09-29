@@ -57,26 +57,31 @@ export function TrendCharts({
   fva,
   horizon,
   onHorizon,
+  speedOnly = false,
 }: {
   history: Resource<TrafficState[]>;
   risk: Resource<Risk[]>;
   fva: Resource<ForecastVsActual>;
   horizon: number;
   onHorizon: (h: number) => void;
+  /** road sensor: only speed is measured - the count / density / queue / flow charts would be flat zeros */
+  speedOnly?: boolean;
 }) {
   if (history.loading) return <Card title="Traffic trends"><StateMessage>Loading history…</StateMessage></Card>;
   if (!history.data)
     return <Card title="Traffic trends"><StateMessage tone="error">History unavailable: {history.error?.detail}</StateMessage></Card>;
   const h = history.data;
   if (h.length === 0)
-    return <Card title="Traffic trends"><StateMessage tone="warn">Waiting for traffic data… no closed 60 s window for this road in the last {HISTORY_MINUTES} min.</StateMessage></Card>;
+    return <Card title="Traffic trends"><StateMessage tone="warn">Waiting for traffic data… no closed window for this road in the last {HISTORY_MINUTES} min.</StateMessage></Card>;
   const insufficient = h.length < 3;
+  const winS = h[h.length - 1].window_s;
+  const winLabel = winS >= 120 ? `${Math.round(winS / 60)}-min` : `${Math.round(winS)} s`;
   const fc = fva.data;
   const riskRows = risk.data ?? [];
   return (
     <Card
       title="Traffic trends"
-      subtitle={`Closed 60 s windows, last ${HISTORY_MINUTES} min (${h.length} windows) · gaps = no data`}
+      subtitle={`Closed ${winLabel} windows, last ${HISTORY_MINUTES} min (${h.length} windows) · gaps = no data`}
       right={
         <label className="text-xs text-slate-400">
           Forecast horizon{" "}
@@ -95,10 +100,19 @@ export function TrendCharts({
       {insufficient && <StateMessage tone="warn">Insufficient data - only {h.length} window(s) so far; trends become meaningful after a few minutes.</StateMessage>}
       <div className="mt-2 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
         <Chart title="Speed vs time" unit="km/h" series={[{ name: "avg speed", color: "#38bdf8", data: pick(h, (s) => s.average_speed_kmh) }]} />
-        <Chart title="Density vs time" unit="%" series={[{ name: "density", color: "#f97316", data: pick(h, (s) => s.density_pct) }]} />
-        <Chart title="Vehicle count vs time" unit="veh" series={[{ name: "vehicles", color: "#a3e635", data: pick(h, (s) => s.vehicle_count) }]} />
-        <Chart title="Queue length vs time" unit="m" series={[{ name: "queue", color: "#f43f5e", data: pick(h, (s) => s.queue_length_m) }]} />
-        <Chart title="Traffic flow vs time" unit="veh/h" series={[{ name: "flow", color: "#c084fc", data: pick(h, (s) => s.flow_veh_h) }]} />
+        {speedOnly ? (
+          <div className="rounded-lg border border-slate-800 p-3 text-xs text-slate-400 md:col-span-2 xl:col-span-2">
+            Density, vehicle count, queue length and flow are not measured by this road sensor (it reports speed only),
+            so their charts are not shown.
+          </div>
+        ) : (
+          <>
+            <Chart title="Density vs time" unit="%" series={[{ name: "density", color: "#f97316", data: pick(h, (s) => s.density_pct) }]} />
+            <Chart title="Vehicle count vs time" unit="veh" series={[{ name: "vehicles", color: "#a3e635", data: pick(h, (s) => s.vehicle_count) }]} />
+            <Chart title="Queue length vs time" unit="m" series={[{ name: "queue", color: "#f43f5e", data: pick(h, (s) => s.queue_length_m) }]} />
+            <Chart title="Traffic flow vs time" unit="veh/h" series={[{ name: "flow", color: "#c084fc", data: pick(h, (s) => s.flow_veh_h) }]} />
+          </>
+        )}
         {fc && fc.forecast.length > 0 ? (
           <Chart
             title={`Forecast vs actual speed (+${horizon} min)`}

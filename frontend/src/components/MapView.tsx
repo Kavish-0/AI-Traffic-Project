@@ -5,6 +5,9 @@ import type { NetworkGeoJSON } from "../api/types";
 import { mapLabels } from "../lib/mapLabels";
 import { CONGESTION_COLORS, UNKNOWN_COLOR } from "../theme/congestion";
 
+const MAX_ROAD_LABELS_ALWAYS = 40;
+const ROAD_LABEL_MIN_ZOOM = 13;
+
 // Basemap: VITE_MAP_STYLE_URL (any MapLibre style URL) or, by default, an offline schematic background.
 const STYLE_URL = import.meta.env.VITE_MAP_STYLE_URL as string | undefined;
 const BLANK_STYLE: StyleSpecification = {
@@ -209,7 +212,29 @@ export function MapView(props: MapProps) {
         markers.current.delete(id);
       }
     }
+    roadLabelIds.current = new Set(want.filter((l) => l.kind === "road").map((l) => l.id));
+    labelVisibility();
   }, [props.network]);
+
+  // a large network (e.g. 325 PEMS-BAY stations) shows road labels only when zoomed in; junction names stay
+  const roadLabelIds = useRef(new Set<string>());
+  const labelVisibility = (): void => {
+    const map = mapRef.current;
+    if (!map) return;
+    const show = roadLabelIds.current.size <= MAX_ROAD_LABELS_ALWAYS || map.getZoom() >= ROAD_LABEL_MIN_ZOOM;
+    for (const id of roadLabelIds.current) {
+      const m = markers.current.get(id);
+      if (m) m.el.style.display = show ? "" : "none";
+    }
+  };
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    map.on("zoomend", labelVisibility);
+    return () => {
+      map.off("zoomend", labelVisibility);
+    };
+  });
 
   // zoom to the selected junction (once per selection, not on every data refresh)
   const fittedJunction = useRef<string | null>(null);

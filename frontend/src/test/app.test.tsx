@@ -50,7 +50,7 @@ describe("App (UI integration against mocked backend responses)", () => {
     // road panel from /approaches/<id>/snapshot (auto-selected approach)
     expect(await screen.findByText(/Incident probability: UNCALIBRATED/)).toBeInTheDocument();
     // trend charts: no windows -> explicit waiting message, not an empty chart
-    expect(await screen.findByText(/no closed 60 s window/)).toBeInTheDocument();
+    expect(await screen.findByText(/no closed window/)).toBeInTheDocument();
     expect(screen.getByTestId("map")).toBeInTheDocument();
     expect(screen.getByText("System status")).toBeInTheDocument();
     expect(await screen.findByText("LIVE")).toBeInTheDocument();

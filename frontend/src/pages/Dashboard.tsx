@@ -125,7 +125,7 @@ export function Dashboard({ shared, onOpenIncidents }: { shared: SharedData; onO
           {aid ? <RoadPanel snapshot={snapshot} /> :<Card title="Selected road"><StateMessage>Select a road on the map or in the junction list.</StateMessage></Card>}
         </div>
         <div className="space-y-4 xl:col-span-2">
-          {aid && <TrendCharts history={history} risk={riskHist} fva={fva} horizon={horizon} onHorizon={setHorizon} />}
+          {aid && <TrendCharts history={history} risk={riskHist} fva={fva} horizon={horizon} onHorizon={setHorizon} speedOnly={!!snapshot.data?.speed_only} />}
           <div className="grid gap-4 md:grid-cols-2">
             <IncidentList incidents={incidents} onOpen={onOpenIncidents} />
             <RiskPanel risk={risk} names={names} />

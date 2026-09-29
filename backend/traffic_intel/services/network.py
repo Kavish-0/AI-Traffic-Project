@@ -135,6 +135,9 @@ def road_views(ctx: ServiceContext) -> list[RoadOut]:
     levels = _fresh_levels(ctx)
     by_road = {a.road_segment_id: a for a in ctx.network.approaches}
     covered = {c["approach_id"] for c in ctx.store.cameras().values()} | {c.approach_id for c in ctx.cameras.values()}
+    sensors = sensor_sources(ctx)
+    if sensors:                                   # a road sensor covers every approach it has reported for
+        covered |= {aid for aid, lv in levels.items() if lv.get("camera_id") in sensors}
     out = []
     for g in ctx.network.segments:
         a = by_road.get(g.id)
