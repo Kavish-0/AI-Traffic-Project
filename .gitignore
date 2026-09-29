@@ -42,3 +42,9 @@ experiments/**/weights/
 experiments/**/*.pt
 experiments/**/*.joblib
 experiments/**/*.parquet
+
+# Model weights anywhere (downloaded or trained) - never in Git
+backend/weights/
+*.pt
+*.onnx
+*.engine
