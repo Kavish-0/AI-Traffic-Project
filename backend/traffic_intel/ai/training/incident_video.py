@@ -478,7 +478,8 @@ def run_incident_experiment(cfg: IncidentExperimentConfig, smoke: bool = False) 
               "videos": len(ids), "windows": {k: len(v) for k, v in sets.items()},
               "positive_windows": {k: int(v["y"].sum()) for k, v in sets.items()},
               "normal_train_windows": fitted["n_normal_windows"], "fit_seconds": round(fit_s, 2),
-              "metrics": rows, "aic21_timing_rule": aic, "calibration": calib, "split": split}
+              "metrics": rows, "aic21_timing_rule": aic, "calibration": calib, "split": split,
+              "labelled": {k: [x for x in v if x in intervals] for k, v in split.items()}}
     (out / "experiment.json").write_text(json.dumps(record, indent=2, default=str), encoding="utf-8")
     import joblib
 
@@ -585,7 +586,9 @@ def _report(rec: dict[str, Any], metrics: pd.DataFrame, cfg: IncidentExperimentC
              "the fitted models are evaluation artefacts, not deployed.", "",
              f"- Detector: `{cfg.extract.weights}` @ {cfg.extract.imgsz}, {cfg.extract.target_fps} processed fps",
              f"- Videos: {rec['videos']}; windows {rec['windows']}; positive windows {rec['positive_windows']}",
-             "- Split (labelled videos): " + ", ".join(f"{k} {len(v)}" for k, v in rec["split"].items()), "",
+             "- Split by video: " + ", ".join(
+                 f"{k} {len(v)} ({len(rec.get('labelled', {}).get(k, []))} with an incident)"
+                 for k, v in rec["split"].items()), "",
              "| " + " | ".join(cols) + " |", "|" + "---|" * len(cols)]
     for _, r in metrics.iterrows():
         lines.append("| " + " | ".join(str(r[c]) if c == "method" else f"{r[c]:.3f}" for c in cols) + " |")
