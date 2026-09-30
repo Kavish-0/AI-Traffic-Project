@@ -2,19 +2,17 @@ import maplibregl, { type GeoJSONSource, type StyleSpecification } from "maplibr
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useMemo, useRef } from "react";
 import type { NetworkGeoJSON } from "../api/types";
+import { loadBasemap } from "../lib/basemap";
 import { mapLabels } from "../lib/mapLabels";
 import { AURORA, CONGESTION_COLORS, ROAD_CASING, ROAD_STYLE, UNKNOWN_COLOR } from "../theme/congestion";
 
 const MAX_ROAD_LABELS_ALWAYS = 40;
 const ROAD_LABEL_MIN_ZOOM = 13;
+const JUNCTION_LABEL_MIN_ZOOM = 12;
 
-// Basemap: VITE_MAP_STYLE_URL (any MapLibre style URL) or, by default, an offline schematic background.
+// Basemap: detailed CARTO Dark Matter recoloured to Aurora (lib/basemap.ts); VITE_MAP_STYLE_URL overrides it,
+// "offline" gives a plain background.
 const STYLE_URL = import.meta.env.VITE_MAP_STYLE_URL as string | undefined;
-const BLANK_STYLE: StyleSpecification = {
-  version: 8,
-  sources: {},
-  layers: [{ id: "bg", type: "background", paint: { "background-color": AURORA.mapGround } }],
-};
 
 // effective level of a road: its backend level, or "none" when there is no fresh level
 const LEVEL: maplibregl.ExpressionSpecification = [
@@ -97,12 +95,26 @@ export function MapView(props: MapProps) {
 
   useEffect(() => {
     if (!container.current) return;
+    let map: maplibregl.Map | null = null;
+    let cancelled = false;
+    void loadBasemap(STYLE_URL).then(({ style, online }) => {
+      if (cancelled || !container.current) return;
+      map = init(container.current, style, online);
+    });
+    return () => {
+      cancelled = true;
+      loaded.current = false;
+      map?.remove();
+    };
+  }, []);
+
+  function init(el: HTMLDivElement, style: StyleSpecification, online: boolean): maplibregl.Map {
     const map = new maplibregl.Map({
-      container: container.current,
-      style: STYLE_URL || BLANK_STYLE,
+      container: el,
+      style,
       center: [0, 0],
       zoom: 1,
-      attributionControl: STYLE_URL ? undefined : false,
+      attributionControl: online ? undefined : false,
     });
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
     mapRef.current = map;
@@ -191,11 +203,8 @@ export function MapView(props: MapProps) {
       loaded.current = true;
       if (cb.current.network) apply(map, cb.current.network);
     });
-    return () => {
-      loaded.current = false;
-      map.remove();
-    };
-  }, []);
+    return map;
+  }
 
   useEffect(() => {
     const map = mapRef.current;
@@ -241,19 +250,26 @@ export function MapView(props: MapProps) {
       }
     }
     roadLabelIds.current = new Set(want.filter((l) => l.kind === "road").map((l) => l.id));
+    junctionLabelIds.current = new Set(want.filter((l) => l.kind === "junction").map((l) => l.id));
     labelVisibility();
   }, [props.network]);
 
   // a large network (e.g. 325 PEMS-BAY stations) shows road labels only when zoomed in; junction names stay
   const roadLabelIds = useRef(new Set<string>());
+  const junctionLabelIds = useRef(new Set<string>());
   const labelVisibility = (): void => {
     const map = mapRef.current;
     if (!map) return;
-    const show = roadLabelIds.current.size <= MAX_ROAD_LABELS_ALWAYS || map.getZoom() >= ROAD_LABEL_MIN_ZOOM;
-    for (const id of roadLabelIds.current) {
-      const m = markers.current.get(id);
-      if (m) m.el.style.display = show ? "" : "none";
-    }
+    const big = roadLabelIds.current.size > MAX_ROAD_LABELS_ALWAYS;
+    const set = (ids: Set<string>, show: boolean): void => {
+      for (const id of ids) {
+        const m = markers.current.get(id);
+        if (m) m.el.style.display = show ? "" : "none";
+      }
+    };
+    set(roadLabelIds.current, !big || map.getZoom() >= ROAD_LABEL_MIN_ZOOM);
+    // corridor names would cover the basemap's city names when zoomed out
+    set(junctionLabelIds.current, !big || map.getZoom() >= JUNCTION_LABEL_MIN_ZOOM);
   };
   useEffect(() => {
     const map = mapRef.current;
