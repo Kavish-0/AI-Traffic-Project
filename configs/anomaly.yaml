@@ -1,0 +1,62 @@
+# Incident fusion (Module 5) - backend/traffic_intel/anomaly/fusion.py
+#
+#   S = 1 - prod(1 - e_f)  over symptom families          (correlated symptoms: noisy-OR, not a sum)
+#   z = bias + symptom_weight * S + sum(weights[f] * e_f) + interaction_weight * S * max(e_stopped, e_trajectory)
+#   incident_probability = 1 / (1 + exp(-z))
+#
+# e_f = strongest signal of family f in the last lookback_s, fading linearly with age.
+# Weights are HAND-SET (calibrated=false in every output) until fitted on labelled incidents.
+# With these weights: congestion only -> ~0.18; one isolated cue -> <= 0.38;
+# congestion + stopped vehicle / abnormal trajectory -> > 0.6 ("possible incident").
+
+lookback_s: 300
+bias: -4.0
+symptom_weight: 2.5
+interaction_weight: 3.0
+
+families:                        # evidence family -> AnomalyType values
+  speed_drop: [sudden_slowdown]
+  queue_growth: [sudden_queue]
+  density_change: [unusual_density]
+  flow_imbalance: [unusual_flow]
+  stopped_vehicle: [stopped_vehicle]
+  trajectory_anomaly: [wrong_way, abnormal_trajectory, collision_like]
+  anomaly_score: [statistical_outlier]
+symptoms: [speed_drop, queue_growth, density_change, flow_imbalance]
+weights:                         # incident-specific families
+  stopped_vehicle: 2.5
+  trajectory_anomaly: 2.0
+  anomaly_score: 1.0
+family_threshold: 0.3            # "family present" for min_families rules
+
+close_after_evaluations: 3       # consecutive normal evaluations before an incident is resolved
+
+# Incident taxonomy - evaluated top to bottom, first match wins; the LAST entry is "normal".
+incident_types:
+  - id: possible_incident
+    label: "Possible incident"
+    when: {min_probability: 0.6, min_families: 2}
+  - id: wrong_way
+    label: "Wrong-way vehicle"
+    when: {family: trajectory_anomaly, min_evidence: 0.15, signal_type: wrong_way}
+    min_severity: high
+  - id: stopped_vehicle
+    label: "Stopped vehicle"
+    when: {family: stopped_vehicle, min_evidence: 0.4}
+  - id: abnormal_queue
+    label: "Abnormal queue"
+    when: {family: queue_growth, min_evidence: 0.4}
+  - id: sudden_slowdown
+    label: "Sudden slowdown"
+    when: {family: speed_drop, min_evidence: 0.4}
+  - id: abnormal_trajectory
+    label: "Abnormal trajectory"
+    when: {family: trajectory_anomaly, min_evidence: 0.5}
+  - id: normal
+    label: "Normal"
+    when: {}
+
+severity:                        # incident probability (+ congestion level) -> severity
+  critical: {min_probability: 0.85, min_level: severe}
+  high:     {min_probability: 0.7}
+  medium:   {min_probability: 0.35}

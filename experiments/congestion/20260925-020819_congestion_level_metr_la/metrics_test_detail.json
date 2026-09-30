@@ -1,0 +1,1022 @@
+[
+  {
+    "horizon_min": 5,
+    "model": "persistence_level",
+    "type": "persistence_level",
+    "params": "{}",
+    "val_macro_f1": 0.6435,
+    "fit_s": 0.0,
+    "accuracy": 0.8974,
+    "balanced_accuracy": 0.6486,
+    "macro_precision": 0.6486,
+    "macro_recall": 0.6486,
+    "macro_f1": 0.6486,
+    "weighted_precision": 0.8974,
+    "weighted_recall": 0.8974,
+    "weighted_f1": 0.8974,
+    "per_class": {
+      "free": {
+        "precision": 0.9674172977281785,
+        "recall": 0.9674558571485512,
+        "f1": 0.9674365770541462,
+        "support": 50178
+      },
+      "moderate": {
+        "precision": 0.35062611806797855,
+        "recall": 0.3497917906008328,
+        "f1": 0.35020845741512807,
+        "support": 3362
+      },
+      "high": {
+        "precision": 0.45438838977194196,
+        "recall": 0.4554901281607205,
+        "f1": 0.4549385919391109,
+        "support": 2887
+      },
+      "severe": {
+        "precision": 0.821954484605087,
+        "recall": 0.8217973231357553,
+        "f1": 0.8218758963572044,
+        "support": 5230
+      }
+    },
+    "confusion": [
+      [
+        48545,
+        1419,
+        175,
+        39
+      ],
+      [
+        1390,
+        1176,
+        667,
+        129
+      ],
+      [
+        211,
+        598,
+        1315,
+        763
+      ],
+      [
+        34,
+        161,
+        737,
+        4298
+      ]
+    ]
+  },
+  {
+    "horizon_min": 5,
+    "model": "regression_to_rules",
+    "type": "regression_to_rules",
+    "params": "{\"n_estimators\": 1500, \"learning_rate\": 0.05, \"max_depth\": 6, \"early_stopping_rounds\": 50}",
+    "val_macro_f1": 0.661,
+    "fit_s": 1.9,
+    "accuracy": 0.9077,
+    "balanced_accuracy": 0.6544,
+    "macro_precision": 0.6795,
+    "macro_recall": 0.6544,
+    "macro_f1": 0.6656,
+    "weighted_precision": 0.904,
+    "weighted_recall": 0.9077,
+    "weighted_f1": 0.9055,
+    "per_class": {
+      "free": {
+        "precision": 0.9654530125678882,
+        "recall": 0.9813264777392483,
+        "f1": 0.9733250313794092,
+        "support": 50178
+      },
+      "moderate": {
+        "precision": 0.4174859550561798,
+        "recall": 0.35365853658536583,
+        "f1": 0.38293075684380035,
+        "support": 3362
+      },
+      "high": {
+        "precision": 0.46664507772020725,
+        "recall": 0.49913404918600623,
+        "f1": 0.4823430962343096,
+        "support": 2887
+      },
+      "severe": {
+        "precision": 0.8685883849088597,
+        "recall": 0.7835564053537285,
+        "f1": 0.8238841978287093,
+        "support": 5230
+      }
+    },
+    "confusion": [
+      [
+        49241,
+        792,
+        128,
+        17
+      ],
+      [
+        1502,
+        1189,
+        592,
+        79
+      ],
+      [
+        223,
+        699,
+        1441,
+        524
+      ],
+      [
+        37,
+        168,
+        927,
+        4098
+      ]
+    ]
+  },
+  {
+    "horizon_min": 5,
+    "model": "logistic_regression",
+    "type": "logistic_regression",
+    "params": "{\"C\": 1.0, \"class_weight\": \"balanced\"}",
+    "val_macro_f1": 0.6381,
+    "fit_s": 12.2,
+    "accuracy": 0.8304,
+    "balanced_accuracy": 0.6916,
+    "macro_precision": 0.6164,
+    "macro_recall": 0.6916,
+    "macro_f1": 0.6335,
+    "weighted_precision": 0.9048,
+    "weighted_recall": 0.8304,
+    "weighted_f1": 0.8603,
+    "per_class": {
+      "free": {
+        "precision": 0.9858536474955297,
+        "recall": 0.868029813862649,
+        "f1": 0.9231975752180502,
+        "support": 50178
+      },
+      "moderate": {
+        "precision": 0.20256058527663465,
+        "recall": 0.5270672218917312,
+        "f1": 0.2926507018992568,
+        "support": 3362
+      },
+      "high": {
+        "precision": 0.44574290484140233,
+        "recall": 0.5549012816072048,
+        "f1": 0.49436815306279897,
+        "support": 2887
+      },
+      "severe": {
+        "precision": 0.8315153876119984,
+        "recall": 0.8162523900573614,
+        "f1": 0.8238131995368584,
+        "support": 5230
+      }
+    },
+    "confusion": [
+      [
+        43556,
+        6340,
+        250,
+        32
+      ],
+      [
+        550,
+        1772,
+        921,
+        119
+      ],
+      [
+        65,
+        506,
+        1602,
+        714
+      ],
+      [
+        10,
+        130,
+        821,
+        4269
+      ]
+    ]
+  },
+  {
+    "horizon_min": 5,
+    "model": "random_forest",
+    "type": "random_forest",
+    "params": "{\"n_estimators\": 150, \"min_samples_leaf\": 5, \"max_samples\": 0.3, \"max_depth\": 20, \"class_weight\": \"balanced_subsample\"}",
+    "val_macro_f1": 0.6722,
+    "fit_s": 13.4,
+    "accuracy": 0.8954,
+    "balanced_accuracy": 0.6807,
+    "macro_precision": 0.6551,
+    "macro_recall": 0.6807,
+    "macro_f1": 0.6664,
+    "weighted_precision": 0.9049,
+    "weighted_recall": 0.8954,
+    "weighted_f1": 0.8998,
+    "per_class": {
+      "free": {
+        "precision": 0.9746161968970839,
+        "recall": 0.9564749491809159,
+        "f1": 0.9654603608859206,
+        "support": 50178
+      },
+      "moderate": {
+        "precision": 0.34528448947778645,
+        "recall": 0.3953004164187983,
+        "f1": 0.3686035223963389,
+        "support": 3362
+      },
+      "high": {
+        "precision": 0.45767119329673506,
+        "recall": 0.5486664357464496,
+        "f1": 0.499054820415879,
+        "support": 2887
+      },
+      "severe": {
+        "precision": 0.8426415833823241,
+        "recall": 0.8221797323135756,
+        "f1": 0.8322849124165296,
+        "support": 5230
+      }
+    },
+    "confusion": [
+      [
+        47994,
+        1895,
+        245,
+        44
+      ],
+      [
+        1085,
+        1329,
+        829,
+        119
+      ],
+      [
+        140,
+        523,
+        1584,
+        640
+      ],
+      [
+        25,
+        102,
+        803,
+        4300
+      ]
+    ]
+  },
+  {
+    "horizon_min": 5,
+    "model": "xgboost",
+    "type": "xgboost",
+    "params": "{\"n_estimators\": 400, \"learning_rate\": 0.1, \"max_depth\": 4}",
+    "val_macro_f1": 0.6503,
+    "fit_s": 24.6,
+    "accuracy": 0.9119,
+    "balanced_accuracy": 0.6354,
+    "macro_precision": 0.6873,
+    "macro_recall": 0.6354,
+    "macro_f1": 0.6499,
+    "weighted_precision": 0.8977,
+    "weighted_recall": 0.9119,
+    "weighted_f1": 0.9021,
+    "per_class": {
+      "free": {
+        "precision": 0.957306839008392,
+        "recall": 0.9889194467695006,
+        "f1": 0.9728564006548185,
+        "support": 50178
+      },
+      "moderate": {
+        "precision": 0.4832298136645963,
+        "recall": 0.2314098750743605,
+        "f1": 0.31295253419147223,
+        "support": 3362
+      },
+      "high": {
+        "precision": 0.4924382146809295,
+        "recall": 0.4624177346726706,
+        "f1": 0.4769560557341908,
+        "support": 2887
+      },
+      "severe": {
+        "precision": 0.8163970187238684,
+        "recall": 0.8586998087954111,
+        "f1": 0.8370142577578977,
+        "support": 5230
+      }
+    },
+    "confusion": [
+      [
+        49622,
+        349,
+        154,
+        53
+      ],
+      [
+        1773,
+        778,
+        654,
+        157
+      ],
+      [
+        353,
+        399,
+        1335,
+        800
+      ],
+      [
+        87,
+        84,
+        568,
+        4491
+      ]
+    ]
+  },
+  {
+    "horizon_min": 15,
+    "model": "persistence_level",
+    "type": "persistence_level",
+    "params": "{}",
+    "val_macro_f1": 0.5945,
+    "fit_s": 0.0,
+    "accuracy": 0.8729,
+    "balanced_accuracy": 0.5886,
+    "macro_precision": 0.5885,
+    "macro_recall": 0.5886,
+    "macro_f1": 0.5886,
+    "weighted_precision": 0.8729,
+    "weighted_recall": 0.8729,
+    "weighted_f1": 0.8729,
+    "per_class": {
+      "free": {
+        "precision": 0.953945795137505,
+        "recall": 0.9539648059945396,
+        "f1": 0.953955300471308,
+        "support": 50179
+      },
+      "moderate": {
+        "precision": 0.27698270721526536,
+        "recall": 0.2758313539192399,
+        "f1": 0.2764058315977388,
+        "support": 3368
+      },
+      "high": {
+        "precision": 0.36281962681409813,
+        "recall": 0.3640776699029126,
+        "f1": 0.363447559709242,
+        "support": 2884
+      },
+      "severe": {
+        "precision": 0.7601835915088927,
+        "recall": 0.7606199770378875,
+        "f1": 0.7604017216642754,
+        "support": 5226
+      }
+    },
+    "confusion": [
+      [
+        47869,
+        1614,
+        480,
+        216
+      ],
+      [
+        1576,
+        929,
+        591,
+        272
+      ],
+      [
+        481,
+        587,
+        1050,
+        766
+      ],
+      [
+        254,
+        224,
+        773,
+        3975
+      ]
+    ]
+  },
+  {
+    "horizon_min": 15,
+    "model": "regression_to_rules",
+    "type": "regression_to_rules",
+    "params": "{\"n_estimators\": 1500, \"learning_rate\": 0.05, \"max_depth\": 6, \"early_stopping_rounds\": 50}",
+    "val_macro_f1": 0.6034,
+    "fit_s": 1.9,
+    "accuracy": 0.8798,
+    "balanced_accuracy": 0.5812,
+    "macro_precision": 0.6206,
+    "macro_recall": 0.5812,
+    "macro_f1": 0.5969,
+    "weighted_precision": 0.8824,
+    "weighted_recall": 0.8798,
+    "weighted_f1": 0.8797,
+    "per_class": {
+      "free": {
+        "precision": 0.9533999608073682,
+        "recall": 0.9695689431834034,
+        "f1": 0.961416474819433,
+        "support": 50179
+      },
+      "moderate": {
+        "precision": 0.29974025974025975,
+        "recall": 0.34263657957244653,
+        "f1": 0.31975616514269883,
+        "support": 3368
+      },
+      "high": {
+        "precision": 0.371994342291372,
+        "recall": 0.3647711511789182,
+        "f1": 0.36834733893557425,
+        "support": 2884
+      },
+      "severe": {
+        "precision": 0.8574322613319828,
+        "recall": 0.6479142747799465,
+        "f1": 0.7380926430517711,
+        "support": 5226
+      }
+    },
+    "confusion": [
+      [
+        48652,
+        1258,
+        214,
+        55
+      ],
+      [
+        1679,
+        1154,
+        434,
+        101
+      ],
+      [
+        463,
+        962,
+        1052,
+        407
+      ],
+      [
+        236,
+        476,
+        1128,
+        3386
+      ]
+    ]
+  },
+  {
+    "horizon_min": 15,
+    "model": "logistic_regression",
+    "type": "logistic_regression",
+    "params": "{\"C\": 10.0, \"class_weight\": \"balanced\"}",
+    "val_macro_f1": 0.5758,
+    "fit_s": 12.4,
+    "accuracy": 0.8017,
+    "balanced_accuracy": 0.623,
+    "macro_precision": 0.5493,
+    "macro_recall": 0.623,
+    "macro_f1": 0.5691,
+    "weighted_precision": 0.881,
+    "weighted_recall": 0.8017,
+    "weighted_f1": 0.8342,
+    "per_class": {
+      "free": {
+        "precision": 0.9771559633027523,
+        "recall": 0.8490404352418343,
+        "f1": 0.9086042717452735,
+        "support": 50179
+      },
+      "moderate": {
+        "precision": 0.1652576722640417,
+        "recall": 0.4236935866983373,
+        "f1": 0.23777388986086812,
+        "support": 3368
+      },
+      "high": {
+        "precision": 0.3325936199722607,
+        "recall": 0.4157420249653259,
+        "f1": 0.3695484666358453,
+        "support": 2884
+      },
+      "severe": {
+        "precision": 0.7220216606498195,
+        "recall": 0.8036739380022963,
+        "f1": 0.7606628633523499,
+        "support": 5226
+      }
+    },
+    "confusion": [
+      [
+        42604,
+        6483,
+        804,
+        288
+      ],
+      [
+        679,
+        1427,
+        931,
+        331
+      ],
+      [
+        195,
+        492,
+        1199,
+        998
+      ],
+      [
+        122,
+        233,
+        671,
+        4200
+      ]
+    ]
+  },
+  {
+    "horizon_min": 15,
+    "model": "random_forest",
+    "type": "random_forest",
+    "params": "{\"n_estimators\": 150, \"min_samples_leaf\": 5, \"max_samples\": 0.3, \"max_depth\": 20, \"class_weight\": \"balanced_subsample\"}",
+    "val_macro_f1": 0.62,
+    "fit_s": 12.2,
+    "accuracy": 0.8736,
+    "balanced_accuracy": 0.6366,
+    "macro_precision": 0.6082,
+    "macro_recall": 0.6366,
+    "macro_f1": 0.6209,
+    "weighted_precision": 0.8847,
+    "weighted_recall": 0.8736,
+    "weighted_f1": 0.8788,
+    "per_class": {
+      "free": {
+        "precision": 0.9635937181317561,
+        "recall": 0.9415293250164412,
+        "f1": 0.9524337509701741,
+        "support": 50179
+      },
+      "moderate": {
+        "precision": 0.30227689086626536,
+        "recall": 0.3429334916864608,
+        "f1": 0.3213242453748783,
+        "support": 3368
+      },
+      "high": {
+        "precision": 0.3922838637003661,
+        "recall": 0.4830097087378641,
+        "f1": 0.43294483294483294,
+        "support": 2884
+      },
+      "severe": {
+        "precision": 0.7746907706945766,
+        "recall": 0.7789896670493686,
+        "f1": 0.7768342715389753,
+        "support": 5226
+      }
+    },
+    "confusion": [
+      [
+        47245,
+        2036,
+        637,
+        261
+      ],
+      [
+        1236,
+        1155,
+        744,
+        233
+      ],
+      [
+        349,
+        452,
+        1393,
+        690
+      ],
+      [
+        200,
+        178,
+        777,
+        4071
+      ]
+    ]
+  },
+  {
+    "horizon_min": 15,
+    "model": "xgboost",
+    "type": "xgboost",
+    "params": "{\"n_estimators\": 400, \"learning_rate\": 0.1, \"max_depth\": 8}",
+    "val_macro_f1": 0.5769,
+    "fit_s": 26.9,
+    "accuracy": 0.892,
+    "balanced_accuracy": 0.5588,
+    "macro_precision": 0.6358,
+    "macro_recall": 0.5588,
+    "macro_f1": 0.5766,
+    "weighted_precision": 0.8673,
+    "weighted_recall": 0.892,
+    "weighted_f1": 0.8746,
+    "per_class": {
+      "free": {
+        "precision": 0.933560894655452,
+        "recall": 0.9865282289403934,
+        "f1": 0.9593139867254493,
+        "support": 50179
+      },
+      "moderate": {
+        "precision": 0.40780487804878046,
+        "recall": 0.12410926365795724,
+        "f1": 0.1903027543819713,
+        "support": 3368
+      },
+      "high": {
+        "precision": 0.4376114081996435,
+        "recall": 0.340499306518724,
+        "f1": 0.3829953198127925,
+        "support": 2884
+      },
+      "severe": {
+        "precision": 0.7640805669526296,
+        "recall": 0.783964791427478,
+        "f1": 0.7738949754438987,
+        "support": 5226
+      }
+    },
+    "confusion": [
+      [
+        49503,
+        254,
+        216,
+        206
+      ],
+      [
+        2191,
+        418,
+        507,
+        252
+      ],
+      [
+        838,
+        257,
+        982,
+        807
+      ],
+      [
+        494,
+        96,
+        539,
+        4097
+      ]
+    ]
+  },
+  {
+    "horizon_min": 30,
+    "model": "persistence_level",
+    "type": "persistence_level",
+    "params": "{}",
+    "val_macro_f1": 0.5433,
+    "fit_s": 0.0,
+    "accuracy": 0.8505,
+    "balanced_accuracy": 0.5427,
+    "macro_precision": 0.542,
+    "macro_recall": 0.5427,
+    "macro_f1": 0.5423,
+    "weighted_precision": 0.8505,
+    "weighted_recall": 0.8505,
+    "weighted_f1": 0.8505,
+    "per_class": {
+      "free": {
+        "precision": 0.9400557991231566,
+        "recall": 0.9398497738638402,
+        "f1": 0.9399527752039932,
+        "support": 50191
+      },
+      "moderate": {
+        "precision": 0.22212283840190816,
+        "recall": 0.22015366430260047,
+        "f1": 0.22113386761650342,
+        "support": 3384
+      },
+      "high": {
+        "precision": 0.31617138908085696,
+        "recall": 0.3191489361702128,
+        "f1": 0.3176531852109009,
+        "support": 2867
+      },
+      "severe": {
+        "precision": 0.6896156052782558,
+        "recall": 0.6914669223394055,
+        "f1": 0.6905400229797013,
+        "support": 5215
+      }
+    },
+    "confusion": [
+      [
+        47172,
+        1810,
+        687,
+        522
+      ],
+      [
+        1787,
+        745,
+        532,
+        320
+      ],
+      [
+        683,
+        488,
+        915,
+        781
+      ],
+      [
+        538,
+        311,
+        760,
+        3606
+      ]
+    ]
+  },
+  {
+    "horizon_min": 30,
+    "model": "regression_to_rules",
+    "type": "regression_to_rules",
+    "params": "{\"n_estimators\": 1500, \"learning_rate\": 0.05, \"max_depth\": 6, \"early_stopping_rounds\": 50}",
+    "val_macro_f1": 0.5474,
+    "fit_s": 1.3,
+    "accuracy": 0.8584,
+    "balanced_accuracy": 0.5268,
+    "macro_precision": 0.5881,
+    "macro_recall": 0.5268,
+    "macro_f1": 0.5466,
+    "weighted_precision": 0.8658,
+    "weighted_recall": 0.8584,
+    "weighted_f1": 0.8585,
+    "per_class": {
+      "free": {
+        "precision": 0.9406156785526291,
+        "recall": 0.9612679564065271,
+        "f1": 0.9508296874384139,
+        "support": 50191
+      },
+      "moderate": {
+        "precision": 0.242451967063129,
+        "recall": 0.3132387706855792,
+        "f1": 0.27333677153171737,
+        "support": 3384
+      },
+      "high": {
+        "precision": 0.3170028818443804,
+        "recall": 0.3069410533658877,
+        "f1": 0.31189083820662766,
+        "support": 2867
+      },
+      "severe": {
+        "precision": 0.8523009950248757,
+        "recall": 0.5255992329817833,
+        "f1": 0.6502194283003202,
+        "support": 5215
+      }
+    },
+    "confusion": [
+      [
+        48247,
+        1564,
+        303,
+        77
+      ],
+      [
+        1871,
+        1060,
+        367,
+        86
+      ],
+      [
+        649,
+        1026,
+        880,
+        312
+      ],
+      [
+        526,
+        722,
+        1226,
+        2741
+      ]
+    ]
+  },
+  {
+    "horizon_min": 30,
+    "model": "logistic_regression",
+    "type": "logistic_regression",
+    "params": "{\"C\": 1.0, \"class_weight\": \"balanced\"}",
+    "val_macro_f1": 0.5196,
+    "fit_s": 11.3,
+    "accuracy": 0.7595,
+    "balanced_accuracy": 0.5531,
+    "macro_precision": 0.4805,
+    "macro_recall": 0.5531,
+    "macro_f1": 0.4998,
+    "weighted_precision": 0.8558,
+    "weighted_recall": 0.7595,
+    "weighted_f1": 0.7987,
+    "per_class": {
+      "free": {
+        "precision": 0.9668828709402518,
+        "recall": 0.8137913171684167,
+        "f1": 0.883756152972359,
+        "support": 50191
+      },
+      "moderate": {
+        "precision": 0.12490198274896382,
+        "recall": 0.32949172576832153,
+        "f1": 0.18113881894240924,
+        "support": 3384
+      },
+      "high": {
+        "precision": 0.22017879948914432,
+        "recall": 0.30066271363794905,
+        "f1": 0.25420230020642876,
+        "support": 2867
+      },
+      "severe": {
+        "precision": 0.6099528230101963,
+        "recall": 0.7685522531160115,
+        "f1": 0.6801289665705074,
+        "support": 5215
+      }
+    },
+    "confusion": [
+      [
+        40845,
+        7003,
+        1584,
+        759
+      ],
+      [
+        845,
+        1115,
+        867,
+        557
+      ],
+      [
+        267,
+        491,
+        862,
+        1247
+      ],
+      [
+        287,
+        318,
+        602,
+        4008
+      ]
+    ]
+  },
+  {
+    "horizon_min": 30,
+    "model": "random_forest",
+    "type": "random_forest",
+    "params": "{\"n_estimators\": 150, \"min_samples_leaf\": 5, \"max_samples\": 0.3, \"max_depth\": 20, \"class_weight\": \"balanced_subsample\"}",
+    "val_macro_f1": 0.5789,
+    "fit_s": 12.1,
+    "accuracy": 0.8547,
+    "balanced_accuracy": 0.5901,
+    "macro_precision": 0.5617,
+    "macro_recall": 0.5901,
+    "macro_f1": 0.5747,
+    "weighted_precision": 0.8636,
+    "weighted_recall": 0.8547,
+    "weighted_f1": 0.8588,
+    "per_class": {
+      "free": {
+        "precision": 0.9520451627366662,
+        "recall": 0.9307246319061186,
+        "f1": 0.9412641802172117,
+        "support": 50191
+      },
+      "moderate": {
+        "precision": 0.2656921754084265,
+        "recall": 0.27393617021276595,
+        "f1": 0.2697512003491925,
+        "support": 3384
+      },
+      "high": {
+        "precision": 0.34103378573491194,
+        "recall": 0.41192884548308334,
+        "f1": 0.3731437598736177,
+        "support": 2867
+      },
+      "severe": {
+        "precision": 0.6878325647392692,
+        "recall": 0.7436241610738255,
+        "f1": 0.7146411130562978,
+        "support": 5215
+      }
+    },
+    "confusion": [
+      [
+        46714,
+        1936,
+        876,
+        665
+      ],
+      [
+        1424,
+        927,
+        720,
+        313
+      ],
+      [
+        491,
+        413,
+        1181,
+        782
+      ],
+      [
+        438,
+        213,
+        686,
+        3878
+      ]
+    ]
+  },
+  {
+    "horizon_min": 30,
+    "model": "xgboost",
+    "type": "xgboost",
+    "params": "{\"n_estimators\": 400, \"learning_rate\": 0.1, \"max_depth\": 8}",
+    "val_macro_f1": 0.5272,
+    "fit_s": 25.7,
+    "accuracy": 0.8788,
+    "balanced_accuracy": 0.5104,
+    "macro_precision": 0.6063,
+    "macro_recall": 0.5104,
+    "macro_f1": 0.5306,
+    "weighted_precision": 0.8454,
+    "weighted_recall": 0.8788,
+    "weighted_f1": 0.8552,
+    "per_class": {
+      "free": {
+        "precision": 0.9146298591966252,
+        "recall": 0.9848976908210635,
+        "f1": 0.9484640917899423,
+        "support": 50191
+      },
+      "moderate": {
+        "precision": 0.3487394957983193,
+        "recall": 0.07358156028368794,
+        "f1": 0.12152269399707175,
+        "support": 3384
+      },
+      "high": {
+        "precision": 0.4343376918703809,
+        "recall": 0.26648064178583886,
+        "f1": 0.3303069606571552,
+        "support": 2867
+      },
+      "severe": {
+        "precision": 0.7276620595678411,
+        "recall": 0.7167785234899329,
+        "f1": 0.7221792890262752,
+        "support": 5215
+      }
+    },
+    "confusion": [
+      [
+        49433,
+        179,
+        220,
+        359
+      ],
+      [
+        2467,
+        249,
+        370,
+        298
+      ],
+      [
+        1157,
+        204,
+        764,
+        742
+      ],
+      [
+        990,
+        82,
+        405,
+        3738
+      ]
+    ]
+  }
+]

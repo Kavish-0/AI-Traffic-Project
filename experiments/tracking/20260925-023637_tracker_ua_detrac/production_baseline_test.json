@@ -1,0 +1,6 @@
+{
+  "note": "The pre-existing configs/pipeline.yaml ByteTrack parameters scored on the same 20 test sequences, same cached detections (yolo11m @960, conf 0.1), for comparison with the validation-tuned setting in metrics_test.csv. Run 2026-09-30.",
+  "tracker": "bytetrack",
+  "params": {"track_high_thresh": 0.5, "match_thresh": 0.8, "new_track_thresh": 0.6},
+  "test": {"MOTA": 0.7374, "MOTP_iou": 0.8702, "precision": 0.9434, "recall": 0.785, "id_switches": 174, "fn": 70338, "fp": 15402, "gt": 327191, "frames": 28787, "ms_per_frame": 0.992}
+}

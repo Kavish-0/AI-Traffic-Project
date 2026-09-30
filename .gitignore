@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+frontend/dist/
+
+# Env / IDE
+.env
+.env.local
+frontend/.env.local
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# Data & models: keep folder structure + READMEs, never large binaries
+data/**/*
+!data/**/
+!data/**/.gitkeep
+!data/README.md
+!data/**/README.md
+models/**/*
+!models/**/
+!models/**/.gitkeep
+!models/README.md
+
+# Machine-specific dataset locations (see configs/datasets/manifest.yaml)
+configs/datasets/local.yaml
+
+# Outputs
+runs/
+reports/*.html
+*.log
+# Experiment records are kept (configs, metrics CSV/JSON, reports, plots); weights live in models/ only
+experiments/**/weights/
+experiments/**/*.pt
+experiments/**/*.joblib
+experiments/**/*.parquet
+
+# Model weights anywhere (downloaded or trained) - never in Git
+backend/weights/
+*.pt
+*.onnx
+*.engine

@@ -1,0 +1,41 @@
+# Risk engine (backend/traffic_intel/risk/weighted.py) - transparent weighted score, 0..100.
+#
+#   base = sum(w_i * c_i) / sum(w_i)  over AVAILABLE components (each c_i in [0, 1])
+#   risk = 100 * base * (1 - importance_weight + importance_weight * road_importance)
+#
+# Components:
+#   current_severity   congestion score now (rule-based classifier)
+#   forecast_severity  worst forecast level (+5/+15/+30 min): free 0, moderate .35, high .65, severe 1
+#   incident           fused incident probability (0 without an active incident)
+#   queue              queue_length_m / min(queue_saturation_m, ROI length)
+#   speed              (1 - speed / free-flow) / 0.8
+#   density            density_ratio / density_saturation
+weights:
+  current_severity: 0.20
+  forecast_severity: 0.20
+  incident: 0.30
+  queue: 0.10
+  speed: 0.10
+  density: 0.10
+
+importance_weight: 0.3          # importance 1 -> x1.0, importance 0 -> x0.7
+default_importance: 0.5         # road segments without `importance` in the network config
+queue_saturation_m: 60
+density_saturation: 0.8
+default_free_flow_kmh: 50
+
+levels:                         # upper bounds of risk_score
+  low: 25
+  medium: 50
+  high: 75
+  critical: 100.01
+
+reason_thresholds:              # component value at which a reason code is added
+  incident_possible: 0.6
+  incident_elevated: 0.3
+  queue: 0.6
+  speed: 0.7
+  density: 0.7
+  importance: 0.8
+  data_quality: 0.5
+signal_reason_min_score: 0.4    # anomaly signals (wrong-way: any >= 0.15) that add a reason code

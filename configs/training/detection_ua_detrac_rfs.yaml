@@ -1,0 +1,44 @@
+# Follow-up to detection_ua_detrac.yaml: the same fine-tuning with repeat-factor sampling (RFS) of the
+# rare classes. Everything else is identical, so the two runs differ in ONE controlled change.
+#   python -m traffic_intel.ai.training train detection --config ../configs/training/detection_ua_detrac_rfs.yaml
+#
+# Why: in the first run, fine-tuned yolo11s lost truck AP (test mAP50-95 0.05 vs 0.43 zero-shot) and
+# some bus AP. The training data explains it: trucks are in 233 of 6,669 training images (3.5%; 0.5% of
+# boxes), buses in 31%. RFS (LVIS, Gupta et al. 2019) repeats an image r = max(1, sqrt(t / f_c)) times
+# for its rarest class. t = 0.5 is fixed from these TRAINING statistics (truck images x3.8, bus images
+# x1.3), not tuned on test. Validation / test are unchanged; the models are compared on validation first.
+name: ua_detrac_finetune_rfs
+description: >
+  Does repeat-factor sampling of rare classes (truck, bus) recover their accuracy when fine-tuning
+  YOLO11s on UA-DETRAC, without losing car accuracy?
+seed: 0
+
+dataset:
+  id: ua_detrac
+  val_sequences: 10
+  frame_step_train: 10
+  frame_step_eval: 10
+  mask_ignored: true
+  output: data/processed/ua_detrac_yolo
+  repeat_factor_threshold: 0.5
+
+classes: [car, bus, truck]
+
+models:
+  - {name: yolo11s_ua_detrac_rfs, weights: models/detection/yolo11s.pt, batch: 8}
+
+train:
+  epochs: 30
+  imgsz: 960
+  batch: 8
+  patience: 8
+  optimizer: auto
+  cos_lr: true
+  close_mosaic: 5
+  workers: 2
+  amp: true
+
+eval_imgsz: [960, 1280]
+eval_conf: 0.001
+operating_conf: 0.25
+baselines: false                # the zero-shot baselines are recorded by detection_ua_detrac.yaml runs

@@ -1,0 +1,13 @@
+# ML congestion classifier (Phase 7). Labels come from (a) manual annotation of
+# sampled windows in data/labels/congestion.csv and (b) optionally rule-based
+# labels for pre-training ONLY - evaluating an ML model against rule labels
+# just measures how well it imitates the rules, so the test set is manual-only.
+dataset:
+  labels_file: data/labels/congestion.csv
+  features: traffic+context
+split: {method: chronological, test_fraction: 0.2}
+models:
+  random_forest: {n_estimators: 300, class_weight: balanced}
+  xgboost: {n_estimators: 400, max_depth: 5, learning_rate: 0.05}
+metrics: [macro_f1, balanced_accuracy, confusion_matrix]
+baseline: rule_based

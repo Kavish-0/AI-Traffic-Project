@@ -1,0 +1,39 @@
+# Congestion-level FORECAST (classification) on METR-LA: FREE / MODERATE / HIGH / SEVERE at +h minutes.
+#   python -m traffic_intel.ai.training train congestion --config ../configs/training/congestion_level_metr_la.yaml
+# Label = the level the project's rules (configs/congestion_rules.yaml) give the OBSERVED speed at t + h;
+# METR-LA measures speed only, so only the speed indicator is used (no implied density / occupancy).
+# Free-flow speed per sensor = 85th percentile of its TRAIN-period speeds (never val / test data).
+# Same sensors, chronological split and windows as forecasting_metr_la_traffic_only.yaml, plus calendar features.
+name: congestion_level_metr_la
+description: >
+  Future congestion level from the past hour of speeds (METR-LA). Compares the "no change" baseline,
+  the production approach (forecast the speed, then apply the rules) and direct classifiers.
+seed: 0
+dataset:
+  source: metr_la
+  params: {every_k: 20, weather: false}
+features:
+  dynamic: [avg_speed_kmh]
+  targets: [avg_speed_kmh]
+  calendar: [hour, day_of_week, rush_hour]
+  weather: []
+  rush_hours: [[6, 10], [15, 19]]
+  max_gap_fill_steps: 2
+  lags: [1, 2, 3, 6, 11]
+  rolling: [3, 12]
+horizons_min: [5, 15, 30]
+split: {train: 0.7, val: 0.1, test: 0.2}
+train_stride: 1
+free_flow: {method: train_quantile, quantile: 0.85}
+models:
+  - {name: persistence_level, type: persistence_level}
+  - {name: regression_to_rules, type: regression_to_rules}
+  - {name: logistic_regression, type: logistic_regression,
+     grid: {C: [0.1, 1.0, 10.0], class_weight: [null, balanced]}}
+  - {name: random_forest, type: random_forest,
+     params: {n_estimators: 150, min_samples_leaf: 5, max_samples: 0.3},
+     grid: {max_depth: [12, 20], class_weight: [null, balanced_subsample]}}
+  - {name: xgboost, type: xgboost,
+     params: {n_estimators: 400, learning_rate: 0.1},
+     grid: {max_depth: [4, 6, 8]}}
+register_best: false

@@ -1,0 +1,112 @@
+{
+  "experiment_id": "20260925-021232_aic21_track4_smoke",
+  "created": "2026-09-24T20:51:00.155234+00:00",
+  "detector": {
+    "weights": "models/detection/yolo11m.pt",
+    "imgsz": 832,
+    "conf_threshold": 0.25,
+    "target_fps": 5.0,
+    "batch": 8,
+    "out_dir": "data/interim/aic21_track4"
+  },
+  "videos": 6,
+  "windows": {
+    "train": 354,
+    "val": 354,
+    "test": 353
+  },
+  "positive_windows": {
+    "train": 60,
+    "val": 176,
+    "test": 57
+  },
+  "normal_train_windows": 294,
+  "fit_seconds": 2.15,
+  "metrics": [
+    {
+      "method": "stationary_rule",
+      "window_roc_auc": 0.49155405405405406,
+      "window_pr_auc": 0.16147308781869688,
+      "window_precision": 0.16147308781869688,
+      "window_recall": 1.0,
+      "window_f1": 0.2780487804878049,
+      "window_threshold": 0.0,
+      "window_positive_rate": 0.16147308781869688,
+      "event_tp": 1,
+      "event_fp": 1,
+      "event_fn": 0,
+      "event_precision": 0.5,
+      "event_recall": 1.0,
+      "event_f1": 0.6666666666666666,
+      "event_median_delay_s": 10.0
+    },
+    {
+      "method": "isolation_forest",
+      "window_roc_auc": 0.5,
+      "window_pr_auc": 0.16147308781869688,
+      "window_precision": 0.16147308781869688,
+      "window_recall": 1.0,
+      "window_f1": 0.2780487804878049,
+      "window_threshold": 0.0,
+      "window_positive_rate": 0.16147308781869688,
+      "event_tp": 1,
+      "event_fp": 1,
+      "event_fn": 0,
+      "event_precision": 0.5,
+      "event_recall": 1.0,
+      "event_f1": 0.6666666666666666,
+      "event_median_delay_s": 10.0
+    },
+    {
+      "method": "autoencoder",
+      "window_roc_auc": 0.9125177809388335,
+      "window_pr_auc": 0.522480711404753,
+      "window_precision": 0.5096153846153846,
+      "window_recall": 0.9298245614035088,
+      "window_f1": 0.6583850931677019,
+      "window_threshold": 0.09437152738325691,
+      "window_positive_rate": 0.16147308781869688,
+      "event_tp": 1,
+      "event_fp": 0,
+      "event_fn": 0,
+      "event_precision": 1.0,
+      "event_recall": 1.0,
+      "event_f1": 1.0,
+      "event_median_delay_s": 20.0
+    }
+  ],
+  "aic21_timing_rule": {
+    "tp": 1,
+    "fp": 1,
+    "fn": 0,
+    "precision": 0.5,
+    "recall": 1.0,
+    "f1": 0.6667,
+    "rmse_s": 10.0,
+    "nrmse": 0.0333,
+    "s4": 0.6444
+  },
+  "calibration": {
+    "method": "autoencoder",
+    "fitted_on": "validation windows",
+    "evaluated_on": "test windows",
+    "brier_uncalibrated_scaled": 0.1138285829540425,
+    "brier_platt": 0.10541505341341068,
+    "brier_isotonic": 0.11960058094323406,
+    "brier_constant_base_rate": 0.24809539840224426
+  },
+  "split": {
+    "train": [
+      "2",
+      "3"
+    ],
+    "val": [
+      "4",
+      "11"
+    ],
+    "test": [
+      "5",
+      "9"
+    ]
+  }
+}

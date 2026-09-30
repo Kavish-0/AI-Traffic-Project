@@ -1,0 +1,29 @@
+# REAL-DATA mode: PEMS-BAY loop-detector speeds replayed as live road sensors.
+#
+#   PowerShell, from backend/ (BOTH terminals need the variable):
+#     $env:TI_PIPELINE_FILE="pipeline_pems_bay.yaml"; python -m traffic_intel.pipeline run --profile pems_bay
+#     $env:TI_PIPELINE_FILE="pipeline_pems_bay.yaml"; uvicorn traffic_intel.api.main:app
+#
+# Everything not set here comes from pipeline.yaml (camera stack, anomaly detectors, fusion, risk, what-if).
+extends: pipeline.yaml
+
+network_file: network/pems_bay.yaml      # generated: python -m traffic_intel.datasets pems-bay-network
+camera_files: []                         # no video in this mode
+
+# Speed + calendar model trained on PEMS-BAY (configs/training/forecasting_pems_bay_live.yaml); its test
+# weeks are what the runtime replays. Selection evidence: docs/MODEL_EVALUATION.md (PEMS-BAY real-data mode).
+forecaster:
+  type: registry
+  params:
+    model: pems_bay_xgboost_d8
+    version: production
+
+calendar_provider:
+  type: holidays
+  params: {country: US, overrides_file: null}
+
+# AppSettings defaults for this mode (an explicit environment variable still wins)
+settings:
+  database_file: traffic_pems_bay.db     # separate database: the demo junction and the Bay Area never mix
+  live_stale_s: 30                       # live values repeat the latest 5-min reading every 5 s
+  window_stale_s: 900                    # 5-min windows: stale after 3 missed windows

@@ -1,0 +1,137 @@
+{
+  "source": "pems_bay",
+  "dataset": "pems_bay",
+  "resolution_s": 300,
+  "series": [
+    "pems_bay_400001",
+    "pems_bay_400201",
+    "pems_bay_400429",
+    "pems_bay_400668",
+    "pems_bay_400873",
+    "pems_bay_401403",
+    "pems_bay_401937",
+    "pems_bay_402289",
+    "pems_bay_404444",
+    "pems_bay_407177",
+    "pems_bay_407352"
+  ],
+  "periods": {
+    "train": {
+      "start": "2017-01-01T08:00:00+00:00",
+      "end": "2017-05-08T00:05:00+00:00"
+    },
+    "val": {
+      "start": "2017-05-08T00:05:00+00:00",
+      "end": "2017-05-26T02:20:00+00:00"
+    },
+    "test": {
+      "start": "2017-05-26T02:20:00+00:00",
+      "end": "2017-07-01T07:00:00+00:00"
+    }
+  },
+  "samples": {
+    "train": 401104,
+    "val": 57255,
+    "test": 114598
+  },
+  "features": [
+    "avg_speed_kmh_t",
+    "avg_speed_kmh_lag1",
+    "avg_speed_kmh_lag2",
+    "avg_speed_kmh_lag3",
+    "avg_speed_kmh_lag6",
+    "avg_speed_kmh_lag11",
+    "avg_speed_kmh_mean3",
+    "avg_speed_kmh_mean12",
+    "avg_speed_kmh_diff1",
+    "hour_sin",
+    "hour_cos",
+    "dow_sin",
+    "dow_cos",
+    "is_weekend",
+    "is_rush_hour"
+  ],
+  "label_indicators": [
+    "avg_speed_kmh"
+  ],
+  "free_flow_kmh": {
+    "pems_bay_400001": 115.55,
+    "pems_bay_400201": 109.44,
+    "pems_bay_400429": 107.83,
+    "pems_bay_400668": 109.27,
+    "pems_bay_400873": 108.47,
+    "pems_bay_401403": 108.95,
+    "pems_bay_401937": 110.88,
+    "pems_bay_402289": 107.18,
+    "pems_bay_404444": 106.22,
+    "pems_bay_407177": 107.83,
+    "pems_bay_407352": 109.44
+  },
+  "free_flow_method": {
+    "method": "train_quantile",
+    "quantile": 0.85
+  },
+  "class_distribution": {
+    "train": {
+      "5": {
+        "free": 373359,
+        "moderate": 12076,
+        "high": 8026,
+        "severe": 7643
+      },
+      "15": {
+        "free": 373359,
+        "moderate": 12076,
+        "high": 8026,
+        "severe": 7643
+      },
+      "30": {
+        "free": 373359,
+        "moderate": 12076,
+        "high": 8026,
+        "severe": 7643
+      }
+    },
+    "val": {
+      "5": {
+        "free": 52949,
+        "moderate": 1549,
+        "high": 1239,
+        "severe": 1518
+      },
+      "15": {
+        "free": 52943,
+        "moderate": 1553,
+        "high": 1241,
+        "severe": 1518
+      },
+      "30": {
+        "free": 52934,
+        "moderate": 1561,
+        "high": 1242,
+        "severe": 1518
+      }
+    },
+    "test": {
+      "5": {
+        "free": 106492,
+        "moderate": 2931,
+        "high": 2451,
+        "severe": 2724
+      },
+      "15": {
+        "free": 106495,
+        "moderate": 2930,
+        "high": 2449,
+        "severe": 2724
+      },
+      "30": {
+        "free": 106497,
+        "moderate": 2929,
+        "high": 2448,
+        "severe": 2724
+      }
+    }
+  },
+  "preprocessor_spec_hash": "a8045b77684c0b41"
+}

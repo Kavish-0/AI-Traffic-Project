@@ -1,0 +1,167 @@
+name: synthetic_junction
+description: '6 weeks x 4 approaches of synthetic 1-minute traffic states (demand
+  profiles, signal capacity, point queues, incidents, sensor gaps) driven by REAL
+  Bengaluru weather (Open-Meteo, Jun-Jul 2025). Synthetic: validates the pipeline
+  and gives the service a schema-compatible model; it is not evidence about real traffic
+  (see forecasting_pems08.yaml for that).
+
+  '
+seed: 0
+dataset:
+  source: synthetic
+  params:
+    start: '2025-06-02T00:00:00+05:30'
+    days: 42
+    seed: 7
+    weather:
+      lat: 12.97
+      lon: 77.59
+    holiday_country: IN
+features:
+  dynamic:
+  - avg_speed_kmh
+  - density_ratio
+  - occupancy_pct
+  - queue_length_m
+  - flow_veh_h
+  - vehicle_count
+  - inflow
+  - outflow
+  - stopped_vehicles
+  targets:
+  - avg_speed_kmh
+  - density_ratio
+  - occupancy_pct
+  - queue_length_m
+  - flow_veh_h
+  weather:
+  - temperature_c
+  - humidity_pct
+  - rain_mm
+  - visibility_km
+  - weather_condition
+  calendar:
+  - hour
+  - day_of_week
+  - holiday
+  - rush_hour
+  rush_hours:
+  - - 7.0
+    - 10.0
+  - - 16.0
+    - 19.0
+  max_gap_fill_steps: 3
+  lags:
+  - 1
+  - 2
+  - 3
+  - 5
+  - 10
+  - 15
+  - 29
+  rolling:
+  - 5
+  - 15
+  - 30
+horizons_min:
+- 5
+- 15
+- 30
+season: 1D
+split:
+  train: 0.6
+  val: 0.2
+  test: 0.2
+  val_start: null
+  test_start: null
+train_stride: 2
+eval_stride: 1
+primary_target: avg_speed_kmh
+deep_seeds:
+- 0
+- 1
+- 2
+models:
+- name: persistence
+  type: persistence
+  params: {}
+- name: seasonal_naive
+  type: seasonal_naive
+  params: {}
+- name: linear
+  type: linear
+  params:
+    alpha: 0.0
+- name: random_forest
+  type: random_forest
+  params:
+    n_estimators: 150
+    max_depth: 16
+    min_samples_leaf: 5
+    max_features: 0.5
+    max_samples: 0.3
+- name: xgboost
+  type: xgboost
+  params:
+    n_estimators: 1500
+    learning_rate: 0.05
+    max_depth: 6
+    early_stopping_rounds: 50
+- name: lstm
+  type: lstm
+  params:
+    lookback_steps: 30
+    hidden: 64
+    layers: 2
+    dropout: 0.1
+    max_epochs: 30
+    batch_size: 512
+    lr: 0.001
+- name: gru
+  type: gru
+  params:
+    lookback_steps: 30
+    hidden: 64
+    layers: 2
+    dropout: 0.1
+    max_epochs: 30
+    batch_size: 512
+    lr: 0.001
+- name: transformer
+  type: transformer
+  params:
+    lookback_steps: 30
+    d_model: 64
+    heads: 4
+    layers: 2
+    ff: 128
+    dropout: 0.1
+    max_epochs: 30
+    batch_size: 512
+    lr: 0.0005
+- name: random_forest_deep
+  type: random_forest
+  params:
+    n_estimators: 200
+    max_depth: 24
+    min_samples_leaf: 2
+    max_features: 0.5
+    max_samples: 0.3
+- name: xgboost_d4
+  type: xgboost
+  params:
+    n_estimators: 1500
+    learning_rate: 0.05
+    max_depth: 4
+    early_stopping_rounds: 50
+- name: xgboost_d8
+  type: xgboost
+  params:
+    n_estimators: 1500
+    learning_rate: 0.05
+    max_depth: 8
+    early_stopping_rounds: 50
+plots:
+  series: junction_a_north
+  days: 1.0
+  start_offset_days: 1.0

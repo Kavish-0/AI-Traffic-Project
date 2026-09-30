@@ -1,0 +1,89 @@
+[
+  {
+    "name": "persistence",
+    "type": "persistence",
+    "family": "baseline",
+    "framework": "numpy",
+    "params": {},
+    "version": "20260930-031242_pems_bay_live",
+    "fit_s": 0.0,
+    "predict_ms_per_sample": 0.0007,
+    "trained": false,
+    "artifact": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\models\\forecasting\\persistence\\20260930-031242_pems_bay_live"
+  },
+  {
+    "name": "seasonal_naive",
+    "type": "seasonal_naive",
+    "family": "baseline",
+    "framework": "numpy",
+    "params": {},
+    "version": "20260930-031242_pems_bay_live",
+    "fit_s": 0.0,
+    "predict_ms_per_sample": 0.0009,
+    "trained": false,
+    "season_steps": 288,
+    "artifact": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\models\\forecasting\\seasonal_naive\\20260930-031242_pems_bay_live"
+  },
+  {
+    "name": "pems_bay_linear",
+    "type": "linear",
+    "family": "linear",
+    "framework": "sklearn",
+    "params": {
+      "target_transform": "delta",
+      "alpha": 0.0
+    },
+    "version": "20260930-031242_pems_bay_live",
+    "fit_s": 3.38,
+    "predict_ms_per_sample": 0.0023,
+    "n_train": 3974576,
+    "n_features": 16,
+    "artifact": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\models\\forecasting\\pems_bay_linear\\20260930-031242_pems_bay_live"
+  },
+  {
+    "name": "pems_bay_random_forest",
+    "type": "random_forest",
+    "family": "tree",
+    "framework": "sklearn",
+    "params": {
+      "target_transform": "delta",
+      "n_estimators": 200,
+      "max_depth": 24,
+      "min_samples_leaf": 2,
+      "max_features": 0.5,
+      "max_samples": 0.3,
+      "n_jobs": -1,
+      "random_state": 0
+    },
+    "version": "20260930-031242_pems_bay_live",
+    "fit_s": 347.4,
+    "predict_ms_per_sample": 0.0091,
+    "n_train": 3974576,
+    "n_features": 16,
+    "artifact": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\models\\forecasting\\pems_bay_random_forest\\20260930-031242_pems_bay_live"
+  },
+  {
+    "name": "pems_bay_xgboost_d8",
+    "type": "xgboost",
+    "family": "tree",
+    "framework": "xgboost",
+    "params": {
+      "target_transform": "delta",
+      "n_estimators": 1500,
+      "learning_rate": 0.05,
+      "max_depth": 8,
+      "subsample": 0.8,
+      "colsample_bytree": 0.8,
+      "min_child_weight": 5.0,
+      "early_stopping_rounds": 50,
+      "device": "auto",
+      "random_state": 0
+    },
+    "version": "20260930-031242_pems_bay_live",
+    "fit_s": 85.53,
+    "predict_ms_per_sample": 0.0096,
+    "n_train": 3974576,
+    "n_features": 16,
+    "artifact": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\models\\forecasting\\pems_bay_xgboost_d8\\20260930-031242_pems_bay_live"
+  }
+]

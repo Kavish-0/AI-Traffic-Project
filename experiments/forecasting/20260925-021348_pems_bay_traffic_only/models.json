@@ -1,0 +1,717 @@
+[
+  {
+    "name": "persistence",
+    "type": "persistence",
+    "family": "baseline",
+    "framework": "numpy",
+    "params": {},
+    "version": "20260925-021348_pems_bay_traffic_only",
+    "fit_s": 0.0,
+    "predict_ms_per_sample": 0.0001,
+    "trained": false,
+    "artifact": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\models\\forecasting\\persistence\\20260925-021348_pems_bay_traffic_only"
+  },
+  {
+    "name": "seasonal_naive",
+    "type": "seasonal_naive",
+    "family": "baseline",
+    "framework": "numpy",
+    "params": {},
+    "version": "20260925-021348_pems_bay_traffic_only",
+    "fit_s": 0.0,
+    "predict_ms_per_sample": 0.0002,
+    "trained": false,
+    "season_steps": 288,
+    "artifact": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\models\\forecasting\\seasonal_naive\\20260925-021348_pems_bay_traffic_only"
+  },
+  {
+    "name": "linear",
+    "type": "linear",
+    "family": "linear",
+    "framework": "sklearn",
+    "params": {
+      "target_transform": "delta",
+      "alpha": 0.0
+    },
+    "version": "20260925-021348_pems_bay_traffic_only",
+    "fit_s": 1.71,
+    "predict_ms_per_sample": 0.0009,
+    "n_train": 401104,
+    "n_features": 9,
+    "artifact": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\models\\forecasting\\linear\\20260925-021348_pems_bay_traffic_only"
+  },
+  {
+    "name": "random_forest",
+    "type": "random_forest",
+    "family": "tree",
+    "framework": "sklearn",
+    "params": {
+      "target_transform": "delta",
+      "n_estimators": 200,
+      "max_depth": 16,
+      "min_samples_leaf": 5,
+      "max_features": 0.5,
+      "max_samples": 0.3,
+      "n_jobs": -1,
+      "random_state": 0
+    },
+    "version": "20260925-021348_pems_bay_traffic_only",
+    "fit_s": 9.63,
+    "predict_ms_per_sample": 0.0027,
+    "n_train": 401104,
+    "n_features": 9,
+    "artifact": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\models\\forecasting\\random_forest\\20260925-021348_pems_bay_traffic_only"
+  },
+  {
+    "name": "xgboost",
+    "type": "xgboost",
+    "family": "tree",
+    "framework": "xgboost",
+    "params": {
+      "target_transform": "delta",
+      "n_estimators": 1500,
+      "learning_rate": 0.05,
+      "max_depth": 6,
+      "subsample": 0.8,
+      "colsample_bytree": 0.8,
+      "min_child_weight": 5.0,
+      "early_stopping_rounds": 50,
+      "device": "auto",
+      "random_state": 0
+    },
+    "version": "20260925-021348_pems_bay_traffic_only",
+    "fit_s": 6.64,
+    "predict_ms_per_sample": 0.0015,
+    "n_train": 401104,
+    "n_features": 9,
+    "artifact": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\models\\forecasting\\xgboost\\20260925-021348_pems_bay_traffic_only"
+  },
+  {
+    "name": "lstm",
+    "type": "lstm",
+    "family": "deep",
+    "framework": "torch",
+    "params": {
+      "target_transform": "delta",
+      "lookback_steps": 12,
+      "batch_size": 512,
+      "max_epochs": 40,
+      "lr": 0.001,
+      "weight_decay": 1e-05,
+      "patience": 5,
+      "grad_clip": 1.0,
+      "device": "auto",
+      "seed": 0,
+      "hidden": 64,
+      "layers": 2,
+      "dropout": 0.1
+    },
+    "version": "20260925-021348_pems_bay_traffic_only",
+    "fit_s": 207.59,
+    "predict_ms_per_sample": 0.0026,
+    "epochs": 33,
+    "best_val_mse": 0.12572,
+    "device": "cuda",
+    "n_parameters": 50755,
+    "n_train": 401104,
+    "selected_seed": 0,
+    "seeds": [
+      0,
+      1
+    ],
+    "history": [
+      {
+        "epoch": 1,
+        "train_mse": 0.12572,
+        "val_mse": 0.14428
+      },
+      {
+        "epoch": 2,
+        "train_mse": 0.11867,
+        "val_mse": 0.1354
+      },
+      {
+        "epoch": 3,
+        "train_mse": 0.11524,
+        "val_mse": 0.13453
+      },
+      {
+        "epoch": 4,
+        "train_mse": 0.11367,
+        "val_mse": 0.132
+      },
+      {
+        "epoch": 5,
+        "train_mse": 0.113,
+        "val_mse": 0.13164
+      },
+      {
+        "epoch": 6,
+        "train_mse": 0.11225,
+        "val_mse": 0.13027
+      },
+      {
+        "epoch": 7,
+        "train_mse": 0.11171,
+        "val_mse": 0.13091
+      },
+      {
+        "epoch": 8,
+        "train_mse": 0.1115,
+        "val_mse": 0.13041
+      },
+      {
+        "epoch": 9,
+        "train_mse": 0.11098,
+        "val_mse": 0.12911
+      },
+      {
+        "epoch": 10,
+        "train_mse": 0.11065,
+        "val_mse": 0.12984
+      },
+      {
+        "epoch": 11,
+        "train_mse": 0.1103,
+        "val_mse": 0.1322
+      },
+      {
+        "epoch": 12,
+        "train_mse": 0.10989,
+        "val_mse": 0.12852
+      },
+      {
+        "epoch": 13,
+        "train_mse": 0.10944,
+        "val_mse": 0.12889
+      },
+      {
+        "epoch": 14,
+        "train_mse": 0.10926,
+        "val_mse": 0.12904
+      },
+      {
+        "epoch": 15,
+        "train_mse": 0.10886,
+        "val_mse": 0.12749
+      },
+      {
+        "epoch": 16,
+        "train_mse": 0.10858,
+        "val_mse": 0.12868
+      },
+      {
+        "epoch": 17,
+        "train_mse": 0.1082,
+        "val_mse": 0.1282
+      },
+      {
+        "epoch": 18,
+        "train_mse": 0.10792,
+        "val_mse": 0.1276
+      },
+      {
+        "epoch": 19,
+        "train_mse": 0.10692,
+        "val_mse": 0.12689
+      },
+      {
+        "epoch": 20,
+        "train_mse": 0.10665,
+        "val_mse": 0.12693
+      },
+      {
+        "epoch": 21,
+        "train_mse": 0.10646,
+        "val_mse": 0.12681
+      },
+      {
+        "epoch": 22,
+        "train_mse": 0.10624,
+        "val_mse": 0.12659
+      },
+      {
+        "epoch": 23,
+        "train_mse": 0.10607,
+        "val_mse": 0.12607
+      },
+      {
+        "epoch": 24,
+        "train_mse": 0.10581,
+        "val_mse": 0.1266
+      },
+      {
+        "epoch": 25,
+        "train_mse": 0.10574,
+        "val_mse": 0.12636
+      },
+      {
+        "epoch": 26,
+        "train_mse": 0.10548,
+        "val_mse": 0.12643
+      },
+      {
+        "epoch": 27,
+        "train_mse": 0.10486,
+        "val_mse": 0.1264
+      },
+      {
+        "epoch": 28,
+        "train_mse": 0.10463,
+        "val_mse": 0.12572
+      },
+      {
+        "epoch": 29,
+        "train_mse": 0.10445,
+        "val_mse": 0.12662
+      },
+      {
+        "epoch": 30,
+        "train_mse": 0.10432,
+        "val_mse": 0.12605
+      },
+      {
+        "epoch": 31,
+        "train_mse": 0.10434,
+        "val_mse": 0.12629
+      },
+      {
+        "epoch": 32,
+        "train_mse": 0.10391,
+        "val_mse": 0.12616
+      },
+      {
+        "epoch": 33,
+        "train_mse": 0.10381,
+        "val_mse": 0.12587
+      }
+    ],
+    "artifact": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\models\\forecasting\\lstm\\20260925-021348_pems_bay_traffic_only"
+  },
+  {
+    "name": "gru",
+    "type": "gru",
+    "family": "deep",
+    "framework": "torch",
+    "params": {
+      "target_transform": "delta",
+      "lookback_steps": 12,
+      "batch_size": 512,
+      "max_epochs": 40,
+      "lr": 0.001,
+      "weight_decay": 1e-05,
+      "patience": 5,
+      "grad_clip": 1.0,
+      "device": "auto",
+      "seed": 1,
+      "hidden": 64,
+      "layers": 2,
+      "dropout": 0.1
+    },
+    "version": "20260925-021348_pems_bay_traffic_only",
+    "fit_s": 132.5,
+    "predict_ms_per_sample": 0.0015,
+    "epochs": 28,
+    "best_val_mse": 0.12493,
+    "device": "cuda",
+    "n_parameters": 38147,
+    "n_train": 401104,
+    "selected_seed": 1,
+    "seeds": [
+      0,
+      1
+    ],
+    "history": [
+      {
+        "epoch": 1,
+        "train_mse": 0.1257,
+        "val_mse": 0.14492
+      },
+      {
+        "epoch": 2,
+        "train_mse": 0.12019,
+        "val_mse": 0.13569
+      },
+      {
+        "epoch": 3,
+        "train_mse": 0.11564,
+        "val_mse": 0.13304
+      },
+      {
+        "epoch": 4,
+        "train_mse": 0.11371,
+        "val_mse": 0.13205
+      },
+      {
+        "epoch": 5,
+        "train_mse": 0.11262,
+        "val_mse": 0.1315
+      },
+      {
+        "epoch": 6,
+        "train_mse": 0.11156,
+        "val_mse": 0.13039
+      },
+      {
+        "epoch": 7,
+        "train_mse": 0.111,
+        "val_mse": 0.12997
+      },
+      {
+        "epoch": 8,
+        "train_mse": 0.11023,
+        "val_mse": 0.12945
+      },
+      {
+        "epoch": 9,
+        "train_mse": 0.10973,
+        "val_mse": 0.12864
+      },
+      {
+        "epoch": 10,
+        "train_mse": 0.10916,
+        "val_mse": 0.12838
+      },
+      {
+        "epoch": 11,
+        "train_mse": 0.10884,
+        "val_mse": 0.12788
+      },
+      {
+        "epoch": 12,
+        "train_mse": 0.10833,
+        "val_mse": 0.12714
+      },
+      {
+        "epoch": 13,
+        "train_mse": 0.10802,
+        "val_mse": 0.1273
+      },
+      {
+        "epoch": 14,
+        "train_mse": 0.1076,
+        "val_mse": 0.12777
+      },
+      {
+        "epoch": 15,
+        "train_mse": 0.10727,
+        "val_mse": 0.12598
+      },
+      {
+        "epoch": 16,
+        "train_mse": 0.10701,
+        "val_mse": 0.12569
+      },
+      {
+        "epoch": 17,
+        "train_mse": 0.10668,
+        "val_mse": 0.12615
+      },
+      {
+        "epoch": 18,
+        "train_mse": 0.1063,
+        "val_mse": 0.12697
+      },
+      {
+        "epoch": 19,
+        "train_mse": 0.10594,
+        "val_mse": 0.12557
+      },
+      {
+        "epoch": 20,
+        "train_mse": 0.10577,
+        "val_mse": 0.12583
+      },
+      {
+        "epoch": 21,
+        "train_mse": 0.10523,
+        "val_mse": 0.12611
+      },
+      {
+        "epoch": 22,
+        "train_mse": 0.10488,
+        "val_mse": 0.12722
+      },
+      {
+        "epoch": 23,
+        "train_mse": 0.10349,
+        "val_mse": 0.12493
+      },
+      {
+        "epoch": 24,
+        "train_mse": 0.10331,
+        "val_mse": 0.12601
+      },
+      {
+        "epoch": 25,
+        "train_mse": 0.10293,
+        "val_mse": 0.12651
+      },
+      {
+        "epoch": 26,
+        "train_mse": 0.10262,
+        "val_mse": 0.12649
+      },
+      {
+        "epoch": 27,
+        "train_mse": 0.10183,
+        "val_mse": 0.12608
+      },
+      {
+        "epoch": 28,
+        "train_mse": 0.1016,
+        "val_mse": 0.12634
+      }
+    ],
+    "artifact": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\models\\forecasting\\gru\\20260925-021348_pems_bay_traffic_only"
+  },
+  {
+    "name": "transformer",
+    "type": "transformer",
+    "family": "deep",
+    "framework": "torch",
+    "params": {
+      "target_transform": "delta",
+      "lookback_steps": 12,
+      "batch_size": 512,
+      "max_epochs": 40,
+      "lr": 0.0005,
+      "weight_decay": 1e-05,
+      "patience": 5,
+      "grad_clip": 1.0,
+      "device": "auto",
+      "seed": 0,
+      "d_model": 64,
+      "heads": 4,
+      "layers": 2,
+      "ff": 128,
+      "dropout": 0.1
+    },
+    "version": "20260925-021348_pems_bay_traffic_only",
+    "fit_s": 230.02,
+    "predict_ms_per_sample": 0.0027,
+    "epochs": 28,
+    "best_val_mse": 0.1261,
+    "device": "cuda",
+    "n_parameters": 67715,
+    "n_train": 401104,
+    "selected_seed": 0,
+    "seeds": [
+      0,
+      1
+    ],
+    "history": [
+      {
+        "epoch": 1,
+        "train_mse": 0.12261,
+        "val_mse": 0.13587
+      },
+      {
+        "epoch": 2,
+        "train_mse": 0.11624,
+        "val_mse": 0.13406
+      },
+      {
+        "epoch": 3,
+        "train_mse": 0.11476,
+        "val_mse": 0.13367
+      },
+      {
+        "epoch": 4,
+        "train_mse": 0.11376,
+        "val_mse": 0.13026
+      },
+      {
+        "epoch": 5,
+        "train_mse": 0.1131,
+        "val_mse": 0.13029
+      },
+      {
+        "epoch": 6,
+        "train_mse": 0.11249,
+        "val_mse": 0.12934
+      },
+      {
+        "epoch": 7,
+        "train_mse": 0.11204,
+        "val_mse": 0.12938
+      },
+      {
+        "epoch": 8,
+        "train_mse": 0.11177,
+        "val_mse": 0.12895
+      },
+      {
+        "epoch": 9,
+        "train_mse": 0.11153,
+        "val_mse": 0.12806
+      },
+      {
+        "epoch": 10,
+        "train_mse": 0.11139,
+        "val_mse": 0.1299
+      },
+      {
+        "epoch": 11,
+        "train_mse": 0.11109,
+        "val_mse": 0.12867
+      },
+      {
+        "epoch": 12,
+        "train_mse": 0.11093,
+        "val_mse": 0.12799
+      },
+      {
+        "epoch": 13,
+        "train_mse": 0.11069,
+        "val_mse": 0.128
+      },
+      {
+        "epoch": 14,
+        "train_mse": 0.11069,
+        "val_mse": 0.12801
+      },
+      {
+        "epoch": 15,
+        "train_mse": 0.11031,
+        "val_mse": 0.12782
+      },
+      {
+        "epoch": 16,
+        "train_mse": 0.11015,
+        "val_mse": 0.12861
+      },
+      {
+        "epoch": 17,
+        "train_mse": 0.11021,
+        "val_mse": 0.12888
+      },
+      {
+        "epoch": 18,
+        "train_mse": 0.10995,
+        "val_mse": 0.12803
+      },
+      {
+        "epoch": 19,
+        "train_mse": 0.10929,
+        "val_mse": 0.1274
+      },
+      {
+        "epoch": 20,
+        "train_mse": 0.10908,
+        "val_mse": 0.12643
+      },
+      {
+        "epoch": 21,
+        "train_mse": 0.10902,
+        "val_mse": 0.12679
+      },
+      {
+        "epoch": 22,
+        "train_mse": 0.10901,
+        "val_mse": 0.12677
+      },
+      {
+        "epoch": 23,
+        "train_mse": 0.10898,
+        "val_mse": 0.1261
+      },
+      {
+        "epoch": 24,
+        "train_mse": 0.10868,
+        "val_mse": 0.12645
+      },
+      {
+        "epoch": 25,
+        "train_mse": 0.10865,
+        "val_mse": 0.12676
+      },
+      {
+        "epoch": 26,
+        "train_mse": 0.10859,
+        "val_mse": 0.12609
+      },
+      {
+        "epoch": 27,
+        "train_mse": 0.10824,
+        "val_mse": 0.12636
+      },
+      {
+        "epoch": 28,
+        "train_mse": 0.108,
+        "val_mse": 0.12645
+      }
+    ],
+    "artifact": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\models\\forecasting\\transformer\\20260925-021348_pems_bay_traffic_only"
+  },
+  {
+    "name": "random_forest_deep",
+    "type": "random_forest",
+    "family": "tree",
+    "framework": "sklearn",
+    "params": {
+      "target_transform": "delta",
+      "n_estimators": 200,
+      "max_depth": 24,
+      "min_samples_leaf": 2,
+      "max_features": 0.5,
+      "max_samples": 0.3,
+      "n_jobs": -1,
+      "random_state": 0
+    },
+    "version": "20260925-021348_pems_bay_traffic_only",
+    "fit_s": 9.57,
+    "predict_ms_per_sample": 0.0036,
+    "n_train": 401104,
+    "n_features": 9,
+    "artifact": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\models\\forecasting\\random_forest_deep\\20260925-021348_pems_bay_traffic_only"
+  },
+  {
+    "name": "xgboost_d4",
+    "type": "xgboost",
+    "family": "tree",
+    "framework": "xgboost",
+    "params": {
+      "target_transform": "delta",
+      "n_estimators": 1500,
+      "learning_rate": 0.05,
+      "max_depth": 4,
+      "subsample": 0.8,
+      "colsample_bytree": 0.8,
+      "min_child_weight": 5.0,
+      "early_stopping_rounds": 50,
+      "device": "auto",
+      "random_state": 0
+    },
+    "version": "20260925-021348_pems_bay_traffic_only",
+    "fit_s": 9.77,
+    "predict_ms_per_sample": 0.0015,
+    "n_train": 401104,
+    "n_features": 9,
+    "artifact": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\models\\forecasting\\xgboost_d4\\20260925-021348_pems_bay_traffic_only"
+  },
+  {
+    "name": "xgboost_d8",
+    "type": "xgboost",
+    "family": "tree",
+    "framework": "xgboost",
+    "params": {
+      "target_transform": "delta",
+      "n_estimators": 1500,
+      "learning_rate": 0.05,
+      "max_depth": 8,
+      "subsample": 0.8,
+      "colsample_bytree": 0.8,
+      "min_child_weight": 5.0,
+      "early_stopping_rounds": 50,
+      "device": "auto",
+      "random_state": 0
+    },
+    "version": "20260925-021348_pems_bay_traffic_only",
+    "fit_s": 3.44,
+    "predict_ms_per_sample": 0.0009,
+    "n_train": 401104,
+    "n_features": 9,
+    "artifact": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\models\\forecasting\\xgboost_d8\\20260925-021348_pems_bay_traffic_only"
+  }
+]

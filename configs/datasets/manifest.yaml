@@ -1,0 +1,472 @@
+# Dataset manifest - one entry per dataset the project uses, and for which experiment.
+#
+#   python -m traffic_intel.datasets status            # which datasets are present / missing, and why
+#   python -m traffic_intel.datasets info metr_la      # source, licence, layout, download instructions
+#   python -m traffic_intel.datasets prepare metr_la   # raw -> canonical representation (data/processed, data/annotations)
+#
+# Rules
+# - NOTHING here is downloaded automatically. Large / licence-restricted datasets are placed by hand
+#   under data/raw/<dataset>/ (or wherever configs/datasets/local.yaml points - that file is git-ignored).
+# - local_path is RELATIVE to the data directory (TI_DATA_DIR, default <project>/data). No absolute paths.
+# - Every dataset is converted by its adapter (backend/traffic_intel/datasets/adapters/) into the project's
+#   canonical representation; model code never reads raw dataset formats.
+# - Datasets are task-specific and are NOT mixed: see `experiments:` at the end.
+# - Licence notes summarise what the providers state; the provider's own terms always prevail - read them
+#   before downloading. Items marked "verify" could not be confirmed from the provider at the time of writing.
+
+datasets:
+
+  # ------------------------------------------------------------------ perception / tracking
+  ua_detrac:
+    name: UA-DETRAC
+    tasks: [detection, classification, tracking]
+    source: "https://detrac-db.rit.albany.edu/ (original site; often offline - mirrors exist, check their terms)"
+    version: "DETRAC benchmark (train 60 sequences, test 40 sequences)"
+    license:
+      name: "Research use; reported as CC BY-NC-SA 3.0 on the original site (verify)"
+      access: registration              # open | registration | request
+      commercial_use: false
+      redistribution: false
+      notes: "Non-commercial research only. Do not commit or re-upload the images/annotations."
+    size: "~10 h of video, 100 sequences, 25 fps, 960x540; ~140k frames, ~1.21M boxes, ~8.25k vehicles"
+    expected_format: >-
+      Frames as JPEG per sequence (Insight-MVT_Annotation_Train/MVI_xxxxx/img00001.jpg) and one XML
+      annotation per sequence (DETRAC-Train-Annotations-XML/MVI_xxxxx.xml: <frame num><target id>
+      <box left top width height/><attribute vehicle_type=.../></target>, <ignored_region> boxes).
+    local_path: raw/uadetrac
+    required:
+      - {pattern: ["DETRAC-Train-Annotations-XML/*.xml", "DETRAC-Train-Annotations-XML-v3/*.xml", "*Annotations*/*.xml"],
+         min_count: 1, description: "per-sequence XML annotations"}
+      - {pattern: ["Insight-MVT_Annotation_Train/*/img*.jpg", "*/MVI_*/img*.jpg"], min_count: 1,
+         description: "sequence frames (JPEG)"}
+    classes:
+      source: [car, van, bus, others]
+      # source class -> project ObjectClass (core/enums.py). Not YOLO/COCO names. 'others' covers trucks
+      # and other large vehicles in DETRAC -> mapped to truck (documented approximation).
+      class_map: {car: car, van: car, bus: bus, others: truck}
+      unavailable: [motorcycle, bicycle, pedestrian]     # not annotated in UA-DETRAC
+    fps: 25
+    frame_size: [960, 540]
+    download: |
+      1. Open the UA-DETRAC page (or a mirror whose terms you accept) and download
+         DETRAC-train-data (Insight-MVT_Annotation_Train) and DETRAC-Train-Annotations-XML.
+      2. Extract to data/raw/uadetrac/ so that data/raw/uadetrac/DETRAC-Train-Annotations-XML/MVI_20011.xml
+         and data/raw/uadetrac/Insight-MVT_Annotation_Train/MVI_20011/img00001.jpg exist.
+      3. python -m traffic_intel.datasets status ua_detrac
+    preprocessing: >-
+      XML -> canonical per-frame ground-truth tracks (project ObjectClass, xyxy pixels, track id), ignored
+      regions kept separately; export to data/annotations/ua_detrac/<sequence>.csv and a precomputed-detector
+      table (for running tracking/features on ground-truth boxes).
+    splits: "official train/test sequences; validation = held-out TRAIN sequences (by sequence, never by frame)"
+    citation: >-
+      L. Wen, D. Du, Z. Cai, Z. Lei, M.-C. Chang, H. Qi, J. Lim, M.-H. Yang, S. Lyu. UA-DETRAC: A new
+      benchmark and protocol for multi-object detection and tracking. Computer Vision and Image
+      Understanding 193 (2020) 102907. arXiv:1511.04136.
+    adapter: {type: ua_detrac}
+
+  aicity_mtmc:
+    name: AI City Challenge - CityFlowV2 (city-scale multi-camera vehicle tracking, Track 1 2021/2022)
+    tasks: [tracking, multi_camera, calibration]
+    source: "https://www.aicitychallenge.org/ (data access request form + data licence agreement)"
+    version: "CityFlowV2 (AIC21/AIC22 Track 1): scenarios S01-S06, 46 cameras, intersections and road segments"
+    license:
+      name: "AI City Challenge data licence agreement (verify current terms on request)"
+      access: request
+      commercial_use: false
+      redistribution: false
+      notes: "Obtained by request for research; no redistribution. Keep under data/raw/aicity/ only."
+    size: "~3.6 h of synchronised video from 46 cameras (10 fps, up to 1920x1080)"
+    expected_format: >-
+      <split>/<scenario>/<camera>/vdo.avi, gt/gt.txt (MOTChallenge: frame,id,left,top,width,height,1,-1,-1,-1),
+      calibration.txt (homography between image and GPS; some cameras also intrinsics/distortion), roi.jpg;
+      cam_timestamp/<scenario>.txt (per-camera time offsets).
+    local_path: raw/aicity
+    required:
+      - {pattern: ["*/S*/c*/gt/gt.txt"], min_count: 1, description: "ground-truth tracks per camera"}
+      - {pattern: ["*/S*/c*/calibration.txt"], min_count: 1, description: "camera calibration (homography)"}
+      - {pattern: ["*/S*/c*/vdo.*"], min_count: 1, description: "camera videos"}
+    classes:
+      source: [vehicle]                   # Track 1 ground truth has vehicle identities, no class labels
+      class_map: {vehicle: car}           # canonical placeholder class; configurable
+      unavailable: [bus, truck, motorcycle, bicycle, pedestrian]
+    fps: 10
+    params:
+      homography_direction: gps_to_image  # direction of the matrix in calibration.txt (verify per release)
+    download: |
+      1. Request access at https://www.aicitychallenge.org/ (Data -> access form), accept the licence.
+      2. Extract the Track 1 package so that data/raw/aicity/train/S01/c001/gt/gt.txt,
+         .../calibration.txt and .../vdo.avi exist (validation/ and cam_timestamp/ alongside).
+      3. python -m traffic_intel.datasets status aicity_mtmc
+    preprocessing: >-
+      gt.txt -> canonical per-frame ground-truth tracks; calibration.txt -> project CalibrationConfig
+      (pixel <-> local metres around a GPS origin) so the homography projector, speeds and the map use it;
+      camera metadata (scenario, time offset, fps) kept per sequence.
+    splits: "official train / validation scenarios; never split one camera's frames across train and test"
+    citation: >-
+      Z. Tang et al. CityFlow: A City-Scale Benchmark for Multi-Target Multi-Camera Vehicle Tracking and
+      Re-Identification. CVPR 2019. M. Naphade et al. The 5th AI City Challenge. CVPR Workshops 2021.
+    adapter: {type: aicity_mtmc}
+
+  # ------------------------------------------------------------------ incidents / anomalies
+  aicity21_anomaly:
+    name: AI City Challenge 2021 Track 4 - Traffic Anomaly Detection
+    tasks: [anomaly, incident_evaluation]
+    source: "https://www.aicitychallenge.org/ (data access request form + data licence agreement)"
+    version: "AIC21 Track 4: 100 training videos (labelled), 150 test videos (labels not public)"
+    license:
+      name: "AI City Challenge 2021 data licence agreement; the release's license.txt states CC BY 4.0"
+      access: request
+      commercial_use: false
+      redistribution: false
+      notes: >-
+        Research use; no redistribution. The downloaded release contains license.txt (CC BY 4.0) and
+        DataLicenseAgreement_AICityChallenge_2021.pdf - the signed agreement prevails. Kept out of Git.
+    size: "~250 freeway videos of ~15 min each (800x410, 30 fps), Iowa DOT cameras"
+    expected_format: >-
+      <video_id>.mp4 in the training folder and a label file with one anomaly per line:
+      video_id start_time_s end_time_s (whitespace separated; file name and exact columns: verify in the
+      release - the adapter accepts whitespace/CSV, optional header, optional 4th label column).
+    local_path: raw/anomaly/aic21_track4
+    required:
+      - {pattern: ["train-anomaly-results.txt", "*anomaly*.txt", "*anomaly*.csv", "*/*anomaly*.txt"],
+         min_count: 1, description: "training anomaly labels (video_id start end)"}
+      - {pattern: ["*train*/*.mp4", "*.mp4"], min_count: 1, description: "training videos"}
+    labels:
+      source: [anomaly]                   # stalled vehicles AND crashes share one label in the ground truth
+      note: >-
+        A labelled anomaly is NOT an 'accident'. The canonical record keeps the source label verbatim; for
+        evaluation any non-normal system output (STOPPED_VEHICLE, POSSIBLE_INCIDENT, ABNORMAL_QUEUE,
+        SUDDEN_SLOWDOWN, WRONG_WAY) at or after the start counts as a detection.
+      positive_system_types: [stopped_vehicle, possible_incident, abnormal_queue, sudden_slowdown, wrong_way]
+    fps: 30
+    frame_size: [800, 410]
+    download: |
+      1. Request access at https://www.aicitychallenge.org/ and download the 2021 Track 4 training data.
+      2. Extract to data/raw/anomaly/aic21_track4/ so the videos (e.g. aic21-track4-train-data/1.mp4) and
+         the training label file (e.g. train-anomaly-results.txt) are inside it. aic21-track4-test-data/
+         (150 unlabelled videos, same file names 1..150) may sit alongside; it is never paired with labels.
+      3. python -m traffic_intel.datasets status aicity21_anomaly
+    preprocessing: >-
+      Label file -> canonical incident intervals (dataset, video_id, start_s, end_s, source label); kept at
+      video/interval level (NOT expanded to frames until an experiment needs it).
+    splits: "only the 100 training videos are labelled -> split BY VIDEO (e.g. 60/20/20), never by time within a video"
+    citation: >-
+      M. Naphade et al. The 5th AI City Challenge. CVPR Workshops 2021.
+    adapter:
+      type: aicity_anomaly
+      # labelled training videos only (the test folder reuses ids 1..150 without public labels)
+      params: {label_file: null, video_glob: ["*train*/**/*.mp4", "*.mp4"]}
+
+  # ------------------------------------------------------------------ forecasting
+  metr_la:
+    name: METR-LA
+    tasks: [forecasting]
+    source: "https://github.com/liyaguang/DCRNN (README links to the data files; manual download)"
+    version: "DCRNN release (metr-la.h5, graph_sensor_locations.csv, adj_mx.pkl)"
+    license:
+      name: "No explicit data licence (loop-detector data from LA County, released with DCRNN; DCRNN code is MIT)"
+      access: open
+      commercial_use: unknown
+      redistribution: false
+      notes: "Research use with citation; do not re-host the file."
+    size: "207 loop detectors, 2012-03-01 .. 2012-06-27, 5-min speed (mph), 34,272 steps"
+    expected_format: >-
+      metr-la.h5: pandas HDF5 table (key 'df'), DatetimeIndex (local time, 5-min), one column per sensor id,
+      values = speed in mph, 0 = missing. Optional graph_sensor_locations.csv (sensor_id, latitude, longitude).
+    local_path: raw/metr_la
+    required:
+      - {pattern: ["metr-la.h5", "METR-LA.h5", "*.h5"], min_count: 1, description: "speed matrix (HDF5)"}
+    features:
+      provides: [avg_speed_kmh]            # canonical columns after conversion (mph -> km/h)
+      not_available: [flow_veh_h, occupancy_pct, density_ratio, queue_length_m, vehicle_count]
+    resolution_s: 300
+    timezone: America/Los_Angeles
+    holiday_country: US
+    weather_point: {lat: 34.05, lon: -118.25}    # approximate network centre (Los Angeles) for optional weather
+    download: |
+      1. Follow the data links in https://github.com/liyaguang/DCRNN (README, "Data Preparation") and
+         download metr-la.h5 (and optionally data/sensor_graph/graph_sensor_locations.csv from the repo).
+      2. Place them at data/raw/metr_la/metr-la.h5 (and data/raw/metr_la/graph_sensor_locations.csv).
+      3. python -m traffic_intel.datasets status metr_la
+    preprocessing: >-
+      wide sensor matrix -> canonical long frame (series_id = metr_la_<sensor>, timestamp UTC,
+      avg_speed_kmh); zeros -> NaN (missing); local time -> UTC; optional sensor subset; then the
+      forecasting pipeline's preprocessor (gap handling, calendar/weather, train-only scaling,
+      chronological split, windows).
+    splits: "chronological 70/10/20 (the DCRNN convention) or as set in the training config; never shuffled"
+    citation: >-
+      Y. Li, R. Yu, C. Shahabi, Y. Liu. Diffusion Convolutional Recurrent Neural Network: Data-Driven
+      Traffic Forecasting. ICLR 2018. H. V. Jagadish et al. Big data and its technical challenges.
+      Commun. ACM 57(7), 2014.
+    adapter: {type: metr_la}
+
+  pems_bay:
+    name: PEMS-BAY
+    tasks: [forecasting]
+    source: "https://github.com/liyaguang/DCRNN (README links to the data files; manual download)"
+    version: "DCRNN release (pems-bay.h5, graph_sensor_locations_bay.csv, adj_mx_bay.pkl)"
+    license:
+      name: "Caltrans PeMS public data, pre-processed and released with DCRNN; no explicit data licence"
+      access: open
+      commercial_use: unknown
+      redistribution: false
+      notes: "Research use with citation; do not re-host the file."
+    size: "325 sensors (San Francisco Bay Area), 2017-01-01 .. 2017-06-30, 5-min speed (mph), 52,116 steps"
+    expected_format: >-
+      pems-bay.h5: pandas HDF5 table (key 'speed'), DatetimeIndex (local time, 5-min), one column per sensor
+      id, speed in mph. Optional graph_sensor_locations_bay.csv.
+    local_path: raw/pems_bay
+    required:
+      - {pattern: ["pems-bay.h5", "PEMS-BAY.h5", "*.h5"], min_count: 1, description: "speed matrix (HDF5)"}
+    features:
+      provides: [avg_speed_kmh]
+      not_available: [flow_veh_h, occupancy_pct, density_ratio, queue_length_m, vehicle_count]
+    resolution_s: 300
+    timezone: America/Los_Angeles
+    holiday_country: US
+    weather_point: {lat: 37.37, lon: -121.92}    # approximate network centre (San Jose / South Bay)
+    download: |
+      1. Follow the data links in https://github.com/liyaguang/DCRNN and download pems-bay.h5.
+      2. Place it at data/raw/pems_bay/pems-bay.h5.
+      3. python -m traffic_intel.datasets status pems_bay
+    preprocessing: "as METR-LA (series_id = pems_bay_<sensor>)"
+    splits: "chronological 70/10/20 or as set in the training config; never shuffled"
+    citation: >-
+      Y. Li, R. Yu, C. Shahabi, Y. Liu. Diffusion Convolutional Recurrent Neural Network: Data-Driven
+      Traffic Forecasting. ICLR 2018. C. Chen et al. Freeway performance measurement system: mining loop
+      detector data. Transportation Research Record 1748, 2001.
+    adapter: {type: pems_bay}
+
+  pems08:
+    name: PeMS District 8 (PEMS08, ASTGCN release)
+    tasks: [forecasting]
+    source: "https://github.com/wanhuaiyu/ASTGCN (configs/datasets/public_timeseries.yaml; small file, scripted download)"
+    version: "ASTGCN release, 2016-07-01 .. 2016-08-31"
+    license:
+      name: "Caltrans PeMS public data; mirror repository states no licence"
+      access: open
+      commercial_use: unknown
+      redistribution: false
+      notes: "Cite PeMS and ASTGCN."
+    size: "170 detector stations, 5-min flow/occupancy/speed, 17,856 steps (~22 MB)"
+    expected_format: "pems08.npz: key 'data' array (steps, sensors, [flow veh/5min, occupancy 0-1, speed mph])"
+    local_path: external/pems08
+    required:
+      - {pattern: ["pems08.npz"], min_count: 1, description: "PEMS08 array"}
+    features:
+      provides: [flow_veh_h, occupancy_pct, avg_speed_kmh]
+    resolution_s: 300
+    timezone: America/Los_Angeles
+    holiday_country: US
+    download: |
+      python -m traffic_intel.datasets --catalog timeseries download pems08    (sha256-verified)
+    preprocessing: "as METR-LA plus flow x12 (veh/5min -> veh/h), occupancy x100"
+    splits: "chronological 60/20/20 (configs/training/forecasting_pems08.yaml)"
+    citation: >-
+      S. Guo, Y. Lin, N. Feng, C. Song, H. Wan. Attention Based Spatial-Temporal Graph Convolutional
+      Networks for Traffic Flow Forecasting. AAAI 2019. C. Chen et al. TRR 1748, 2001.
+    adapter: {type: pems08}
+
+  # ------------------------------------------------------------------ context
+  open_meteo_weather:
+    name: Open-Meteo historical weather archive
+    tasks: [context]
+    source: "https://open-meteo.com/ (archive API, no key)"
+    version: "ERA5-based archive API"
+    license:
+      name: "CC BY 4.0 (Open-Meteo data; attribution required)"
+      access: open
+      commercial_use: true
+      redistribution: true
+      notes: "Fetched on demand for the dates/locations of an experiment and cached as Parquet."
+    size: "hourly; a few KB per location-month"
+    expected_format: "openmeteo_<lat>_<lon>_<start>_<end>.parquet (cache written by forecasting/data/context.py)"
+    local_path: raw/weather
+    required: []                          # fetched on demand; nothing to place by hand
+    features:
+      provides: [temperature_c, humidity_pct, rain_mm, visibility_km, weather_condition]
+      note: "visibility is not provided by the archive API (all-NaN, dropped at fit)"
+    download: "automatic, small, cached: only when a training config sets dataset.params.weather"
+    preprocessing: "hourly -> series grid (numeric interpolated, condition forward-filled); optional per experiment"
+    citation: "Zippenfenig, P. Open-Meteo.com Weather API. Zenodo, 2023. doi:10.5281/zenodo.7970649"
+    adapter: {type: none}
+
+  weather_history_szeged:
+    name: Weather history, Szeged (Hungary) 2006-2016 (Kaggle weatherHistory.csv)
+    tasks: [context]
+    source: "Kaggle dataset 'Weather in Szeged 2006-2016' (budincsevity/szeged-weather); originally Dark Sky API data"
+    version: "weatherHistory.csv (hourly)"
+    license:
+      name: "as stated on the Kaggle page (verify); underlying Dark Sky data terms"
+      access: registration
+      commercial_use: unknown
+      redistribution: false
+      notes: "Kept under data/raw only; not re-hosted."
+    size: "16 MB CSV, 96,453 hourly rows, 2006-01-01 .. 2016-12-31 (local time, +01/+02 offsets)"
+    expected_format: >-
+      weatherHistory.csv: Formatted Date (local time with +01/+02 offset), Summary, Precip Type,
+      Temperature (C), Apparent Temperature (C), Humidity (0-1), Wind Speed (km/h), Wind Bearing (degrees),
+      Visibility (km), Loud Cover, Pressure (millibars), Daily Summary.
+    local_path: raw/weather/kaggle_szeged
+    required:
+      - {pattern: ["weatherHistory.csv"], min_count: 1, description: "hourly weather CSV"}
+    features:
+      provides: [temperature_c, humidity_pct, visibility_km, weather_condition]
+      note: >-
+        NOT used by any experiment: Szeged (Hungary) 2006-2016 does not overlap METR-LA (Los Angeles, 2012)
+        or PEMS-BAY (Bay Area, 2017) in place or time, so joining it would attach the wrong weather to the
+        traffic. Context for the public forecasting datasets comes from Open-Meteo for the right location
+        and dates (open_meteo_weather).
+    download: |
+      Downloaded manually from Kaggle. Place at data/raw/weather/kaggle_szeged/weatherHistory.csv.
+    preprocessing: "none - reference only (see features.note)"
+    citation: "N. Budincsevity. Weather in Szeged 2006-2016. Kaggle."
+    adapter: {type: none}
+
+  # ------------------------------------------------------------------ available locally, not used by E1-E6
+  aicity21_reid:
+    name: AI City Challenge 2021 Track 2 - City-scale vehicle re-identification (CityFlowV2-ReID)
+    tasks: [reid]
+    source: "https://www.aicitychallenge.org/ (data access request form + data licence agreement)"
+    version: "AIC21 Track 2: image_train / image_query / image_test crops, train_label.xml, *_track.txt"
+    license:
+      name: "AI City Challenge 2021 data licence agreement (DataLicenseAgreement_AICityChallenge_2021.pdf)"
+      access: request
+      commercial_use: false
+      redistribution: false
+      notes: "Research use only; no redistribution. Kept out of Git."
+    size: "~85k vehicle crops (JPEG), ~2 GB"
+    expected_format: >-
+      image_train/*.jpg, image_query/*.jpg, image_test/*.jpg; train_label.xml (imageName, vehicleID,
+      cameraID); name_*.txt; train_track.txt / test_track.txt (crops grouped into tracks); tools/ (eval).
+    local_path: raw/aicity_reid/aic21_track2
+    required:
+      - {pattern: ["image_train/*.jpg"], min_count: 1, description: "training vehicle crops"}
+      - {pattern: ["train_label.xml"], min_count: 1, description: "training identities"}
+    download: |
+      1. Request access at https://www.aicitychallenge.org/ and download the 2021 Track 2 data.
+      2. Extract so that data/raw/aicity_reid/aic21_track2/image_train/ and train_label.xml exist.
+    preprocessing: "none yet - the project's trackers are single-camera; no ReID model is trained or used"
+    splits: "official train / query / test"
+    citation: >-
+      Z. Tang et al. CityFlow: A City-Scale Benchmark for Multi-Target Multi-Camera Vehicle Tracking and
+      Re-Identification. CVPR 2019. M. Naphade et al. The 5th AI City Challenge. CVPR Workshops 2021.
+    adapter: {type: none}
+    note: >-
+      Stored for future multi-camera work (appearance features for BoT-SORT / cross-camera matching).
+      It is NOT the CityFlowV2 Track 1 MTMC data that aicity_mtmc (E2/E3) needs - that one is still missing.
+
+  lisa_traffic_lights:
+    name: LISA Traffic Light Dataset
+    tasks: [traffic_light]
+    source: "LISA Lab, UC San Diego; Kaggle mirror 'LISA Traffic Light Dataset' (mbornoe/lisa-traffic-light-dataset)"
+    version: "day/night train clips + test sequences, box annotations as CSV"
+    license:
+      name: "CC BY-NC-SA 4.0 as stated on the Kaggle mirror (verify)"
+      access: registration
+      commercial_use: false
+      redistribution: false
+      notes: "Non-commercial research only. Kept out of Git."
+    size: "~44k frames (1280x960 JPEG), ~4.8 GB"
+    expected_format: >-
+      dayTrain/dayClipN/frames/*.jpg, nightTrain/nightClipN/frames/*.jpg, daySequence1|2, nightSequence1|2,
+      sample-*; Annotations/.../frameAnnotationsBOX.csv and frameAnnotationsBULB.csv
+      (Filename;Annotation tag;Upper left corner X;...; tags go, goLeft, warning, warningLeft, stop, stopLeft).
+    local_path: raw/traffic_lights/lisa
+    required:
+      - {pattern: ["Annotations/**/frameAnnotationsBOX.csv"], min_count: 1, description: "box annotations (CSV)"}
+      - {pattern: ["dayTrain/**/*.jpg"], min_count: 1, description: "training frames"}
+    download: |
+      Downloaded manually (Kaggle mirror). Place so that data/raw/traffic_lights/lisa/Annotations/ and
+      dayTrain/ exist.
+    preprocessing: "none yet - signal phase is not detected by the current pipeline"
+    splits: "dayTrain/nightTrain for training, day/nightSequence1-2 for test (by clip, never by frame)"
+    citation: >-
+      M. B. Jensen, M. P. Philipsen, A. Mogelmose, T. B. Moeslund, M. M. Trivedi. Vision for Looking at
+      Traffic Lights: Issues, Survey, and Perspectives. IEEE T-ITS 17(7), 2016.
+    adapter: {type: none}
+    note: >-
+      Stored for a possible signal-state module (red/green phase as junction context).
+      Not part of E1-E6; no detector class for traffic lights is mapped today.
+
+  # ------------------------------------------------------------------ own data
+  synthetic_junction:
+    name: Synthetic junction series (project-generated)
+    tasks: [forecasting, anomaly]
+    source: "generated by backend/traffic_intel/forecasting/data/synthetic_series.py (seeded)"
+    version: "generator v1"
+    license: {name: "project-generated", access: open, commercial_use: true, redistribution: true, notes: ""}
+    size: "configurable (default 42 days x 4 approaches, 1-min)"
+    expected_format: "generated in memory; nothing on disk"
+    local_path: synthetic
+    required: []
+    features:
+      provides: [vehicle_count, avg_speed_kmh, density_veh_km, density_ratio, occupancy_pct, flow_veh_h,
+                 inflow, outflow, queue_length_m, stopped_vehicles, quality]
+    download: "none"
+    preprocessing: "none (already canonical); injected incidents available as gt_incident labels"
+    citation: "this project"
+    adapter: {type: synthetic}
+
+  own_recordings:
+    name: Own traffic-camera recordings (future)
+    tasks: [perception, forecasting, anomaly, integrated_demo]
+    source: "cameras of this project (to be recorded)"
+    version: "n/a"
+    license:
+      name: "project-owned; personal data (faces, plates) - keep private, aggregate only"
+      access: private
+      commercial_use: false
+      redistribution: false
+      notes: "No raw video leaves the project; only aggregated 1-min windows are shared/published."
+    size: "grows with recording"
+    expected_format: >-
+      videos in data/recordings/<camera>/ ; pipeline outputs: runs/<camera>/<run>/traffic_states.jsonl
+      (1-min TrafficState windows), anomalies.jsonl, Parquet detections/tracks in data/interim/.
+    local_path: recordings
+    required: []                          # optional: public-data experiments never need it
+    params:
+      states_glob: "runs/*/*/traffic_states.jsonl"
+    features:
+      provides: [vehicle_count, avg_speed_kmh, median_speed_kmh, density_veh_km, density_ratio, occupancy_pct,
+                 flow_veh_h, inflow, outflow, queue_length_m, stopped_vehicles, quality]
+    download: |
+      Record video, calibrate the camera (configs/cameras/<cam>.yaml), then
+      python -m traffic_intel.pipeline replay <cam>   -> runs/<cam>/<run>/traffic_states.jsonl
+    preprocessing: "video -> OpenCV -> YOLO -> ByteTrack -> traffic features -> 1-min windows -> this dataset"
+    citation: "this project"
+    adapter: {type: own_recordings}
+
+# ---------------------------------------------------------------------------------------------------------
+# Which dataset is used for which experiment. Components are evaluated on THEIR dataset only; the
+# integrated demonstration combines component OUTPUTS, never pretending they came from one dataset.
+experiments:
+  E1_perception_detection:
+    purpose: "vehicle detection + class mapping quality of the detector (YOLO11 COCO-pretrained, later fine-tuned)"
+    datasets: [ua_detrac]
+    metrics: [AP50 per canonical class, precision, recall]
+    split: "official train/test sequences; tuning only on train sequences"
+  E2_tracking:
+    purpose: "single-camera multi-object tracking (ByteTrack / BoT-SORT) on ground-truth or detector boxes"
+    datasets: [ua_detrac, aicity_mtmc]
+    metrics: [MOTA, MOTP, ID switches, precision, recall]
+    split: "by sequence / camera"
+  E3_calibration_geo:
+    purpose: "homography-based metric projection and geo-referencing from real camera calibrations"
+    datasets: [aicity_mtmc]
+    metrics: [reprojection consistency, projected speed plausibility]
+  E4_incident_anomaly:
+    purpose: "stopped-vehicle / possible-incident detection timing vs labelled anomaly intervals"
+    datasets: [aicity21_anomaly, synthetic_junction]
+    metrics: [F1 (detection within 10 s of start), detection-time RMSE, S4 = F1 x (1 - NRMSE), false alarms]
+    split: "by video"
+  E5_forecasting:
+    purpose: "+5/+15/+30 min forecasting: Linear, RF, XGBoost, LSTM, GRU, Transformer vs baselines"
+    datasets: [metr_la, pems_bay, pems08, synthetic_junction]
+    variants: [traffic_only, traffic_plus_context]
+    metrics: [MAE, RMSE, R2]
+    split: "chronological train/validation/test, fit-on-train scaling, identical windows for all models"
+  E6_integrated_demo:
+    purpose: "end-to-end demonstration on real footage: perception -> features -> forecast -> incidents -> risk"
+    datasets: [own_recordings]
+    note: "uses models trained in E1-E5 on their own datasets; reports which dataset each component came from"

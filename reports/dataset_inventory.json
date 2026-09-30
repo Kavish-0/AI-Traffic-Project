@@ -1,0 +1,2670 @@
+{
+  "generated": "2026-09-24T20:15:42+00:00",
+  "data_dir": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\data",
+  "units": [
+    {
+      "unit": "db",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\data\\db",
+      "manifest_ids": [],
+      "registered": false,
+      "files": 1,
+      "bytes": 208896,
+      "extensions": {
+        ".db": 1
+      },
+      "docs": [],
+      "code_files": 0,
+      "findings": {
+        "db": {
+          "count": 1,
+          "tables": {
+            "traffic.db": {
+              "anomaly_event": 0,
+              "approach": 5,
+              "approach_live_state": 0,
+              "camera": 2,
+              "camera_calibration": 0,
+              "camera_status": 0,
+              "camera_zone": 0,
+              "congestion_state": 0,
+              "context_observation": 0,
+              "forecast": 0,
+              "incident": 0,
+              "junction": 3,
+              "model_registry": 0,
+              "risk_assessment": 0,
+              "road_node": 8,
+              "road_segment": 11,
+              "simulation_scenario": 1,
+              "traffic_observation": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "unit": "external/pems08",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\data\\external\\pems08",
+      "manifest_ids": [
+        "pems08"
+      ],
+      "registered": true,
+      "files": 1,
+      "bytes": 18525419,
+      "extensions": {
+        ".npz": 1
+      },
+      "docs": [],
+      "code_files": 0,
+      "findings": {
+        "npz": {
+          "count": 1,
+          "arrays": [
+            {
+              "file": "pems08.npz",
+              "array": "data",
+              "shape": [
+                17856,
+                170,
+                3
+              ],
+              "dtype": "float64",
+              "min": 0.0,
+              "max": 1147.0,
+              "nan": 0,
+              "per_channel_range": [
+                [
+                  0.0,
+                  1147.0
+                ],
+                [
+                  0.0,
+                  0.8955
+                ],
+                [
+                  3.0,
+                  82.3
+                ]
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "unit": "external/weather",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\data\\external\\weather",
+      "manifest_ids": [],
+      "registered": false,
+      "files": 2,
+      "bytes": 37704,
+      "extensions": {
+        ".parquet": 2
+      },
+      "docs": [],
+      "code_files": 0,
+      "findings": {
+        "parquet": {
+          "count": 2,
+          "schemas": [
+            {
+              "columns": [
+                "temperature_c",
+                "humidity_pct",
+                "rain_mm",
+                "visibility_km",
+                "weather_condition",
+                "__index_level_0__"
+              ],
+              "files": 2,
+              "rows": 2544,
+              "examples": [
+                "openmeteo_12.970_77.590_2025-06-01_2025-07-13.parquet",
+                "openmeteo_34.060_-117.340_2016-07-01_2016-09-01.parquet"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "unit": "interim/public_highway_01",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\data\\interim\\public_highway_01",
+      "manifest_ids": [],
+      "registered": false,
+      "files": 15,
+      "bytes": 481573,
+      "extensions": {
+        ".parquet": 15
+      },
+      "docs": [],
+      "code_files": 0,
+      "findings": {
+        "parquet": {
+          "count": 15,
+          "schemas": [
+            {
+              "columns": [
+                "camera_id",
+                "run_id",
+                "frame_index",
+                "timestamp",
+                "class_id",
+                "class_name",
+                "confidence",
+                "x1",
+                "y1",
+                "x2",
+                "y2"
+              ],
+              "files": 5,
+              "rows": 4470,
+              "examples": [
+                "2026-09-01/20260923-124304/detections-00000.parquet",
+                "2026-09-01/20260923-124639/detections-00000.parquet"
+              ]
+            },
+            {
+              "columns": [
+                "camera_id",
+                "approach_id",
+                "track_id",
+                "object_class",
+                "first_seen",
+                "last_seen",
+                "element",
+                "mean_speed_kmh",
+                "max_stopped_s",
+                "crossed_entry",
+                "crossed_exit",
+                "element",
+                "distance_m",
+                "displacement_along_travel_m",
+                "run_id"
+              ],
+              "files": 5,
+              "rows": 45,
+              "examples": [
+                "2026-09-01/20260923-124304/track_summaries-00000.parquet",
+                "2026-09-01/20260923-124639/track_summaries-00000.parquet"
+              ]
+            },
+            {
+              "columns": [
+                "camera_id",
+                "run_id",
+                "frame_index",
+                "timestamp",
+                "track_id",
+                "class_name",
+                "confidence",
+                "x1",
+                "y1",
+                "x2",
+                "y2",
+                "anchor_x",
+                "anchor_y",
+                "ground_x_m",
+                "ground_y_m",
+                "speed_kmh",
+                "stopped_s",
+                "age_s"
+              ],
+              "files": 5,
+              "rows": 3915,
+              "examples": [
+                "2026-09-01/20260923-124304/tracks-00000.parquet",
+                "2026-09-01/20260923-124639/tracks-00000.parquet"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "unit": "processed/pems08",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\data\\processed\\pems08",
+      "manifest_ids": [],
+      "registered": false,
+      "files": 2,
+      "bytes": 590500,
+      "extensions": {
+        ".json": 1,
+        ".parquet": 1
+      },
+      "docs": [],
+      "code_files": 0,
+      "findings": {
+        "parquet": {
+          "count": 1,
+          "schemas": [
+            {
+              "columns": [
+                "series_id",
+                "timestamp",
+                "flow_veh_h",
+                "occupancy_pct",
+                "avg_speed_kmh"
+              ],
+              "files": 1,
+              "rows": 89280,
+              "examples": [
+                "series.parquet"
+              ]
+            }
+          ]
+        },
+        "json": {
+          "count": 1,
+          "by_file_name": {
+            "meta.json": 1
+          },
+          "top_level_keys": {
+            "meta.json": [
+              "columns",
+              "created",
+              "dataset_id",
+              "holiday_country",
+              "info",
+              "params",
+              "resolution_s",
+              "rows",
+              "schema",
+              "series",
+              "tz"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "unit": "raw/aicity_reid/aic21_track2",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\data\\raw\\aicity_reid\\aic21_track2",
+      "manifest_ids": [
+        "aicity21_reid"
+      ],
+      "registered": true,
+      "files": 86172,
+      "bytes": 2163174867,
+      "extensions": {
+        ".jpg": 85058,
+        ".txt": 1109,
+        ".xml": 3,
+        ".pdf": 1,
+        ".py": 1
+      },
+      "docs": [
+        "DataLicenseAgreement_AICityChallenge_2021.pdf",
+        "ReadMe.txt"
+      ],
+      "code_files": 1,
+      "findings": {
+        "images": {
+          "count": 85058,
+          "sampled_sizes": {
+            "279x329": 1,
+            "92x77": 1,
+            "119x88": 1,
+            "95x59": 1,
+            "82x35": 1,
+            "83x43": 1,
+            "201x96": 1,
+            "147x108": 1,
+            "174x162": 1,
+            "261x243": 1,
+            "112x86": 1,
+            "458x337": 1,
+            "133x107": 1,
+            "254x152": 1,
+            "375x240": 1,
+            "151x105": 1
+          },
+          "unreadable_in_sample": [],
+          "folders": 3,
+          "largest_folders": {
+            "image_train": 52717,
+            "image_test": 31238,
+            "image_query": 1103
+          }
+        },
+        "xml": {
+          "error": "ValueError: multi-byte encodings are not supported"
+        },
+        "txt": {
+          "count": 1109,
+          "inspected": [
+            {
+              "file": "name_query.txt",
+              "lines": 1103,
+              "numeric_table": false,
+              "columns": {
+                "1": 1103
+              },
+              "first_line": "000001.jpg"
+            },
+            {
+              "file": "name_test.txt",
+              "lines": 31238,
+              "numeric_table": false,
+              "columns": {
+                "1": 31238
+              },
+              "first_line": "000001.jpg"
+            },
+            {
+              "file": "name_train.txt",
+              "lines": 52717,
+              "numeric_table": false,
+              "columns": {
+                "1": 52717
+              },
+              "first_line": "000001.jpg"
+            },
+            {
+              "file": "ReadMe.txt",
+              "lines": 50,
+              "numeric_table": false,
+              "columns": {
+                "1": 9,
+                "3": 7,
+                "8": 4
+              },
+              "first_line": "%******************************************************************************************************************%"
+            },
+            {
+              "file": "test_track.txt",
+              "lines": 991,
+              "numeric_table": false,
+              "columns": {
+                "36": 37,
+                "29": 35,
+                "37": 34
+              },
+              "first_line": "013254.jpg 008967.jpg 017834.jpg 001893.jpg 008067.jpg 027275.jpg 000637.jpg 021285.jpg 004405.jpg 029432.jpg 025980.jpg"
+            },
+            {
+              "file": "tools/dist_example/000001.txt",
+              "lines": 100,
+              "numeric_table": true,
+              "columns": {
+                "1": 100
+              },
+              "first_line": "5021"
+            },
+            {
+              "file": "tools/dist_example/000002.txt",
+              "lines": 100,
+              "numeric_table": true,
+              "columns": {
+                "1": 100
+              },
+              "first_line": "4246"
+            },
+            {
+              "file": "tools/dist_example/000003.txt",
+              "lines": 100,
+              "numeric_table": true,
+              "columns": {
+                "1": 100
+              },
+              "first_line": "8492"
+            },
+            {
+              "file": "tools/dist_example/000004.txt",
+              "lines": 100,
+              "numeric_table": true,
+              "columns": {
+                "1": 100
+              },
+              "first_line": "10186"
+            },
+            {
+              "file": "tools/dist_example/000005.txt",
+              "lines": 100,
+              "numeric_table": true,
+              "columns": {
+                "1": 100
+              },
+              "first_line": "9807"
+            },
+            {
+              "file": "tools/dist_example/000006.txt",
+              "lines": 100,
+              "numeric_table": true,
+              "columns": {
+                "1": 100
+              },
+              "first_line": "20936"
+            },
+            {
+              "file": "tools/dist_example/000007.txt",
+              "lines": 100,
+              "numeric_table": true,
+              "columns": {
+                "1": 100
+              },
+              "first_line": "30996"
+            },
+            {
+              "file": "tools/dist_example/000008.txt",
+              "lines": 100,
+              "numeric_table": true,
+              "columns": {
+                "1": 100
+              },
+              "first_line": "22051"
+            },
+            {
+              "file": "tools/dist_example/000009.txt",
+              "lines": 100,
+              "numeric_table": true,
+              "columns": {
+                "1": 100
+              },
+              "first_line": "15331"
+            },
+            {
+              "file": "tools/dist_example/000010.txt",
+              "lines": 100,
+              "numeric_table": true,
+              "columns": {
+                "1": 100
+              },
+              "first_line": "19168"
+            },
+            {
+              "file": "tools/dist_example/000011.txt",
+              "lines": 100,
+              "numeric_table": true,
+              "columns": {
+                "1": 100
+              },
+              "first_line": "10501"
+            },
+            {
+              "file": "tools/dist_example/000012.txt",
+              "lines": 100,
+              "numeric_table": true,
+              "columns": {
+                "1": 100
+              },
+              "first_line": "29646"
+            },
+            {
+              "file": "tools/dist_example/000013.txt",
+              "lines": 100,
+              "numeric_table": true,
+              "columns": {
+                "1": 100
+              },
+              "first_line": "23141"
+            },
+            {
+              "file": "tools/dist_example/000014.txt",
+              "lines": 100,
+              "numeric_table": true,
+              "columns": {
+                "1": 100
+              },
+              "first_line": "1515"
+            },
+            {
+              "file": "tools/dist_example/000015.txt",
+              "lines": 100,
+              "numeric_table": true,
+              "columns": {
+                "1": 100
+              },
+              "first_line": "26497"
+            },
+            {
+              "file": "tools/dist_example/000016.txt",
+              "lines": 100,
+              "numeric_table": true,
+              "columns": {
+                "1": 100
+              },
+              "first_line": "31014"
+            },
+            {
+              "file": "tools/dist_example/000017.txt",
+              "lines": 100,
+              "numeric_table": true,
+              "columns": {
+                "1": 100
+              },
+              "first_line": "14207"
+            },
+            {
+              "file": "tools/dist_example/000018.txt",
+              "lines": 100,
+              "numeric_table": true,
+              "columns": {
+                "1": 100
+              },
+              "first_line": "20266"
+            },
+            {
+              "file": "tools/dist_example/000019.txt",
+              "lines": 100,
+              "numeric_table": true,
+              "columns": {
+                "1": 100
+              },
+              "first_line": "7830"
+            },
+            {
+              "file": "tools/dist_example/000020.txt",
+              "lines": 100,
+              "numeric_table": true,
+              "columns": {
+                "1": 100
+              },
+              "first_line": "2267"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "unit": "raw/anomaly/aic21_track4",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\data\\raw\\anomaly\\aic21_track4",
+      "manifest_ids": [
+        "aicity21_anomaly"
+      ],
+      "registered": true,
+      "files": 254,
+      "bytes": 15125053612,
+      "extensions": {
+        ".mp4": 250,
+        ".txt": 3,
+        ".pdf": 1
+      },
+      "docs": [
+        "DataLicenseAgreement_AICityChallenge_2021.pdf",
+        "ReadMe.txt"
+      ],
+      "code_files": 0,
+      "findings": {
+        "video": {
+          "count": 250,
+          "unreadable": [],
+          "resolutions": {
+            "800x410": 250
+          },
+          "fps": {
+            "30.0": 223,
+            "23.83": 4,
+            "29.97": 5,
+            "14.3": 4,
+            "23.56": 4,
+            "60.0": 1,
+            "14.99": 1,
+            "29.92": 4,
+            "25.96": 3,
+            "29.67": 1
+          },
+          "duration_s": {
+            "min": 75.2,
+            "max": 900.3,
+            "total_h": 61.66
+          },
+          "per_folder": {
+            "aic21-track4-test-data": 150,
+            "aic21-track4-train-data": 100
+          }
+        },
+        "txt": {
+          "count": 3,
+          "inspected": [
+            {
+              "file": "license.txt",
+              "lines": 1,
+              "numeric_table": false,
+              "columns": {
+                "36": 1
+              },
+              "first_line": "This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, "
+            },
+            {
+              "file": "ReadMe.txt",
+              "lines": 10,
+              "numeric_table": false,
+              "columns": {
+                "1": 2,
+                "10": 2,
+                "9": 2
+              },
+              "first_line": "%******************************************************************************************************************%"
+            },
+            {
+              "file": "train-anomaly-results.txt",
+              "lines": 18,
+              "numeric_table": true,
+              "columns": {
+                "3": 18
+              },
+              "first_line": "2 587 894"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "unit": "raw/metr_la",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\data\\raw\\metr_la",
+      "manifest_ids": [
+        "metr_la"
+      ],
+      "registered": true,
+      "files": 3,
+      "bytes": 57719064,
+      "extensions": {
+        ".pkl": 1,
+        ".h5": 1,
+        ".md": 1
+      },
+      "docs": [
+        "README.md"
+      ],
+      "code_files": 0,
+      "findings": {
+        "h5": {
+          "count": 1,
+          "tables": [
+            {
+              "file": "METR-LA.h5",
+              "key": "df",
+              "shape": [
+                34272,
+                207
+              ],
+              "columns_sample": [
+                "773869",
+                "767541",
+                "767542",
+                "717447",
+                "717446"
+              ],
+              "index": "DatetimeIndex",
+              "start": "2012-03-01 00:00:00",
+              "end": "2012-06-27 23:55:00",
+              "step_s": {
+                "300": 34271
+              },
+              "duplicate_timestamps": 0,
+              "value_min": 0.0,
+              "value_max": 70.0,
+              "nan": 0,
+              "zeros": 575302,
+              "cells": 7094304
+            }
+          ]
+        },
+        "pkl": {
+          "count": 1,
+          "files": [
+            {
+              "file": "adj_METR-LA.pkl",
+              "globals": [
+                "numpy.core.multiarray._reconstruct",
+                "numpy.dtype",
+                "numpy.ndarray"
+              ],
+              "structure": {
+                "list": 3,
+                "items": [
+                  {
+                    "list": 207,
+                    "items": [
+                      "str",
+                      "str",
+                      "str"
+                    ]
+                  },
+                  {
+                    "dict": 207,
+                    "sample_keys": [
+                      "717099",
+                      "773869",
+                      "767541"
+                    ]
+                  },
+                  {
+                    "ndarray": [
+                      207,
+                      207
+                    ],
+                    "dtype": "float32",
+                    "nonzero": 1722
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "unit": "raw/pems_bay",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\data\\raw\\pems_bay",
+      "manifest_ids": [
+        "pems_bay"
+      ],
+      "registered": true,
+      "files": 4,
+      "bytes": 138723060,
+      "extensions": {
+        ".h5": 2,
+        ".pkl": 1,
+        ".md": 1
+      },
+      "docs": [
+        "README.md"
+      ],
+      "code_files": 0,
+      "findings": {
+        "h5": {
+          "count": 2,
+          "tables": [
+            {
+              "file": "pems-bay-meta.h5",
+              "key": "meta",
+              "shape": [
+                325,
+                17
+              ],
+              "columns_sample": [
+                "Fwy",
+                "Dir",
+                "District",
+                "County",
+                "City"
+              ],
+              "index": "Index",
+              "value_min": -122.07953899999998,
+              "value_max": 443406.0,
+              "nan": 27,
+              "zeros": 0,
+              "cells": 3250
+            },
+            {
+              "file": "pems-bay.h5",
+              "key": "speed",
+              "shape": [
+                52116,
+                325
+              ],
+              "columns_sample": [
+                "400001",
+                "400017",
+                "400030",
+                "400040",
+                "400045"
+              ],
+              "index": "DatetimeIndex",
+              "start": "2017-01-01 00:00:00",
+              "end": "2017-06-30 23:55:00",
+              "step_s": {
+                "300": 52114,
+                "3900": 1
+              },
+              "duplicate_timestamps": 0,
+              "value_min": 0.0,
+              "value_max": 85.1,
+              "nan": 0,
+              "zeros": 521,
+              "cells": 16937700
+            }
+          ]
+        },
+        "pkl": {
+          "count": 1,
+          "files": [
+            {
+              "file": "adj_mx_bay.pkl",
+              "globals": [
+                "numpy.core.multiarray._reconstruct",
+                "numpy.dtype",
+                "numpy.ndarray"
+              ],
+              "structure": {
+                "list": 3,
+                "items": [
+                  {
+                    "list": 325,
+                    "items": [
+                      "str",
+                      "str",
+                      "str"
+                    ]
+                  },
+                  {
+                    "dict": 325,
+                    "sample_keys": [
+                      "401391",
+                      "409528",
+                      "407157"
+                    ]
+                  },
+                  {
+                    "ndarray": [
+                      325,
+                      325
+                    ],
+                    "dtype": "float32",
+                    "nonzero": 2694
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "unit": "raw/public",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\data\\raw\\public",
+      "manifest_ids": [],
+      "registered": false,
+      "files": 3,
+      "bytes": 44188509,
+      "extensions": {
+        ".mp4": 3
+      },
+      "docs": [],
+      "code_files": 0,
+      "findings": {
+        "video": {
+          "count": 3,
+          "unreadable": [],
+          "resolutions": {
+            "768x432": 2,
+            "3840x2160": 1
+          },
+          "fps": {
+            "12.5": 1,
+            "12.0": 1,
+            "25.0": 1
+          },
+          "duration_s": {
+            "min": 21.5,
+            "max": 53.9,
+            "total_h": 0.03
+          },
+          "per_folder": {
+            ".": 3
+          }
+        }
+      }
+    },
+    {
+      "unit": "raw/traffic_lights/lisa",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\data\\raw\\traffic_lights\\lisa",
+      "manifest_ids": [
+        "lisa_traffic_lights"
+      ],
+      "registered": true,
+      "files": 44123,
+      "bytes": 5163406226,
+      "extensions": {
+        ".jpg": 44075,
+        ".csv": 48
+      },
+      "docs": [],
+      "code_files": 0,
+      "findings": {
+        "images": {
+          "count": 44075,
+          "sampled_sizes": {
+            "1280x960": 16
+          },
+          "unreadable_in_sample": [],
+          "folders": 24,
+          "largest_folders": {
+            "daySequence2/daySequence2/frames": 6894,
+            "nightSequence2/nightSequence2/frames": 6534,
+            "nightSequence1/nightSequence1/frames": 4993,
+            "daySequence1/daySequence1/frames": 4060,
+            "dayTrain/dayTrain/dayClip7/frames": 2719
+          }
+        },
+        "csv": {
+          "count": 48,
+          "inspected": 48,
+          "schemas": [
+            {
+              "columns": [
+                "Filename",
+                "Annotation tag",
+                "Upper left corner X",
+                "Upper left corner Y",
+                "Lower right corner X",
+                "Lower right corner Y",
+                "Origin file",
+                "Origin frame number",
+                "Origin track",
+                "Origin track frame number"
+              ],
+              "files": 48,
+              "rows": 232348,
+              "duplicate_rows": 33,
+              "missing": {},
+              "categorical": {},
+              "numeric_range": {
+                "Upper left corner X": [
+                  0.0,
+                  1273.0
+                ],
+                "Upper left corner Y": [
+                  0.0,
+                  669.0
+                ],
+                "Lower right corner X": [
+                  4.0,
+                  1280.0
+                ],
+                "Lower right corner Y": [
+                  9.0,
+                  672.0
+                ],
+                "Origin frame number": [
+                  0.0,
+                  6884.0
+                ],
+                "Origin track frame number": [
+                  0.0,
+                  6884.0
+                ]
+              },
+              "time_range": {},
+              "examples": [
+                "Annotations/Annotations/daySequence1/frameAnnotationsBOX.csv",
+                "Annotations/Annotations/daySequence1/frameAnnotationsBULB.csv",
+                "Annotations/Annotations/daySequence2/frameAnnotationsBOX.csv"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "unit": "raw/uadetrac",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\data\\raw\\uadetrac",
+      "manifest_ids": [
+        "ua_detrac"
+      ],
+      "registered": true,
+      "files": 141040,
+      "bytes": 11509141913,
+      "extensions": {
+        ".jpg": 140131,
+        ".m": 573,
+        ".txt": 131,
+        ".xml": 100,
+        ".png": 16,
+        ".mexa64": 10,
+        ".mexmaci": 10,
+        ".mexmaci64": 10,
+        ".mexw32": 10,
+        ".mexw64": 10,
+        ".dll": 10,
+        ".c": 9,
+        ".exe": 6,
+        ".mat": 6,
+        ".md": 3,
+        ".html": 2,
+        ".pdb": 2,
+        ".cpp": 1
+      },
+      "docs": [
+        "README.TXT",
+        "README.md",
+        "README.md",
+        "README.md",
+        "README.txt",
+        "README.txt",
+        "README.txt",
+        "README.txt",
+        "README_curve.txt",
+        "README_evaluation.txt",
+        "readme.txt"
+      ],
+      "code_files": 633,
+      "findings": {
+        "images": {
+          "count": 140147,
+          "sampled_sizes": {
+            "960x540": 16
+          },
+          "unreadable_in_sample": [],
+          "folders": 104,
+          "largest_folders": {
+            "DETRAC-Images/MVI_40172": 2635,
+            "DETRAC-Images/MVI_40191": 2495,
+            "DETRAC-Images/MVI_40712": 2400,
+            "DETRAC-Images/MVI_40241": 2320,
+            "DETRAC-Images/MVI_40192": 2195
+          }
+        },
+        "xml": {
+          "count": 100,
+          "kinds": {
+            "per-frame object annotations (frame/target)": 100
+          },
+          "per_folder": {
+            "DETRAC-Test-Annotations-XML": 40,
+            "DETRAC-Train-Annotations-XML": 60
+          },
+          "object_annotations": {
+            "files": 100,
+            "frames": 138252,
+            "objects": 1274055,
+            "track_ids": 8289,
+            "ignored_regions": 407,
+            "class_counts": {
+              "vehicle_type": {
+                "car": 1052408,
+                "van": 95570,
+                "bus": 105436,
+                "others": 20641
+              }
+            },
+            "sequence_attributes": {
+              "camera_state": {
+                "unstable": 47,
+                "stable": 53
+              },
+              "sence_weather": {
+                "sunny": 23,
+                "cloudy": 30,
+                "night": 28,
+                "rainy": 19
+              }
+            }
+          }
+        },
+        "txt": {
+          "count": 131,
+          "inspected": [
+            {
+              "file": "DETRAC-MOT-toolkit/evaluation/curve_results/ACF_detection_PR.txt",
+              "lines": 21,
+              "numeric_table": false,
+              "columns": {
+                "1": 21
+              },
+              "first_line": "0.567181741977320,0.292586135014274"
+            },
+            {
+              "file": "DETRAC-MOT-toolkit/evaluation/curve_results/compACT_detection_PR.txt",
+              "lines": 21,
+              "numeric_table": false,
+              "columns": {
+                "1": 21
+              },
+              "first_line": "0.614658294715865,0.390629633091797"
+            },
+            {
+              "file": "DETRAC-MOT-toolkit/evaluation/curve_results/DPM_detection_PR.txt",
+              "lines": 21,
+              "numeric_table": false,
+              "columns": {
+                "1": 21
+              },
+              "first_line": "0.422645388837047,0.171554399987160"
+            },
+            {
+              "file": "DETRAC-MOT-toolkit/evaluation/curve_results/R-CNN_detection_PR.txt",
+              "lines": 21,
+              "numeric_table": false,
+              "columns": {
+                "1": 21
+              },
+              "first_line": "0.566832207759343,0.292402245940614"
+            },
+            {
+              "file": "DETRAC-MOT-toolkit/evaluation/curve_results/README_curve.txt",
+              "lines": 3,
+              "numeric_table": false,
+              "columns": {
+                "21": 1,
+                "18": 1,
+                "16": 1
+              },
+              "first_line": "The Precision-Recall curve is generated by tuning the threshold (i.e., 0:0.05:1) of an detector to generate different pr"
+            },
+            {
+              "file": "DETRAC-MOT-toolkit/evaluation/igrs/MVI_20011_IgR.txt",
+              "lines": 7,
+              "numeric_table": false,
+              "columns": {
+                "1": 7
+              },
+              "first_line": "778.75,24.75,181.75,63.5"
+            },
+            {
+              "file": "DETRAC-MOT-toolkit/evaluation/igrs/MVI_20012_IgR.txt",
+              "lines": 6,
+              "numeric_table": false,
+              "columns": {
+                "1": 6
+              },
+              "first_line": "497.75,0.5,462.75,22.75"
+            },
+            {
+              "file": "DETRAC-MOT-toolkit/evaluation/igrs/MVI_20032_IgR.txt",
+              "lines": 5,
+              "numeric_table": false,
+              "columns": {
+                "1": 5
+              },
+              "first_line": "716.75,55.75,243.75,64.5"
+            },
+            {
+              "file": "DETRAC-MOT-toolkit/evaluation/igrs/MVI_20033_IgR.txt",
+              "lines": 5,
+              "numeric_table": false,
+              "columns": {
+                "1": 5
+              },
+              "first_line": "458.75,0.5,159.5,53.75"
+            },
+            {
+              "file": "DETRAC-MOT-toolkit/evaluation/igrs/MVI_20034_IgR.txt",
+              "lines": 5,
+              "numeric_table": false,
+              "columns": {
+                "1": 5
+              },
+              "first_line": "455.75,0.5,189.5,55.75"
+            },
+            {
+              "file": "DETRAC-MOT-toolkit/evaluation/igrs/MVI_20035_IgR.txt",
+              "lines": 7,
+              "numeric_table": false,
+              "columns": {
+                "1": 7
+              },
+              "first_line": "450.75,0.5,183.5,60"
+            },
+            {
+              "file": "DETRAC-MOT-toolkit/evaluation/igrs/MVI_20051_IgR.txt",
+              "lines": 5,
+              "numeric_table": false,
+              "columns": {
+                "1": 5
+              },
+              "first_line": "807.75,0.5,146.5,92.75"
+            },
+            {
+              "file": "DETRAC-MOT-toolkit/evaluation/igrs/MVI_20052_IgR.txt",
+              "lines": 6,
+              "numeric_table": false,
+              "columns": {
+                "1": 6
+              },
+              "first_line": "542.75,0.5,194.5,27.75"
+            },
+            {
+              "file": "DETRAC-MOT-toolkit/evaluation/igrs/MVI_20061_IgR.txt",
+              "lines": 6,
+              "numeric_table": false,
+              "columns": {
+                "1": 6
+              },
+              "first_line": "513.75,13.75,185.5,46.5"
+            },
+            {
+              "file": "DETRAC-MOT-toolkit/evaluation/igrs/MVI_20062_IgR.txt",
+              "lines": 6,
+              "numeric_table": false,
+              "columns": {
+                "1": 6
+              },
+              "first_line": "517.75,0.5,165,33.75"
+            },
+            {
+              "file": "DETRAC-MOT-toolkit/evaluation/igrs/MVI_20063_IgR.txt",
+              "lines": 6,
+              "numeric_table": false,
+              "columns": {
+                "1": 6
+              },
+              "first_line": "851.75,14.75,108.75,48.5"
+            },
+            {
+              "file": "DETRAC-MOT-toolkit/evaluation/igrs/MVI_20064_IgR.txt",
+              "lines": 9,
+              "numeric_table": false,
+              "columns": {
+                "1": 9
+              },
+              "first_line": "511.75,0.5,269.5,27.75"
+            },
+            {
+              "file": "DETRAC-MOT-toolkit/evaluation/igrs/MVI_20065_IgR.txt",
+              "lines": 6,
+              "numeric_table": false,
+              "columns": {
+                "1": 6
+              },
+              "first_line": "513.75,0.5,238.5,23.75"
+            },
+            {
+              "file": "DETRAC-MOT-toolkit/evaluation/igrs/MVI_39031_IgR.txt",
+              "lines": 3,
+              "numeric_table": false,
+              "columns": {
+                "1": 3
+              },
+              "first_line": "335.75,52.75,256.5,117.5"
+            },
+            {
+              "file": "DETRAC-MOT-toolkit/evaluation/igrs/MVI_39051_IgR.txt",
+              "lines": 2,
+              "numeric_table": false,
+              "columns": {
+                "1": 2
+              },
+              "first_line": "916.75,283.75,43.75,41.5"
+            },
+            {
+              "file": "DETRAC-MOT-toolkit/evaluation/igrs/MVI_39211_IgR.txt",
+              "lines": 1,
+              "numeric_table": false,
+              "columns": {
+                "1": 1
+              },
+              "first_line": "380.75,0.5,579.75,96.75"
+            },
+            {
+              "file": "DETRAC-MOT-toolkit/evaluation/igrs/MVI_39271_IgR.txt",
+              "lines": 4,
+              "numeric_table": false,
+              "columns": {
+                "1": 4
+              },
+              "first_line": "742.75,349.75,217.75,190.75"
+            },
+            {
+              "file": "DETRAC-MOT-toolkit/evaluation/igrs/MVI_39311_IgR.txt",
+              "lines": 7,
+              "numeric_table": false,
+              "columns": {
+                "1": 7
+              },
+              "first_line": "0.5,218.75,336.75,65.5"
+            },
+            {
+              "file": "DETRAC-MOT-toolkit/evaluation/igrs/MVI_39361_IgR.txt",
+              "lines": 6,
+              "numeric_table": false,
+              "columns": {
+                "1": 6
+              },
+              "first_line": "0.5,71.75,903.75,107.5"
+            },
+            {
+              "file": "DETRAC-MOT-toolkit/evaluation/igrs/MVI_39371_IgR.txt",
+              "lines": 2,
+              "numeric_table": false,
+              "columns": {
+                "1": 2
+              },
+              "first_line": "0.5,332.75,130.75,47.5"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "unit": "raw/weather/kaggle_szeged",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\data\\raw\\weather\\kaggle_szeged",
+      "manifest_ids": [
+        "weather_history_szeged"
+      ],
+      "registered": true,
+      "files": 1,
+      "bytes": 16294377,
+      "extensions": {
+        ".csv": 1
+      },
+      "docs": [],
+      "code_files": 0,
+      "findings": {
+        "csv": {
+          "count": 1,
+          "inspected": 1,
+          "schemas": [
+            {
+              "columns": [
+                "Formatted Date",
+                "Summary",
+                "Precip Type",
+                "Temperature (C)",
+                "Apparent Temperature (C)",
+                "Humidity",
+                "Wind Speed (km/h)",
+                "Wind Bearing (degrees)",
+                "Visibility (km)",
+                "Loud Cover",
+                "Pressure (millibars)",
+                "Daily Summary"
+              ],
+              "files": 1,
+              "rows": 96453,
+              "duplicate_rows": 24,
+              "missing": {
+                "Precip Type": 517
+              },
+              "categorical": {},
+              "numeric_range": {
+                "Temperature (C)": [
+                  -21.8222,
+                  39.9056
+                ],
+                "Apparent Temperature (C)": [
+                  -27.7167,
+                  39.3444
+                ],
+                "Humidity": [
+                  0.0,
+                  1.0
+                ],
+                "Wind Speed (km/h)": [
+                  0.0,
+                  63.8526
+                ],
+                "Wind Bearing (degrees)": [
+                  0.0,
+                  359.0
+                ],
+                "Visibility (km)": [
+                  0.0,
+                  16.1
+                ],
+                "Loud Cover": [
+                  0.0,
+                  0.0
+                ],
+                "Pressure (millibars)": [
+                  0.0,
+                  1046.38
+                ]
+              },
+              "time_range": {},
+              "examples": [
+                "weatherHistory.csv"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "unit": "runs/calibration",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\runs\\calibration",
+      "manifest_ids": [],
+      "registered": false,
+      "files": 6,
+      "bytes": 5993919,
+      "extensions": {
+        ".png": 6
+      },
+      "docs": [],
+      "code_files": 0,
+      "findings": {
+        "images": {
+          "count": 6,
+          "sampled_sizes": {
+            "183x734": 1,
+            "1920x1080": 2,
+            "194x733": 1,
+            "1280x720": 2
+          },
+          "unreadable_in_sample": [],
+          "folders": 2,
+          "largest_folders": {
+            "public_highway_01": 3,
+            "synth_default": 3
+          }
+        }
+      }
+    },
+    {
+      "unit": "runs/final_congested",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\runs\\final_congested",
+      "manifest_ids": [],
+      "registered": false,
+      "files": 3,
+      "bytes": 248582,
+      "extensions": {
+        ".jsonl": 2,
+        ".json": 1
+      },
+      "docs": [],
+      "code_files": 0,
+      "findings": {
+        "jsonl": {
+          "count": 2,
+          "records": 62,
+          "by_file_name": {
+            "tracks.jsonl": 1,
+            "traffic_states.jsonl": 1
+          },
+          "keys_sample": [
+            "approach_id",
+            "camera_id",
+            "crossed_entry",
+            "crossed_exit",
+            "displacement_along_travel_m",
+            "distance_m",
+            "first_seen",
+            "last_seen",
+            "max_stopped_s",
+            "mean_speed_kmh",
+            "object_class",
+            "path_ground_m",
+            "path_image_px",
+            "track_id"
+          ]
+        },
+        "json": {
+          "count": 1,
+          "by_file_name": {
+            "summary.json": 1
+          },
+          "top_level_keys": {
+            "summary.json": [
+              "approach_id",
+              "calibration_reprojection_error_m",
+              "camera_id",
+              "detection_files",
+              "frame_size",
+              "frames",
+              "lanes",
+              "latency_ms_mean",
+              "processing_fps",
+              "roi_length_m",
+              "source_fps",
+              "states",
+              "tracks_finished",
+              "windows"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "unit": "runs/final_default",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\runs\\final_default",
+      "manifest_ids": [],
+      "registered": false,
+      "files": 3,
+      "bytes": 128249,
+      "extensions": {
+        ".jsonl": 2,
+        ".json": 1
+      },
+      "docs": [],
+      "code_files": 0,
+      "findings": {
+        "jsonl": {
+          "count": 2,
+          "records": 68,
+          "by_file_name": {
+            "tracks.jsonl": 1,
+            "traffic_states.jsonl": 1
+          },
+          "keys_sample": [
+            "approach_id",
+            "camera_id",
+            "crossed_entry",
+            "crossed_exit",
+            "displacement_along_travel_m",
+            "distance_m",
+            "first_seen",
+            "last_seen",
+            "max_stopped_s",
+            "mean_speed_kmh",
+            "object_class",
+            "path_ground_m",
+            "path_image_px",
+            "track_id"
+          ]
+        },
+        "json": {
+          "count": 1,
+          "by_file_name": {
+            "summary.json": 1
+          },
+          "top_level_keys": {
+            "summary.json": [
+              "approach_id",
+              "calibration_reprojection_error_m",
+              "camera_id",
+              "detection_files",
+              "frame_size",
+              "frames",
+              "lanes",
+              "latency_ms_mean",
+              "processing_fps",
+              "roi_length_m",
+              "source_fps",
+              "states",
+              "tracks_finished",
+              "windows"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "unit": "runs/final_free_flow",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\runs\\final_free_flow",
+      "manifest_ids": [],
+      "registered": false,
+      "files": 3,
+      "bytes": 49775,
+      "extensions": {
+        ".jsonl": 2,
+        ".json": 1
+      },
+      "docs": [],
+      "code_files": 0,
+      "findings": {
+        "jsonl": {
+          "count": 2,
+          "records": 38,
+          "by_file_name": {
+            "tracks.jsonl": 1,
+            "traffic_states.jsonl": 1
+          },
+          "keys_sample": [
+            "approach_id",
+            "average_speed_kmh",
+            "bicycle_count",
+            "bus_count",
+            "camera_id",
+            "car_count",
+            "congestion_score",
+            "crossed_entry",
+            "crossed_exit",
+            "density_pct",
+            "density_veh_km",
+            "displacement_along_travel_m",
+            "distance_m",
+            "explanation",
+            "first_seen",
+            "flow_veh_h",
+            "inflow",
+            "is_live",
+            "junction_id",
+            "last_seen",
+            "max_stopped_s",
+            "mean_speed_kmh",
+            "median_speed_kmh",
+            "motorcycle_count",
+            "object_class"
+          ]
+        },
+        "json": {
+          "count": 1,
+          "by_file_name": {
+            "summary.json": 1
+          },
+          "top_level_keys": {
+            "summary.json": [
+              "approach_id",
+              "calibration_reprojection_error_m",
+              "camera_id",
+              "detection_files",
+              "frame_size",
+              "frames",
+              "lanes",
+              "latency_ms_mean",
+              "processing_fps",
+              "roi_length_m",
+              "source_fps",
+              "states",
+              "tracks_finished",
+              "windows"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "unit": "runs/it_cam",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\runs\\it_cam",
+      "manifest_ids": [],
+      "registered": false,
+      "files": 48,
+      "bytes": 662023,
+      "extensions": {
+        ".jsonl": 36,
+        ".json": 12
+      },
+      "docs": [],
+      "code_files": 0,
+      "findings": {
+        "jsonl": {
+          "count": 36,
+          "records": 627,
+          "by_file_name": {
+            "anomalies.jsonl": 12,
+            "tracks.jsonl": 12,
+            "traffic_states.jsonl": 12
+          },
+          "keys_sample": [
+            "approach_id",
+            "camera_id",
+            "crossed_entry",
+            "crossed_exit",
+            "details",
+            "detector",
+            "displacement_along_travel_m",
+            "distance_m",
+            "first_seen",
+            "ground_xy_m",
+            "last_seen",
+            "max_stopped_s",
+            "mean_speed_kmh",
+            "object_class",
+            "path_ground_m",
+            "path_image_px",
+            "scope",
+            "score",
+            "timestamp",
+            "track_id",
+            "track_ids",
+            "type"
+          ]
+        },
+        "json": {
+          "count": 12,
+          "by_file_name": {
+            "summary.json": 12
+          },
+          "top_level_keys": {
+            "20260924-160908/summary.json": [
+              "annotated_video",
+              "calibration_reprojection_error_m",
+              "camera_id",
+              "detector",
+              "device",
+              "dropped_by_lag",
+              "error",
+              "frame_size",
+              "frames",
+              "is_live",
+              "lanes",
+              "last_frame_at",
+              "latency_ms_mean",
+              "model",
+              "parquet_files"
+            ],
+            "20260924-160923/summary.json": [
+              "annotated_video",
+              "calibration_reprojection_error_m",
+              "camera_id",
+              "detector",
+              "device",
+              "dropped_by_lag",
+              "error",
+              "frame_size",
+              "frames",
+              "is_live",
+              "lanes",
+              "last_frame_at",
+              "latency_ms_mean",
+              "model",
+              "parquet_files"
+            ],
+            "20260924-160937/summary.json": [
+              "annotated_video",
+              "calibration_reprojection_error_m",
+              "camera_id",
+              "detector",
+              "device",
+              "dropped_by_lag",
+              "error",
+              "frame_size",
+              "frames",
+              "is_live",
+              "lanes",
+              "last_frame_at",
+              "latency_ms_mean",
+              "model",
+              "parquet_files"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "unit": "runs/live_preview",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\runs\\live_preview",
+      "manifest_ids": [],
+      "registered": false,
+      "files": 4,
+      "bytes": 157992,
+      "extensions": {
+        ".jpg": 4
+      },
+      "docs": [],
+      "code_files": 0,
+      "findings": {
+        "images": {
+          "count": 4,
+          "sampled_sizes": {
+            "960x540": 4
+          },
+          "unreadable_in_sample": [],
+          "folders": 1,
+          "largest_folders": {
+            ".": 4
+          }
+        }
+      }
+    },
+    {
+      "unit": "runs/public_highway_01",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\runs\\public_highway_01",
+      "manifest_ids": [],
+      "registered": false,
+      "files": 25,
+      "bytes": 91135564,
+      "extensions": {
+        ".jsonl": 15,
+        ".mp4": 5,
+        ".json": 5
+      },
+      "docs": [],
+      "code_files": 0,
+      "findings": {
+        "video": {
+          "count": 5,
+          "unreadable": [],
+          "resolutions": {
+            "1920x1080": 5
+          },
+          "fps": {
+            "25.0": 5
+          },
+          "duration_s": {
+            "min": 21.5,
+            "max": 21.5,
+            "total_h": 0.03
+          },
+          "per_folder": {
+            "20260923-124304": 1,
+            "20260923-124639": 1,
+            "20260923-124830": 1,
+            "20260923-124942": 1,
+            "20260923-125719": 1
+          }
+        },
+        "jsonl": {
+          "count": 15,
+          "records": 160,
+          "by_file_name": {
+            "live_states.jsonl": 5,
+            "tracks.jsonl": 5,
+            "traffic_states.jsonl": 5
+          },
+          "keys_sample": [
+            "approach_id",
+            "average_speed_kmh",
+            "bicycle_count",
+            "bus_count",
+            "camera_id",
+            "car_count",
+            "congestion_score",
+            "crossed_entry",
+            "crossed_exit",
+            "density_pct",
+            "density_veh_km",
+            "displacement_along_travel_m",
+            "distance_m",
+            "explanation",
+            "first_seen",
+            "flow_veh_h",
+            "inflow",
+            "is_live",
+            "junction_id",
+            "last_seen",
+            "max_stopped_s",
+            "mean_speed_kmh",
+            "median_speed_kmh",
+            "motorcycle_count",
+            "object_class"
+          ]
+        },
+        "json": {
+          "count": 5,
+          "by_file_name": {
+            "summary.json": 5
+          },
+          "top_level_keys": {
+            "20260923-124304/summary.json": [
+              "annotated_video",
+              "calibration_reprojection_error_m",
+              "camera_id",
+              "detector",
+              "device",
+              "dropped_by_lag",
+              "frame_size",
+              "frames",
+              "is_live",
+              "lanes",
+              "latency_ms_mean",
+              "model",
+              "parquet_files",
+              "perception_only",
+              "processing_fps"
+            ],
+            "20260923-124639/summary.json": [
+              "annotated_video",
+              "calibration_reprojection_error_m",
+              "camera_id",
+              "detector",
+              "device",
+              "dropped_by_lag",
+              "frame_size",
+              "frames",
+              "is_live",
+              "lanes",
+              "latency_ms_mean",
+              "model",
+              "parquet_files",
+              "perception_only",
+              "processing_fps"
+            ],
+            "20260923-124830/summary.json": [
+              "annotated_video",
+              "calibration_reprojection_error_m",
+              "camera_id",
+              "detector",
+              "device",
+              "dropped_by_lag",
+              "frame_size",
+              "frames",
+              "is_live",
+              "lanes",
+              "latency_ms_mean",
+              "model",
+              "parquet_files",
+              "perception_only",
+              "processing_fps"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "unit": "runs/replay_video",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\runs\\replay_video",
+      "manifest_ids": [],
+      "registered": false,
+      "files": 5,
+      "bytes": 46758230,
+      "extensions": {
+        ".jsonl": 3,
+        ".mp4": 1,
+        ".json": 1
+      },
+      "docs": [],
+      "code_files": 0,
+      "findings": {
+        "video": {
+          "count": 1,
+          "unreadable": [],
+          "resolutions": {
+            "1280x720": 1
+          },
+          "fps": {
+            "10.0": 1
+          },
+          "duration_s": {
+            "min": 180.0,
+            "max": 180.0,
+            "total_h": 0.05
+          },
+          "per_folder": {
+            ".": 1
+          }
+        },
+        "jsonl": {
+          "count": 3,
+          "records": 248,
+          "by_file_name": {
+            "live_states.jsonl": 1,
+            "tracks.jsonl": 1,
+            "traffic_states.jsonl": 1
+          },
+          "keys_sample": [
+            "approach_id",
+            "average_speed_kmh",
+            "bicycle_count",
+            "bus_count",
+            "camera_id",
+            "car_count",
+            "congestion_score",
+            "density_pct",
+            "density_veh_km",
+            "explanation",
+            "flow_veh_h",
+            "inflow",
+            "is_live",
+            "junction_id",
+            "median_speed_kmh",
+            "motorcycle_count",
+            "occupancy_pct",
+            "outflow",
+            "pedestrian_count",
+            "quality",
+            "queue_length_m",
+            "road_id",
+            "stopped_vehicle_count",
+            "timestamp",
+            "traffic_state"
+          ]
+        },
+        "json": {
+          "count": 1,
+          "by_file_name": {
+            "summary.json": 1
+          },
+          "top_level_keys": {
+            "summary.json": [
+              "approach_id",
+              "calibration_reprojection_error_m",
+              "camera_id",
+              "detection_files",
+              "frame_size",
+              "frames",
+              "lanes",
+              "latency_ms_mean",
+              "processing_fps",
+              "roi_length_m",
+              "source_fps",
+              "states",
+              "tracks_finished",
+              "windows"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "unit": "runs/synth_a_east",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\runs\\synth_a_east",
+      "manifest_ids": [],
+      "registered": false,
+      "files": 6,
+      "bytes": 98697,
+      "extensions": {
+        ".jsonl": 6
+      },
+      "docs": [],
+      "code_files": 0,
+      "findings": {
+        "jsonl": {
+          "count": 6,
+          "records": 90,
+          "by_file_name": {
+            "anomalies.jsonl": 2,
+            "tracks.jsonl": 2,
+            "traffic_states.jsonl": 2
+          },
+          "keys_sample": [
+            "approach_id",
+            "camera_id",
+            "crossed_entry",
+            "crossed_exit",
+            "details",
+            "detector",
+            "displacement_along_travel_m",
+            "distance_m",
+            "first_seen",
+            "ground_xy_m",
+            "last_seen",
+            "max_stopped_s",
+            "mean_speed_kmh",
+            "object_class",
+            "path_ground_m",
+            "path_image_px",
+            "scope",
+            "score",
+            "timestamp",
+            "track_id",
+            "track_ids",
+            "type"
+          ]
+        }
+      }
+    },
+    {
+      "unit": "runs/synth_a_north",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\runs\\synth_a_north",
+      "manifest_ids": [],
+      "registered": false,
+      "files": 6,
+      "bytes": 337290,
+      "extensions": {
+        ".jsonl": 6
+      },
+      "docs": [],
+      "code_files": 0,
+      "findings": {
+        "jsonl": {
+          "count": 6,
+          "records": 251,
+          "by_file_name": {
+            "anomalies.jsonl": 2,
+            "tracks.jsonl": 2,
+            "traffic_states.jsonl": 2
+          },
+          "keys_sample": [
+            "approach_id",
+            "camera_id",
+            "details",
+            "detector",
+            "ground_xy_m",
+            "scope",
+            "score",
+            "timestamp",
+            "track_ids",
+            "type"
+          ]
+        }
+      }
+    },
+    {
+      "unit": "runs/synth_a_south",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\runs\\synth_a_south",
+      "manifest_ids": [],
+      "registered": false,
+      "files": 6,
+      "bytes": 42202,
+      "extensions": {
+        ".jsonl": 6
+      },
+      "docs": [],
+      "code_files": 0,
+      "findings": {
+        "jsonl": {
+          "count": 6,
+          "records": 50,
+          "by_file_name": {
+            "anomalies.jsonl": 2,
+            "tracks.jsonl": 2,
+            "traffic_states.jsonl": 2
+          },
+          "keys_sample": [
+            "approach_id",
+            "average_speed_kmh",
+            "bicycle_count",
+            "bus_count",
+            "camera_id",
+            "car_count",
+            "congestion_score",
+            "crossed_entry",
+            "crossed_exit",
+            "density_pct",
+            "density_veh_km",
+            "details",
+            "detector",
+            "displacement_along_travel_m",
+            "distance_m",
+            "explanation",
+            "first_seen",
+            "flow_veh_h",
+            "ground_xy_m",
+            "inflow",
+            "is_live",
+            "junction_id",
+            "last_seen",
+            "max_stopped_s",
+            "mean_speed_kmh"
+          ]
+        }
+      }
+    },
+    {
+      "unit": "runs/synth_a_west",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\runs\\synth_a_west",
+      "manifest_ids": [],
+      "registered": false,
+      "files": 3,
+      "bytes": 72165,
+      "extensions": {
+        ".jsonl": 3
+      },
+      "docs": [],
+      "code_files": 0,
+      "findings": {
+        "jsonl": {
+          "count": 3,
+          "records": 62,
+          "by_file_name": {
+            "anomalies.jsonl": 1,
+            "tracks.jsonl": 1,
+            "traffic_states.jsonl": 1
+          },
+          "keys_sample": [
+            "approach_id",
+            "camera_id",
+            "crossed_entry",
+            "crossed_exit",
+            "details",
+            "detector",
+            "displacement_along_travel_m",
+            "distance_m",
+            "first_seen",
+            "ground_xy_m",
+            "last_seen",
+            "max_stopped_s",
+            "mean_speed_kmh",
+            "object_class",
+            "path_ground_m",
+            "path_image_px",
+            "scope",
+            "score",
+            "timestamp",
+            "track_id",
+            "track_ids",
+            "type"
+          ]
+        }
+      }
+    },
+    {
+      "unit": "runs/test_congested",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\runs\\test_congested",
+      "manifest_ids": [],
+      "registered": false,
+      "files": 3,
+      "bytes": 247214,
+      "extensions": {
+        ".jsonl": 2,
+        ".json": 1
+      },
+      "docs": [],
+      "code_files": 0,
+      "findings": {
+        "jsonl": {
+          "count": 2,
+          "records": 62,
+          "by_file_name": {
+            "tracks.jsonl": 1,
+            "traffic_states.jsonl": 1
+          },
+          "keys_sample": [
+            "approach_id",
+            "camera_id",
+            "crossed_entry",
+            "crossed_exit",
+            "displacement_along_travel_m",
+            "distance_m",
+            "first_seen",
+            "last_seen",
+            "max_stopped_s",
+            "mean_speed_kmh",
+            "object_class",
+            "path_ground_m",
+            "path_image_px",
+            "track_id"
+          ]
+        },
+        "json": {
+          "count": 1,
+          "by_file_name": {
+            "summary.json": 1
+          },
+          "top_level_keys": {
+            "summary.json": [
+              "approach_id",
+              "calibration_reprojection_error_m",
+              "camera_id",
+              "detection_files",
+              "frame_size",
+              "frames",
+              "lanes",
+              "latency_ms_mean",
+              "processing_fps",
+              "roi_length_m",
+              "source_fps",
+              "states",
+              "tracks_finished",
+              "windows"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "unit": "runs/test_default",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\runs\\test_default",
+      "manifest_ids": [],
+      "registered": false,
+      "files": 3,
+      "bytes": 126633,
+      "extensions": {
+        ".jsonl": 2,
+        ".json": 1
+      },
+      "docs": [],
+      "code_files": 0,
+      "findings": {
+        "jsonl": {
+          "count": 2,
+          "records": 68,
+          "by_file_name": {
+            "tracks.jsonl": 1,
+            "traffic_states.jsonl": 1
+          },
+          "keys_sample": [
+            "approach_id",
+            "camera_id",
+            "crossed_entry",
+            "crossed_exit",
+            "displacement_along_travel_m",
+            "distance_m",
+            "first_seen",
+            "last_seen",
+            "max_stopped_s",
+            "mean_speed_kmh",
+            "object_class",
+            "path_ground_m",
+            "path_image_px",
+            "track_id"
+          ]
+        },
+        "json": {
+          "count": 1,
+          "by_file_name": {
+            "summary.json": 1
+          },
+          "top_level_keys": {
+            "summary.json": [
+              "approach_id",
+              "calibration_reprojection_error_m",
+              "camera_id",
+              "detection_files",
+              "frame_size",
+              "frames",
+              "lanes",
+              "latency_ms_mean",
+              "processing_fps",
+              "roi_length_m",
+              "source_fps",
+              "states",
+              "tracks_finished",
+              "windows"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "unit": "runs/test_free_flow",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\runs\\test_free_flow",
+      "manifest_ids": [],
+      "registered": false,
+      "files": 3,
+      "bytes": 48911,
+      "extensions": {
+        ".jsonl": 2,
+        ".json": 1
+      },
+      "docs": [],
+      "code_files": 0,
+      "findings": {
+        "jsonl": {
+          "count": 2,
+          "records": 38,
+          "by_file_name": {
+            "tracks.jsonl": 1,
+            "traffic_states.jsonl": 1
+          },
+          "keys_sample": [
+            "approach_id",
+            "average_speed_kmh",
+            "bicycle_count",
+            "bus_count",
+            "camera_id",
+            "car_count",
+            "congestion_score",
+            "crossed_entry",
+            "crossed_exit",
+            "density_pct",
+            "density_veh_km",
+            "displacement_along_travel_m",
+            "distance_m",
+            "explanation",
+            "first_seen",
+            "flow_veh_h",
+            "inflow",
+            "is_live",
+            "junction_id",
+            "last_seen",
+            "max_stopped_s",
+            "mean_speed_kmh",
+            "median_speed_kmh",
+            "motorcycle_count",
+            "object_class"
+          ]
+        },
+        "json": {
+          "count": 1,
+          "by_file_name": {
+            "summary.json": 1
+          },
+          "top_level_keys": {
+            "summary.json": [
+              "approach_id",
+              "calibration_reprojection_error_m",
+              "camera_id",
+              "detection_files",
+              "frame_size",
+              "frames",
+              "lanes",
+              "latency_ms_mean",
+              "processing_fps",
+              "roi_length_m",
+              "source_fps",
+              "states",
+              "tracks_finished",
+              "windows"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "unit": "runs/test_synth",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\runs\\test_synth",
+      "manifest_ids": [],
+      "registered": false,
+      "files": 3,
+      "bytes": 107582,
+      "extensions": {
+        ".jsonl": 2,
+        ".json": 1
+      },
+      "docs": [],
+      "code_files": 0,
+      "findings": {
+        "jsonl": {
+          "count": 2,
+          "records": 64,
+          "by_file_name": {
+            "tracks.jsonl": 1,
+            "traffic_states.jsonl": 1
+          },
+          "keys_sample": [
+            "approach_id",
+            "camera_id",
+            "crossed_entry",
+            "crossed_exit",
+            "displacement_along_travel_m",
+            "distance_m",
+            "first_seen",
+            "last_seen",
+            "max_stopped_s",
+            "mean_speed_kmh",
+            "object_class",
+            "path_ground_m",
+            "path_image_px",
+            "track_id"
+          ]
+        },
+        "json": {
+          "count": 1,
+          "by_file_name": {
+            "summary.json": 1
+          },
+          "top_level_keys": {
+            "summary.json": [
+              "approach_id",
+              "calibration_reprojection_error_m",
+              "camera_id",
+              "detection_files",
+              "frame_size",
+              "frames",
+              "lanes",
+              "latency_ms_mean",
+              "processing_fps",
+              "roi_length_m",
+              "source_fps",
+              "states",
+              "tracks_finished",
+              "windows"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "unit": "synthetic",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\data\\synthetic",
+      "manifest_ids": [
+        "synthetic_junction"
+      ],
+      "registered": true,
+      "files": 10,
+      "bytes": 102797974,
+      "extensions": {
+        ".pkl": 5,
+        ".csv": 2,
+        ".yaml": 1,
+        ".json": 1,
+        ".mp4": 1
+      },
+      "docs": [],
+      "code_files": 0,
+      "findings": {
+        "video": {
+          "count": 1,
+          "unreadable": [],
+          "resolutions": {
+            "1280x720": 1
+          },
+          "fps": {
+            "10.0": 1
+          },
+          "duration_s": {
+            "min": 180.0,
+            "max": 180.0,
+            "total_h": 0.05
+          },
+          "per_folder": {
+            "default": 1
+          }
+        },
+        "csv": {
+          "count": 2,
+          "inspected": 2,
+          "schemas": [
+            {
+              "columns": [
+                "frame",
+                "class",
+                "confidence",
+                "x1",
+                "y1",
+                "x2",
+                "y2"
+              ],
+              "files": 1,
+              "rows": 17195,
+              "duplicate_rows": 0,
+              "missing": {},
+              "categorical": {},
+              "numeric_range": {
+                "frame": [
+                  0.0,
+                  1799.0
+                ],
+                "confidence": [
+                  0.2,
+                  0.95
+                ],
+                "x1": [
+                  0.0,
+                  926.67
+                ],
+                "y1": [
+                  172.53,
+                  607.15
+                ],
+                "x2": [
+                  31.58,
+                  1275.68
+                ],
+                "y2": [
+                  223.03,
+                  719.0
+                ]
+              },
+              "time_range": {},
+              "examples": [
+                "default/detections.csv"
+              ]
+            },
+            {
+              "columns": [
+                "frame",
+                "time",
+                "id",
+                "class",
+                "x_m",
+                "along_m",
+                "speed_kmh",
+                "x1",
+                "y1",
+                "x2",
+                "y2"
+              ],
+              "files": 1,
+              "rows": 18622,
+              "duplicate_rows": 0,
+              "missing": {
+                "x1": 750,
+                "y1": 750,
+                "x2": 750,
+                "y2": 750
+              },
+              "categorical": {},
+              "numeric_range": {
+                "frame": [
+                  0.0,
+                  1799.0
+                ],
+                "id": [
+                  6.0,
+                  71.0
+                ],
+                "x_m": [
+                  -1.983,
+                  6.234
+                ],
+                "along_m": [
+                  -11.982,
+                  115.497
+                ],
+                "speed_kmh": [
+                  0.0,
+                  45.112
+                ],
+                "x1": [
+                  0.0,
+                  926.34
+                ],
+                "y1": [
+                  174.4,
+                  607.31
+                ],
+                "x2": [
+                  32.45,
+                  1279.0
+                ],
+                "y2": [
+                  226.4,
+                  719.0
+                ]
+              },
+              "time_range": {},
+              "examples": [
+                "default/truth.csv"
+              ]
+            }
+          ]
+        },
+        "pkl": {
+          "count": 5,
+          "files": [
+            {
+              "file": "cache/rt_it_cam-62bfb58a36dbf55f.pkl",
+              "globals": [],
+              "structure": "not loaded - references code beyond NumPy arrays (inspected with pickletools only)"
+            },
+            {
+              "file": "cache/rt_synth_a_east-6964980cdee37f55.pkl",
+              "globals": [],
+              "structure": "not loaded - references code beyond NumPy arrays (inspected with pickletools only)"
+            },
+            {
+              "file": "cache/rt_synth_a_north-ed27b036cb5692cb.pkl",
+              "globals": [],
+              "structure": "not loaded - references code beyond NumPy arrays (inspected with pickletools only)"
+            },
+            {
+              "file": "cache/rt_synth_a_south-6e1f13178b73cd2b.pkl",
+              "globals": [],
+              "structure": "not loaded - references code beyond NumPy arrays (inspected with pickletools only)"
+            },
+            {
+              "file": "cache/rt_synth_a_west-1d5ff0ed9df3cd4f.pkl",
+              "globals": [],
+              "structure": "not loaded - references code beyond NumPy arrays (inspected with pickletools only)"
+            }
+          ]
+        },
+        "json": {
+          "count": 1,
+          "by_file_name": {
+            "scene.json": 1
+          },
+          "top_level_keys": {
+            "default/scene.json": [
+              "arrival_rate_veh_h_per_lane",
+              "calibration_noise_px",
+              "class_flip_prob",
+              "classes",
+              "comfort_decel",
+              "despawn_along_m",
+              "duration_s",
+              "fps",
+              "frame_size",
+              "jitter_px",
+              "lane_width_m",
+              "lanes",
+              "low_conf_prob",
+              "max_accel",
+              "miss_prob"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "manifest_entries_without_files": [
+    "aicity_mtmc",
+    "open_meteo_weather",
+    "own_recordings"
+  ]
+}

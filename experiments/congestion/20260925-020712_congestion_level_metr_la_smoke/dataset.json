@@ -1,0 +1,137 @@
+{
+  "source": "metr_la",
+  "dataset": "metr_la",
+  "resolution_s": 300,
+  "series": [
+    "metr_la_717461",
+    "metr_la_717510",
+    "metr_la_718089",
+    "metr_la_718496",
+    "metr_la_765164",
+    "metr_la_768066",
+    "metr_la_769403",
+    "metr_la_769444",
+    "metr_la_769806",
+    "metr_la_772151",
+    "metr_la_773869"
+  ],
+  "periods": {
+    "train": {
+      "start": "2012-03-01T08:00:00+00:00",
+      "end": "2012-05-23T14:30:00+00:00"
+    },
+    "val": {
+      "start": "2012-05-23T14:30:00+00:00",
+      "end": "2012-06-04T11:55:00+00:00"
+    },
+    "test": {
+      "start": "2012-06-04T11:55:00+00:00",
+      "end": "2012-06-28T07:00:00+00:00"
+    }
+  },
+  "samples": {
+    "train": 12016,
+    "val": 32543,
+    "test": 61657
+  },
+  "features": [
+    "avg_speed_kmh_t",
+    "avg_speed_kmh_lag1",
+    "avg_speed_kmh_lag2",
+    "avg_speed_kmh_lag3",
+    "avg_speed_kmh_lag6",
+    "avg_speed_kmh_lag11",
+    "avg_speed_kmh_mean3",
+    "avg_speed_kmh_mean12",
+    "avg_speed_kmh_diff1",
+    "hour_sin",
+    "hour_cos",
+    "dow_sin",
+    "dow_cos",
+    "is_weekend",
+    "is_rush_hour"
+  ],
+  "label_indicators": [
+    "avg_speed_kmh"
+  ],
+  "free_flow_kmh": {
+    "metr_la_717461": 109.03,
+    "metr_la_717510": 104.61,
+    "metr_la_718089": 108.03,
+    "metr_la_718496": 107.47,
+    "metr_la_765164": 109.9,
+    "metr_la_768066": 109.03,
+    "metr_la_769403": 111.04,
+    "metr_la_769444": 103.6,
+    "metr_la_769806": 108.18,
+    "metr_la_772151": 105.01,
+    "metr_la_773869": 108.9
+  },
+  "free_flow_method": {
+    "method": "train_quantile",
+    "quantile": 0.85
+  },
+  "class_distribution": {
+    "train": {
+      "5": {
+        "free": 10243,
+        "moderate": 530,
+        "high": 423,
+        "severe": 820
+      },
+      "15": {
+        "free": 10235,
+        "moderate": 534,
+        "high": 390,
+        "severe": 857
+      },
+      "30": {
+        "free": 10222,
+        "moderate": 531,
+        "high": 428,
+        "severe": 835
+      }
+    },
+    "val": {
+      "5": {
+        "free": 27584,
+        "moderate": 1421,
+        "high": 1071,
+        "severe": 2467
+      },
+      "15": {
+        "free": 27599,
+        "moderate": 1423,
+        "high": 1068,
+        "severe": 2453
+      },
+      "30": {
+        "free": 27623,
+        "moderate": 1427,
+        "high": 1059,
+        "severe": 2434
+      }
+    },
+    "test": {
+      "5": {
+        "free": 50178,
+        "moderate": 3362,
+        "high": 2887,
+        "severe": 5230
+      },
+      "15": {
+        "free": 50179,
+        "moderate": 3368,
+        "high": 2884,
+        "severe": 5226
+      },
+      "30": {
+        "free": 50191,
+        "moderate": 3384,
+        "high": 2867,
+        "severe": 5215
+      }
+    }
+  },
+  "preprocessor_spec_hash": "a8045b77684c0b41"
+}

@@ -1,0 +1,140 @@
+id: synth_small
+name: Synthetic (small)
+approach_id: junction_a_north
+source: synthetic://small
+source_type: synthetic
+source_fps: null
+process_fps: 10.0
+resolution: null
+replay_start: '2026-09-01T08:00:00+05:30'
+realtime: false
+loop: false
+location:
+- 77.5946
+- 12.9719
+calibration:
+  image_points_px:
+  - - 266.6
+    - 665.9
+  - - 999.1
+    - 666.1
+  - - 490.5
+    - 359.0
+  - - 787.7
+    - 359.7
+  - - 546.3
+    - 279.6
+  - - 732.9
+    - 281.8
+  ground_points_m:
+  - - 0.0
+    - 0.0
+  - - 7.0
+    - 0.0
+  - - 0.0
+    - 30.0
+  - - 7.0
+    - 30.0
+  - - 0.0
+    - 60.0
+  - - 7.0
+    - 60.0
+  origin_lonlat:
+  - 77.5946
+  - 12.9721
+  bearing_deg: 0.0
+  image_size:
+  - 1280
+  - 720
+zones_image_size: null
+zones:
+- id: roi
+  type: roi
+  points_px:
+  - - 470.9
+    - 276.8
+  - - 809.2
+    - 276.8
+  - - 1429.6
+    - 755.6
+  - - -166.0
+    - 755.6
+  lane_index: null
+  direction: null
+- id: lane_1
+  type: lane
+  points_px:
+  - - 549.0
+    - 276.8
+  - - 640.1
+    - 276.8
+  - - 631.8
+    - 755.6
+  - - 202.2
+    - 755.6
+  lane_index: 1
+  direction:
+  - 0.0
+  - -1.0
+- id: lane_2
+  type: lane
+  points_px:
+  - - 640.1
+    - 276.8
+  - - 731.1
+    - 276.8
+  - - 1061.4
+    - 755.6
+  - - 631.8
+    - 755.6
+  lane_index: 2
+  direction:
+  - 0.0
+  - -1.0
+- id: entry
+  type: entry_line
+  points_px:
+  - - 517.9
+    - 298.7
+  - - 761.5
+    - 298.7
+  lane_index: null
+  direction: null
+- id: stop_line
+  type: exit_line
+  points_px:
+  - - 214.3
+    - 666.7
+  - - 1052.4
+    - 666.7
+  lane_index: null
+  direction: null
+- id: queue
+  type: queue_zone
+  points_px:
+  - - 549.0
+    - 276.8
+  - - 731.1
+    - 276.8
+  - - 1038.7
+    - 722.8
+  - - 226.0
+    - 722.8
+  lane_index: null
+  direction: null
+- id: loop
+  type: virtual_loop
+  points_px:
+  - - 372.1
+    - 521.0
+  - - 899.5
+    - 521.0
+  - - 954.3
+    - 600.4
+  - - 314.6
+    - 600.4
+  lane_index: null
+  direction: null
+lanes: null
+travel_direction: null
+roi_length_m: null

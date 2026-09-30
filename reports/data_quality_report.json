@@ -1,0 +1,742 @@
+{
+  "generated": "2026-09-24T20:21:58+00:00",
+  "datasets": [
+    {
+      "dataset": "ua_detrac",
+      "kind": "object annotations (detection / tracking)",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\data\\raw\\uadetrac",
+      "checks": [
+        {
+          "name": "train: images vs annotations",
+          "status": "ok",
+          "detail": "82085 annotated frames, 83791 images; 1706 images have no annotation entry (excluded - never assumed empty); 0 annotations without an image",
+          "value": null
+        },
+        {
+          "name": "train: box validity",
+          "status": "ok",
+          "detail": "0 zero/negative-size, 0 outside the image, 0 duplicate ids in a frame, 625 smaller than 8 px",
+          "value": null
+        },
+        {
+          "name": "train: ignored regions",
+          "status": "info",
+          "detail": "24940 annotated boxes centred inside ignored regions (ignored regions are masked for training and excluded from evaluation)",
+          "value": null
+        },
+        {
+          "name": "train: class balance",
+          "status": "warn",
+          "detail": "car 560904 (93.8%), bus 33651 (5.6%), truck 3726 (0.6%)",
+          "value": null
+        },
+        {
+          "name": "train: adjacent-frame redundancy",
+          "status": "info",
+          "detail": "median IoU of the same object in consecutive frames 0.85 - adjacent frames are near-duplicates, so splits are by sequence and training frames are subsampled",
+          "value": null
+        },
+        {
+          "name": "test: images vs annotations",
+          "status": "ok",
+          "detail": "56167 annotated frames, 56340 images; 173 images have no annotation entry (excluded - never assumed empty); 0 annotations without an image",
+          "value": null
+        },
+        {
+          "name": "test: box validity",
+          "status": "ok",
+          "detail": "0 zero/negative-size, 0 outside the image, 0 duplicate ids in a frame, 4 smaller than 8 px",
+          "value": null
+        },
+        {
+          "name": "test: ignored regions",
+          "status": "info",
+          "detail": "47780 annotated boxes centred inside ignored regions (ignored regions are masked for training and excluded from evaluation)",
+          "value": null
+        },
+        {
+          "name": "test: class balance",
+          "status": "warn",
+          "detail": "car 587074 (86.9%), bus 71785 (10.6%), truck 16915 (2.5%)",
+          "value": null
+        },
+        {
+          "name": "test: adjacent-frame redundancy",
+          "status": "info",
+          "detail": "median IoU of the same object in consecutive frames 0.94 - adjacent frames are near-duplicates, so splits are by sequence and training frames are subsampled",
+          "value": null
+        },
+        {
+          "name": "train/test sequence overlap",
+          "status": "ok",
+          "detail": "60 train and 40 test sequences; overlap: none",
+          "value": null
+        }
+      ],
+      "stats": {
+        "train": {
+          "sequences": 60,
+          "annotated_frames": 82085,
+          "image_frames": 83791,
+          "images_without_annotation": 1706,
+          "annotations_without_image": 0,
+          "boxes": 598281,
+          "unmapped_labels": 0,
+          "invalid_boxes": 0,
+          "out_of_image_boxes": 0,
+          "tiny_boxes_lt8px": 625,
+          "duplicate_ids_in_frame": 0,
+          "boxes_centred_in_ignored_regions": 24940,
+          "classes": {
+            "car": 560904,
+            "truck": 3726,
+            "bus": 33651
+          },
+          "median_consecutive_frame_iou": 0.848
+        },
+        "test": {
+          "sequences": 40,
+          "annotated_frames": 56167,
+          "image_frames": 56340,
+          "images_without_annotation": 173,
+          "annotations_without_image": 0,
+          "boxes": 675774,
+          "unmapped_labels": 0,
+          "invalid_boxes": 0,
+          "out_of_image_boxes": 0,
+          "tiny_boxes_lt8px": 4,
+          "duplicate_ids_in_frame": 0,
+          "boxes_centred_in_ignored_regions": 47780,
+          "classes": {
+            "car": 587074,
+            "bus": 71785,
+            "truck": 16915
+          },
+          "median_consecutive_frame_iou": 0.942
+        }
+      }
+    },
+    {
+      "dataset": "aicity21_anomaly",
+      "kind": "incident intervals (video level)",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\data\\raw\\anomaly\\aic21_track4",
+      "checks": [
+        {
+          "name": "labels reference existing training videos",
+          "status": "ok",
+          "detail": "17 labelled videos; without a file: none",
+          "value": null
+        },
+        {
+          "name": "interval validity",
+          "status": "ok",
+          "detail": "18 intervals; 0 with start >= end or end beyond the video ([])",
+          "value": null
+        },
+        {
+          "name": "overlapping intervals",
+          "status": "ok",
+          "detail": "0 overlapping pairs; 1 videos have more than one interval",
+          "value": null
+        },
+        {
+          "name": "class balance",
+          "status": "warn",
+          "detail": "17/100 training videos contain an anomaly; anomalous time 2.7 h of 24.5 h (10.9%); 5 intervals start at 0 s (anomaly already present when the video starts)",
+          "value": null
+        },
+        {
+          "name": "frame rates",
+          "status": "warn",
+          "detail": "2 training videos not at 30 fps: {'58': 14.3, '66': 23.56} - labels are in seconds, so times are converted with each video's own fps",
+          "value": null
+        },
+        {
+          "name": "test split",
+          "status": "info",
+          "detail": "150 test videos without public labels - not usable for supervised evaluation; excluded",
+          "value": null
+        }
+      ],
+      "stats": {
+        "videos": 100,
+        "labelled_videos": 17,
+        "intervals": 18,
+        "hours": 24.53,
+        "anomalous_hours": 2.68,
+        "test_videos": 150
+      }
+    },
+    {
+      "dataset": "metr_la",
+      "kind": "time series",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\data\\raw\\metr_la",
+      "checks": [
+        {
+          "name": "duplicate (series, timestamp)",
+          "status": "ok",
+          "detail": "0 duplicates",
+          "value": 0
+        },
+        {
+          "name": "regular sampling",
+          "status": "ok",
+          "detail": "0 steps differ from 300 s (largest 0 days 00:05:00); DST: 12 non-existent local timestamps dropped",
+          "value": 0
+        },
+        {
+          "name": "missing avg_speed_kmh",
+          "status": "warn",
+          "detail": "8.08% missing overall; worst series 20.1%, 1 series > 20% missing",
+          "value": 0.08077
+        },
+        {
+          "name": "zeros = sensor outage",
+          "status": "info",
+          "detail": "572818 zero readings converted to missing (documented source convention)",
+          "value": 572818
+        },
+        {
+          "name": "longest gap (avg_speed_kmh)",
+          "status": "info",
+          "detail": "longest run of missing steps per series: max 1683, median 381 (gaps > max_gap_fill_steps are never interpolated; windows touching them are excluded)",
+          "value": null
+        },
+        {
+          "name": "physical range avg_speed_kmh",
+          "status": "ok",
+          "detail": "0 values outside [0, 200]",
+          "value": 0
+        },
+        {
+          "name": "stuck sensor (avg_speed_kmh)",
+          "status": "ok",
+          "detail": "0.05% of readings sit in runs of identical non-missing values lasting >= 1 h",
+          "value": 0.00048
+        },
+        {
+          "name": "chronological split (forecasting_metr_la_context.yaml)",
+          "status": "ok",
+          "detail": "train < val < test, disjoint periods; targets never cross a boundary (windows.py)",
+          "value": {
+            "train": {
+              "start": "2012-03-01T08:00:00+00:00",
+              "end": "2012-05-23T14:30:00+00:00"
+            },
+            "val": {
+              "start": "2012-05-23T14:30:00+00:00",
+              "end": "2012-06-04T11:55:00+00:00"
+            },
+            "test": {
+              "start": "2012-06-04T11:55:00+00:00",
+              "end": "2012-06-28T07:00:00+00:00"
+            },
+            "ordered_disjoint": true
+          }
+        },
+        {
+          "name": "chronological split (forecasting_metr_la_traffic_only.yaml)",
+          "status": "ok",
+          "detail": "train < val < test, disjoint periods; targets never cross a boundary (windows.py)",
+          "value": {
+            "train": {
+              "start": "2012-03-01T08:00:00+00:00",
+              "end": "2012-05-23T14:30:00+00:00"
+            },
+            "val": {
+              "start": "2012-05-23T14:30:00+00:00",
+              "end": "2012-06-04T11:55:00+00:00"
+            },
+            "test": {
+              "start": "2012-06-04T11:55:00+00:00",
+              "end": "2012-06-28T07:00:00+00:00"
+            },
+            "ordered_disjoint": true
+          }
+        }
+      ],
+      "stats": {
+        "rows": 7091820,
+        "series": 207,
+        "columns": [
+          "avg_speed_kmh"
+        ],
+        "start": "2012-03-01 08:00:00+00:00",
+        "end": "2012-06-28 06:55:00+00:00",
+        "resolution_s": 300,
+        "adapter_info": {
+          "file": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\data\\raw\\metr_la\\metr-la.h5",
+          "n_sensors_total": 207,
+          "steps": 34260,
+          "period_utc": [
+            "2012-03-01 08:00:00+00:00",
+            "2012-06-28 06:55:00+00:00"
+          ],
+          "missing_values": 572818,
+          "zeros_treated_as_missing": 572818,
+          "dropped_dst_timestamps": 12,
+          "weather": false,
+          "units": "speed mph -> km/h",
+          "provenance": "https://github.com/liyaguang/DCRNN (README links to the data files; manual download)"
+        },
+        "longest_gap_steps": {
+          "max": 1683,
+          "median": 381.0
+        },
+        "splits": {
+          "forecasting_metr_la_context.yaml": {
+            "train": {
+              "start": "2012-03-01T08:00:00+00:00",
+              "end": "2012-05-23T14:30:00+00:00"
+            },
+            "val": {
+              "start": "2012-05-23T14:30:00+00:00",
+              "end": "2012-06-04T11:55:00+00:00"
+            },
+            "test": {
+              "start": "2012-06-04T11:55:00+00:00",
+              "end": "2012-06-28T07:00:00+00:00"
+            },
+            "ordered_disjoint": true
+          },
+          "forecasting_metr_la_traffic_only.yaml": {
+            "train": {
+              "start": "2012-03-01T08:00:00+00:00",
+              "end": "2012-05-23T14:30:00+00:00"
+            },
+            "val": {
+              "start": "2012-05-23T14:30:00+00:00",
+              "end": "2012-06-04T11:55:00+00:00"
+            },
+            "test": {
+              "start": "2012-06-04T11:55:00+00:00",
+              "end": "2012-06-28T07:00:00+00:00"
+            },
+            "ordered_disjoint": true
+          }
+        }
+      }
+    },
+    {
+      "dataset": "pems_bay",
+      "kind": "time series",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\data\\raw\\pems_bay",
+      "checks": [
+        {
+          "name": "duplicate (series, timestamp)",
+          "status": "ok",
+          "detail": "0 duplicates",
+          "value": 0
+        },
+        {
+          "name": "regular sampling",
+          "status": "ok",
+          "detail": "0 steps differ from 300 s (largest 0 days 00:05:00); DST: 0 non-existent local timestamps dropped",
+          "value": 0
+        },
+        {
+          "name": "missing avg_speed_kmh",
+          "status": "ok",
+          "detail": "0.00% missing overall; worst series 0.0%, 0 series > 20% missing",
+          "value": 3e-05
+        },
+        {
+          "name": "zeros = sensor outage",
+          "status": "info",
+          "detail": "521 zero readings converted to missing (documented source convention)",
+          "value": 521
+        },
+        {
+          "name": "longest gap (avg_speed_kmh)",
+          "status": "info",
+          "detail": "longest run of missing steps per series: max 1, median 1 (gaps > max_gap_fill_steps are never interpolated; windows touching them are excluded)",
+          "value": null
+        },
+        {
+          "name": "physical range avg_speed_kmh",
+          "status": "ok",
+          "detail": "0 values outside [0, 200]",
+          "value": 0
+        },
+        {
+          "name": "stuck sensor (avg_speed_kmh)",
+          "status": "ok",
+          "detail": "0.70% of readings sit in runs of identical non-missing values lasting >= 1 h",
+          "value": 0.00696
+        },
+        {
+          "name": "chronological split (forecasting_pems_bay_context.yaml)",
+          "status": "ok",
+          "detail": "train < val < test, disjoint periods; targets never cross a boundary (windows.py)",
+          "value": {
+            "train": {
+              "start": "2017-01-01T08:00:00+00:00",
+              "end": "2017-05-08T00:05:00+00:00"
+            },
+            "val": {
+              "start": "2017-05-08T00:05:00+00:00",
+              "end": "2017-05-26T02:20:00+00:00"
+            },
+            "test": {
+              "start": "2017-05-26T02:20:00+00:00",
+              "end": "2017-07-01T07:00:00+00:00"
+            },
+            "ordered_disjoint": true
+          }
+        },
+        {
+          "name": "chronological split (forecasting_pems_bay_traffic_only.yaml)",
+          "status": "ok",
+          "detail": "train < val < test, disjoint periods; targets never cross a boundary (windows.py)",
+          "value": {
+            "train": {
+              "start": "2017-01-01T08:00:00+00:00",
+              "end": "2017-05-08T00:05:00+00:00"
+            },
+            "val": {
+              "start": "2017-05-08T00:05:00+00:00",
+              "end": "2017-05-26T02:20:00+00:00"
+            },
+            "test": {
+              "start": "2017-05-26T02:20:00+00:00",
+              "end": "2017-07-01T07:00:00+00:00"
+            },
+            "ordered_disjoint": true
+          }
+        }
+      ],
+      "stats": {
+        "rows": 16937700,
+        "series": 325,
+        "columns": [
+          "avg_speed_kmh"
+        ],
+        "start": "2017-01-01 08:00:00+00:00",
+        "end": "2017-07-01 06:55:00+00:00",
+        "resolution_s": 300,
+        "adapter_info": {
+          "file": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\data\\raw\\pems_bay\\pems-bay.h5",
+          "n_sensors_total": 325,
+          "steps": 52116,
+          "period_utc": [
+            "2017-01-01 08:00:00+00:00",
+            "2017-07-01 06:55:00+00:00"
+          ],
+          "missing_values": 521,
+          "zeros_treated_as_missing": 521,
+          "dropped_dst_timestamps": 0,
+          "weather": false,
+          "units": "speed mph -> km/h",
+          "provenance": "https://github.com/liyaguang/DCRNN (README links to the data files; manual download)"
+        },
+        "longest_gap_steps": {
+          "max": 1,
+          "median": 1.0
+        },
+        "splits": {
+          "forecasting_pems_bay_context.yaml": {
+            "train": {
+              "start": "2017-01-01T08:00:00+00:00",
+              "end": "2017-05-08T00:05:00+00:00"
+            },
+            "val": {
+              "start": "2017-05-08T00:05:00+00:00",
+              "end": "2017-05-26T02:20:00+00:00"
+            },
+            "test": {
+              "start": "2017-05-26T02:20:00+00:00",
+              "end": "2017-07-01T07:00:00+00:00"
+            },
+            "ordered_disjoint": true
+          },
+          "forecasting_pems_bay_traffic_only.yaml": {
+            "train": {
+              "start": "2017-01-01T08:00:00+00:00",
+              "end": "2017-05-08T00:05:00+00:00"
+            },
+            "val": {
+              "start": "2017-05-08T00:05:00+00:00",
+              "end": "2017-05-26T02:20:00+00:00"
+            },
+            "test": {
+              "start": "2017-05-26T02:20:00+00:00",
+              "end": "2017-07-01T07:00:00+00:00"
+            },
+            "ordered_disjoint": true
+          }
+        }
+      }
+    },
+    {
+      "dataset": "pems08",
+      "kind": "time series",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\data\\external\\pems08",
+      "checks": [
+        {
+          "name": "duplicate (series, timestamp)",
+          "status": "ok",
+          "detail": "0 duplicates",
+          "value": 0
+        },
+        {
+          "name": "regular sampling",
+          "status": "ok",
+          "detail": "0 steps differ from 300 s (largest 0 days 00:05:00); DST: 0 non-existent local timestamps dropped",
+          "value": 0
+        },
+        {
+          "name": "missing flow_veh_h",
+          "status": "ok",
+          "detail": "0.27% missing overall; worst series 3.4%, 0 series > 20% missing",
+          "value": 0.00268
+        },
+        {
+          "name": "missing occupancy_pct",
+          "status": "ok",
+          "detail": "0.27% missing overall; worst series 3.4%, 0 series > 20% missing",
+          "value": 0.00268
+        },
+        {
+          "name": "missing avg_speed_kmh",
+          "status": "ok",
+          "detail": "0.27% missing overall; worst series 3.4%, 0 series > 20% missing",
+          "value": 0.00268
+        },
+        {
+          "name": "longest gap (avg_speed_kmh)",
+          "status": "info",
+          "detail": "longest run of missing steps per series: max 29, median 0 (gaps > max_gap_fill_steps are never interpolated; windows touching them are excluded)",
+          "value": null
+        },
+        {
+          "name": "physical range avg_speed_kmh",
+          "status": "ok",
+          "detail": "0 values outside [0, 200]",
+          "value": 0
+        },
+        {
+          "name": "physical range occupancy_pct",
+          "status": "ok",
+          "detail": "0 values outside [0, 100]",
+          "value": 0
+        },
+        {
+          "name": "physical range flow_veh_h",
+          "status": "ok",
+          "detail": "0 values outside [0, 20000]",
+          "value": 0
+        },
+        {
+          "name": "stuck sensor (avg_speed_kmh)",
+          "status": "ok",
+          "detail": "0.03% of readings sit in runs of identical non-missing values lasting >= 1 h",
+          "value": 0.00027
+        },
+        {
+          "name": "chronological split (forecasting_pems08.yaml)",
+          "status": "ok",
+          "detail": "train < val < test, disjoint periods; targets never cross a boundary (windows.py)",
+          "value": {
+            "train": {
+              "start": "2016-07-01T07:00:00+00:00",
+              "end": "2016-08-07T11:45:00+00:00"
+            },
+            "val": {
+              "start": "2016-08-07T11:45:00+00:00",
+              "end": "2016-08-19T21:20:00+00:00"
+            },
+            "test": {
+              "start": "2016-08-19T21:20:00+00:00",
+              "end": "2016-09-01T07:00:00+00:00"
+            },
+            "ordered_disjoint": true
+          }
+        }
+      ],
+      "stats": {
+        "rows": 232128,
+        "series": 13,
+        "columns": [
+          "flow_veh_h",
+          "occupancy_pct",
+          "avg_speed_kmh"
+        ],
+        "start": "2016-07-01 07:00:00+00:00",
+        "end": "2016-09-01 06:55:00+00:00",
+        "resolution_s": 300,
+        "adapter_info": {
+          "file": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\data\\external\\pems08\\pems08.npz",
+          "steps": 17856,
+          "outage_rows": 621,
+          "provenance": "Caltrans PeMS District 8 via ASTGCN mirror (see configs/datasets/public_timeseries.yaml)",
+          "time_origin_assumption": "step 0 = 2016-07-01 00:00 America/Los_Angeles"
+        },
+        "longest_gap_steps": {
+          "max": 29,
+          "median": 0.0
+        },
+        "splits": {
+          "forecasting_pems08.yaml": {
+            "train": {
+              "start": "2016-07-01T07:00:00+00:00",
+              "end": "2016-08-07T11:45:00+00:00"
+            },
+            "val": {
+              "start": "2016-08-07T11:45:00+00:00",
+              "end": "2016-08-19T21:20:00+00:00"
+            },
+            "test": {
+              "start": "2016-08-19T21:20:00+00:00",
+              "end": "2016-09-01T07:00:00+00:00"
+            },
+            "ordered_disjoint": true
+          }
+        }
+      }
+    },
+    {
+      "dataset": "aicity21_reid",
+      "kind": "identity labels (re-identification)",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\data\\raw\\aicity_reid\\aic21_track2",
+      "checks": [
+        {
+          "name": "label file vs images",
+          "status": "ok",
+          "detail": "52717 labelled, 52717 listed, 52717 on disk",
+          "value": null
+        },
+        {
+          "name": "images per identity",
+          "status": "info",
+          "detail": "440 identities; images per identity min 19, median 92, max 682; cameras per identity median 4",
+          "value": null
+        },
+        {
+          "name": "test identities",
+          "status": "info",
+          "detail": "test/query labels carry camera ids only - identities are withheld (challenge evaluation), so a held-out evaluation must split the TRAINING identities",
+          "value": null
+        }
+      ],
+      "stats": {
+        "identities": 440,
+        "train_images": 52717
+      }
+    },
+    {
+      "dataset": "lisa_traffic_lights",
+      "kind": "box annotations (CSV)",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\data\\raw\\traffic_lights\\lisa",
+      "checks": [
+        {
+          "name": "box validity",
+          "status": "ok",
+          "detail": "112370 boxes in 24 files; 0 zero/negative-size, 0 outside the 1280x960 frame",
+          "value": null
+        },
+        {
+          "name": "tag balance",
+          "status": "warn",
+          "detail": "go 48892, stop 44730, stopLeft 13048, warning 2669, goLeft 2476, warningLeft 350, goForward 205",
+          "value": null
+        },
+        {
+          "name": "referenced frames exist",
+          "status": "ok",
+          "detail": "100.0% of annotation rows point to an image on disk (36265 distinct frames referenced, 43016 images)",
+          "value": null
+        },
+        {
+          "name": "duplicate rows",
+          "status": "warn",
+          "detail": "2911 duplicate annotation rows",
+          "value": null
+        }
+      ],
+      "stats": {
+        "boxes": 112370,
+        "tags": {
+          "go": 48892,
+          "stop": 44730,
+          "stopLeft": 13048,
+          "warning": 2669,
+          "goLeft": 2476,
+          "warningLeft": 350,
+          "goForward": 205
+        },
+        "frame_size": [
+          1280,
+          960
+        ]
+      }
+    },
+    {
+      "dataset": "weather_history_szeged",
+      "kind": "context table (weather)",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\data\\raw\\weather\\kaggle_szeged",
+      "checks": [
+        {
+          "name": "timestamps",
+          "status": "ok",
+          "detail": "0 unparseable; 2 UTC offsets present (['+0100', '+0200']); range 2005-12-31 23:00:00+00:00 .. 2016-12-31 22:00:00+00:00",
+          "value": null
+        },
+        {
+          "name": "duplicates",
+          "status": "warn",
+          "detail": "24 duplicate rows, 24 duplicate timestamps",
+          "value": null
+        },
+        {
+          "name": "impossible values",
+          "status": "warn",
+          "detail": "Humidity: 22, Pressure (millibars): 1288 (pressure outside 850-1090 mbar, humidity 0)",
+          "value": null
+        },
+        {
+          "name": "constant columns",
+          "status": "warn",
+          "detail": "['Loud Cover'] carry no information",
+          "value": null
+        },
+        {
+          "name": "missing values",
+          "status": "warn",
+          "detail": "{'Precip Type': 517}",
+          "value": null
+        },
+        {
+          "name": "overlap with traffic datasets",
+          "status": "warn",
+          "detail": "time overlap: metr_la: yes, pems_bay: no, pems08: yes - and a single site; weather must match the traffic's location AND time to be a feature",
+          "value": null
+        }
+      ],
+      "stats": {
+        "rows": 96453,
+        "start": "2005-12-31 23:00:00+00:00",
+        "end": "2016-12-31 22:00:00+00:00"
+      }
+    },
+    {
+      "dataset": "external/weather (Open-Meteo cache)",
+      "kind": "context cache (Parquet)",
+      "path": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\data\\external\\weather",
+      "checks": [
+        {
+          "name": "openmeteo_12.970_77.590_2025-06-01_2025-07-13.parquet",
+          "status": "warn",
+          "detail": "1032 rows 2025-06-01 00:00:00+00:00 .. 2025-07-13 23:00:00+00:00; missing: {'visibility_km': '100%'}",
+          "value": null
+        },
+        {
+          "name": "openmeteo_34.060_-117.340_2016-07-01_2016-09-01.parquet",
+          "status": "warn",
+          "detail": "1512 rows 2016-07-01 00:00:00+00:00 .. 2016-09-01 23:00:00+00:00; missing: {'visibility_km': '100%'}",
+          "value": null
+        }
+      ],
+      "stats": {}
+    }
+  ]
+}

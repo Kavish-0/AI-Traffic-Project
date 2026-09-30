@@ -1,0 +1,20 @@
+[
+  {
+    "name": "level_h5",
+    "horizon_min": 5,
+    "model": "random_forest",
+    "artifact": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\models\\congestion\\level_h5\\20260925-021745_congestion_level_synthetic"
+  },
+  {
+    "name": "level_h15",
+    "horizon_min": 15,
+    "model": "random_forest",
+    "artifact": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\models\\congestion\\level_h15\\20260925-021745_congestion_level_synthetic"
+  },
+  {
+    "name": "level_h30",
+    "horizon_min": 30,
+    "model": "xgboost",
+    "artifact": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\models\\congestion\\level_h30\\20260925-021745_congestion_level_synthetic"
+  }
+]

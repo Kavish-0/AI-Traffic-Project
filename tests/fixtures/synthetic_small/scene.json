@@ -1,0 +1,74 @@
+{
+  "name": "small",
+  "seed": 7,
+  "start": "2026-09-01T08:00:00+05:30",
+  "duration_s": 20.0,
+  "warmup_s": 30.0,
+  "fps": 10.0,
+  "frame_size": [
+    1280,
+    720
+  ],
+  "lanes": 2,
+  "lane_width_m": 3.5,
+  "spawn_along_m": 110.0,
+  "despawn_along_m": -12.0,
+  "arrival_rate_veh_h_per_lane": 500.0,
+  "pedestrian_rate_h": 60.0,
+  "signal": {
+    "cycle_s": 60.0,
+    "green_s": 27.0,
+    "amber_s": 3.0,
+    "offset_s": 0.0
+  },
+  "classes": {
+    "car": {
+      "share": 0.6,
+      "length_m": 4.5,
+      "width_m": 1.8,
+      "height_m": 1.5,
+      "desired_speed_kmh": 45.0,
+      "speed_std_kmh": 5.0,
+      "min_gap_m": 2.0,
+      "headway_s": 1.2
+    },
+    "motorcycle": {
+      "share": 0.22,
+      "length_m": 2.0,
+      "width_m": 0.8,
+      "height_m": 1.4,
+      "desired_speed_kmh": 42.0,
+      "speed_std_kmh": 5.0,
+      "min_gap_m": 1.0,
+      "headway_s": 0.8
+    },
+    "bus": {
+      "share": 0.06,
+      "length_m": 12.0,
+      "width_m": 2.5,
+      "height_m": 3.2,
+      "desired_speed_kmh": 38.0,
+      "speed_std_kmh": 5.0,
+      "min_gap_m": 2.5,
+      "headway_s": 1.5
+    },
+    "truck": {
+      "share": 0.12,
+      "length_m": 9.0,
+      "width_m": 2.5,
+      "height_m": 3.0,
+      "desired_speed_kmh": 38.0,
+      "speed_std_kmh": 5.0,
+      "min_gap_m": 2.5,
+      "headway_s": 1.5
+    }
+  },
+  "max_accel": 1.5,
+  "comfort_decel": 2.0,
+  "jitter_px": 1.5,
+  "miss_prob": 0.04,
+  "class_flip_prob": 0.03,
+  "low_conf_prob": 0.08,
+  "calibration_noise_px": 1.0,
+  "substeps": 4
+}

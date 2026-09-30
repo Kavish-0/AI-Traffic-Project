@@ -1,0 +1,23 @@
+# Anomaly detectors: fit (Isolation Forest, autoencoder) + evaluate all series detectors.
+#   python -m traffic_intel.ai.training train anomaly --config configs/training/anomaly.yaml --promote best-val
+name: synthetic_anomaly
+description: >
+  Synthetic 1-min junction series (4 approaches) with injected capacity drops as ground truth.
+  Learned detectors see only normal windows of the training period. Evaluation is chronological.
+dataset: {days: 35, seed: 11, incident_rate_per_day: 0.5}
+train_days: 14
+history_windows: 30
+alarm_threshold: 0.5
+fused_alarm_threshold: 0.3     # fused probability alarms at 'elevated' (series-only evidence caps near 0.38)
+margin_min: 15
+impact_load_ratio: 0.9
+learned:
+  isolation_forest: {n_estimators: 200, max_samples: 1024}
+  autoencoder: {hidden: [16, 4, 16], max_iter: 200}
+statistical:                  # same parameters as configs/pipeline.yaml
+  - {type: sudden_slowdown, params: {drop_min: 0.25, drop_full: 0.6, z_full: 3.0}}
+  - {type: queue_growth, params: {trend_windows: 4, rate_full_m_per_window: 8.0}}
+  - {type: density_zscore, params: {z_min: 3.0, z_full: 6.0}}
+  - {type: flow_imbalance, params: {windows: 3}}
+  - {type: ewma, params: {lam: 0.3, L: 3.0}}
+  - {type: zscore, params: {L: 3.0}}

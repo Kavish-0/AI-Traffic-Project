@@ -1,0 +1,62 @@
+# Demo road network: one 4-arm signalised junction (A) plus a neighbouring
+# junction (D) so that what-if rerouting has an alternative path.
+# Coordinates are PLACEHOLDERS - replace with the real site of your footage.
+# Segments are directed; approach segments point INTO their junction.
+
+name: demo_city
+junctions:
+  - {id: junction_a, name: "Junction A", location: [77.5946, 12.9716]}
+  - {id: junction_d, name: "Junction D", location: [77.6006, 12.9716]}
+  # Development site for public footage (data/raw/public/roboflow_vehicles.mp4). Not a real junction:
+  # a monitoring point so public highway video runs through the same pipeline. Location = PLACEHOLDER.
+  - {id: dev_highway, name: "Dev site - public highway footage", location: [77.6200, 12.9800], signalized: false}
+
+nodes:
+  - {id: n_a, junction_id: junction_a, location: [77.5946, 12.9716]}
+  - {id: n_d, junction_id: junction_d, location: [77.6006, 12.9716]}
+  - {id: n_north, location: [77.5946, 12.9761]}
+  - {id: n_south, location: [77.5946, 12.9671]}
+  - {id: n_west,  location: [77.5886, 12.9716]}
+  - {id: n_ne,    location: [77.6006, 12.9761]}
+  - {id: n_hw_up,   location: [77.6200, 12.9850]}
+  - {id: n_hw_site, junction_id: dev_highway, location: [77.6200, 12.9800]}
+
+segments:
+  # Road A: north arm (southbound into junction A)
+  - {id: road_a_sb, name: "Road A (southbound)", from_node: n_north, to_node: n_a,
+     geometry: [[77.5946, 12.9761], [77.5946, 12.9716]], lanes: 2, speed_limit_kmh: 50, importance: 0.8}
+  # Road B: east arm, links A and D (westbound into A)
+  - {id: road_b_wb, name: "Road B (westbound)", from_node: n_d, to_node: n_a,
+     geometry: [[77.6006, 12.9716], [77.5946, 12.9716]], lanes: 2, speed_limit_kmh: 50, importance: 0.8}
+  - {id: road_b_eb, name: "Road B (eastbound)", from_node: n_a, to_node: n_d,
+     geometry: [[77.5946, 12.9716], [77.6006, 12.9716]], lanes: 2, speed_limit_kmh: 50}
+  # Road C: south arm (northbound into A)
+  - {id: road_c_nb, name: "Road C (northbound)", from_node: n_south, to_node: n_a,
+     geometry: [[77.5946, 12.9671], [77.5946, 12.9716]], lanes: 2, speed_limit_kmh: 50, importance: 0.7}
+  # Road D: west arm (eastbound into A)
+  - {id: road_d_eb, name: "Road D (eastbound)", from_node: n_west, to_node: n_a,
+     geometry: [[77.5886, 12.9716], [77.5946, 12.9716]], lanes: 1, speed_limit_kmh: 40}
+  # Alternative route north -> junction D
+  - {id: road_e_eb, name: "Road E (eastbound)", from_node: n_north, to_node: n_ne,
+     geometry: [[77.5946, 12.9761], [77.6006, 12.9761]], lanes: 1, speed_limit_kmh: 40}
+  - {id: road_f_sb, name: "Road F (southbound)", from_node: n_ne, to_node: n_d,
+     geometry: [[77.6006, 12.9761], [77.6006, 12.9716]], lanes: 1, speed_limit_kmh: 40}
+  # Return / parallel links: alternative routes from Junction D towards Junction A, so that
+  # what-if closures (e.g. Road B) have somewhere to redistribute traffic (via Road A or Road C).
+  - {id: road_f_nb, name: "Road F (northbound)", from_node: n_d, to_node: n_ne,
+     geometry: [[77.6006, 12.9716], [77.6006, 12.9761]], lanes: 1, speed_limit_kmh: 40}
+  - {id: road_e_wb, name: "Road E (westbound)", from_node: n_ne, to_node: n_north,
+     geometry: [[77.6006, 12.9761], [77.5946, 12.9761]], lanes: 1, speed_limit_kmh: 40}
+  - {id: road_g_sw, name: "Road G (south-west)", from_node: n_d, to_node: n_south,
+     geometry: [[77.6006, 12.9716], [77.5946, 12.9671]], lanes: 1, speed_limit_kmh: 40}
+  # Development site: motorway carriageway approaching the camera (2 lanes, 130 km/h)
+  - {id: dev_highway_approach_seg, name: "Dev highway (towards camera)", from_node: n_hw_up, to_node: n_hw_site,
+     geometry: [[77.6200, 12.9850], [77.6200, 12.9800]], lanes: 2, speed_limit_kmh: 130, free_flow_speed_kmh: 120}
+
+approaches:
+  - {id: junction_a_north, junction_id: junction_a, road_segment_id: road_a_sb, name: "Road A", direction: southbound}
+  - {id: junction_a_east,  junction_id: junction_a, road_segment_id: road_b_wb, name: "Road B", direction: westbound}
+  - {id: junction_a_south, junction_id: junction_a, road_segment_id: road_c_nb, name: "Road C", direction: northbound}
+  - {id: junction_a_west,  junction_id: junction_a, road_segment_id: road_d_eb, name: "Road D", direction: eastbound}
+  - {id: dev_highway_approach, junction_id: dev_highway, road_segment_id: dev_highway_approach_seg,
+     name: "Dev highway (public footage)", direction: towards_camera}

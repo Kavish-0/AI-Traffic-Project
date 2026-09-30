@@ -1,0 +1,60 @@
+# Forecasting on PEMS-BAY (325 Bay Area PeMS sensors, Jan-May 2017) - TRAFFIC-ONLY variant.
+# The data is NOT downloaded automatically: place data/raw/pems_bay/*.h5 first
+#   python -m traffic_intel.datasets info pems_bay
+#   python -m traffic_intel.datasets status pems_bay
+#   python -m traffic_intel.ai.training train forecasting --config configs/training/forecasting_pems_bay_traffic_only.yaml
+# The traffic + context twin (forecasting_pems_bay_context.yaml) uses the same sensors, split, windows
+# and models, so the two experiments differ ONLY in the context features.
+name: pems_bay_traffic_only
+description: >
+  PEMS-BAY speed forecasting at +5/+15/+30 min (traffic only: past speeds of the sensor).
+  Chronological split, fit-on-train scaling, identical windows for every model.
+seed: 0
+
+dataset:
+  source: pems_bay
+  params:
+    every_k: 30                      # 11 series - raise for the full benchmark
+    weather: false                   # traffic-only: no weather
+
+features:
+  dynamic: [avg_speed_kmh]             # the only traffic variable in PEMS-BAY
+  targets: [avg_speed_kmh]
+  calendar: []                         # traffic-only: no calendar either
+  weather: []
+  rush_hours: [[6, 10], [15, 19]]
+  max_gap_fill_steps: 2                # interpolate gaps <= 10 min; longer gaps excluded
+  lags: [1, 2, 3, 6, 11]               # 5, 10, 15, 30, 55 min
+  rolling: [3, 12]
+
+horizons_min: [5, 15, 30]              # = 1, 3, 6 steps of 5 min
+season: 1D
+split: {train: 0.7, val: 0.1, test: 0.2}   # DCRNN convention, chronological
+train_stride: 1
+eval_stride: 1
+primary_target: avg_speed_kmh
+deep_seeds: [0, 1]                   # 2 seeds per deep model (GPU time); best-on-validation kept
+
+models:
+  - {name: persistence, type: persistence}
+  - {name: seasonal_naive, type: seasonal_naive}
+  - {name: linear, type: linear, params: {alpha: 0.0}}
+  - {name: random_forest, type: random_forest,
+     params: {n_estimators: 200, max_depth: 16, min_samples_leaf: 5, max_features: 0.5, max_samples: 0.3}}
+  - {name: xgboost, type: xgboost,
+     params: {n_estimators: 1500, learning_rate: 0.05, max_depth: 6, early_stopping_rounds: 50}}
+  - {name: lstm, type: lstm,
+     params: {lookback_steps: 12, hidden: 64, layers: 2, dropout: 0.1, max_epochs: 40, batch_size: 512, lr: 0.001}}
+  - {name: gru, type: gru,
+     params: {lookback_steps: 12, hidden: 64, layers: 2, dropout: 0.1, max_epochs: 40, batch_size: 512, lr: 0.001}}
+  - {name: transformer, type: transformer,
+     params: {lookback_steps: 12, d_model: 64, heads: 4, layers: 2, ff: 128, dropout: 0.1,
+              max_epochs: 40, batch_size: 512, lr: 0.0005}}
+  # --- controlled hyperparameter tuning: a small matrix around the tree defaults; every variant is
+  #     ranked on VALIDATION RMSE (test is reporting only). Deep models tune epochs by early stopping.
+  - {name: random_forest_deep, type: random_forest,
+     params: {n_estimators: 200, max_depth: 24, min_samples_leaf: 2, max_features: 0.5, max_samples: 0.3}}
+  - {name: xgboost_d4, type: xgboost,
+     params: {n_estimators: 1500, learning_rate: 0.05, max_depth: 4, early_stopping_rounds: 50}}
+  - {name: xgboost_d8, type: xgboost,
+     params: {n_estimators: 1500, learning_rate: 0.05, max_depth: 8, early_stopping_rounds: 50}}

@@ -1,0 +1,117 @@
+{
+  "source": "metr_la",
+  "dataset": "metr_la",
+  "resolution_s": 300,
+  "timezone": "America/Los_Angeles",
+  "holiday_country": "US",
+  "series": [
+    "metr_la_717461",
+    "metr_la_717510",
+    "metr_la_718089",
+    "metr_la_718496",
+    "metr_la_765164",
+    "metr_la_768066",
+    "metr_la_769403",
+    "metr_la_769444",
+    "metr_la_769806",
+    "metr_la_772151",
+    "metr_la_773869"
+  ],
+  "info": {
+    "file": "C:\\Users\\Kavish Gupta\\AI-Project-Traffic\\data\\raw\\metr_la\\metr-la.h5",
+    "sensors": [
+      "773869",
+      "769403",
+      "768066",
+      "769444",
+      "765164",
+      "772151",
+      "718089",
+      "718496",
+      "717461",
+      "717510",
+      "769806"
+    ],
+    "n_sensors_total": 207,
+    "steps": 34260,
+    "period_utc": [
+      "2012-03-01 08:00:00+00:00",
+      "2012-06-28 06:55:00+00:00"
+    ],
+    "missing_values": 33235,
+    "zeros_treated_as_missing": 33235,
+    "dropped_dst_timestamps": 12,
+    "weather": true,
+    "units": "speed mph -> km/h",
+    "provenance": "https://github.com/liyaguang/DCRNN (README links to the data files; manual download)"
+  },
+  "periods": {
+    "train": {
+      "start": "2012-03-01T08:00:00+00:00",
+      "end": "2012-05-23T14:30:00+00:00"
+    },
+    "val": {
+      "start": "2012-05-23T14:30:00+00:00",
+      "end": "2012-06-04T11:55:00+00:00"
+    },
+    "test": {
+      "start": "2012-06-04T11:55:00+00:00",
+      "end": "2012-06-28T07:00:00+00:00"
+    }
+  },
+  "samples": {
+    "train": 240241,
+    "val": 32543,
+    "test": 61657
+  },
+  "window_lookback_steps": 12,
+  "horizons_min": [
+    5,
+    15,
+    30
+  ],
+  "horizon_steps": [
+    1,
+    3,
+    6
+  ],
+  "season_steps": 288,
+  "features": {
+    "inputs": [
+      "avg_speed_kmh",
+      "hour_sin",
+      "hour_cos",
+      "dow_sin",
+      "dow_cos",
+      "is_weekend",
+      "is_holiday",
+      "is_rush_hour",
+      "temperature_c",
+      "humidity_pct",
+      "rain_mm",
+      "weather_clear",
+      "weather_cloudy",
+      "weather_drizzle",
+      "weather_rain"
+    ],
+    "targets": [
+      "avg_speed_kmh"
+    ],
+    "dropped": [],
+    "tabular_lags": [
+      1,
+      2,
+      3,
+      6,
+      11
+    ],
+    "tabular_rolling": [
+      3,
+      12
+    ]
+  },
+  "missing_fraction": {
+    "avg_speed_kmh": 0.08819
+  },
+  "preprocessor_spec_hash": "a772bf68f8f0f583"
+}

@@ -1,0 +1,2 @@
+model,seed,val_rmse,test_rmse,epochs
+lstm,0,10.170957988096111,11.169400990272067,1

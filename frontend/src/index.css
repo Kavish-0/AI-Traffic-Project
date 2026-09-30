@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+/* Aurora theme. The components use Tailwind's slate / sky / cyan scales; Aurora re-points them here so
+   the whole dashboard changes in one place:
+     surfaces   slate-950 page, slate-900 cards, slate-800 raised cards and borders
+     text       slate-100 primary, slate-400 / slate-500 secondary
+     actions    sky-600 violet, sky-500 hover
+     data / AI  sky-300 / sky-400 and cyan: magenta */
+@theme {
+  --color-slate-50: #faf8ff;
+  --color-slate-100: #f3f0ff;
+  --color-slate-200: #e2ddf7;
+  --color-slate-300: #c7c0e6;
+  --color-slate-400: #a49dc4;
+  --color-slate-500: #8a83ad;
+  --color-slate-600: #5b5480;
+  --color-slate-700: #3a3460;
+  --color-slate-800: #2f2a4d;
+  --color-slate-900: #151226;
+  --color-slate-950: #0c0a18;
+
+  --color-sky-300: #f0abfc;
+  --color-sky-400: #e879f9;
+  --color-sky-500: #8b5cf6;
+  --color-sky-600: #7c3aed;
+  --color-sky-700: #6d28d9;
+
+  --color-cyan-200: #f5d0fe;
+  --color-cyan-300: #f0abfc;
+  --color-cyan-400: #e879f9;
+  --color-cyan-500: #d946ef;
+}
+
+body {
+  background-color: #0c0a18;
+  color: #f3f0ff;
+}
