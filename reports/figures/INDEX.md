@@ -13,10 +13,6 @@ score timeline with alarm threshold and ground-truth incident periods; precision
 
 per experiment: test macro-F1 by model and horizon, confusion matrix of the model chosen on validation
 
-- [20260925-020712_congestion_level_metr_la_smoke/confusion_h15.png](congestion/20260925-020712_congestion_level_metr_la_smoke/confusion_h15.png)
-- [20260925-020712_congestion_level_metr_la_smoke/confusion_h30.png](congestion/20260925-020712_congestion_level_metr_la_smoke/confusion_h30.png)
-- [20260925-020712_congestion_level_metr_la_smoke/confusion_h5.png](congestion/20260925-020712_congestion_level_metr_la_smoke/confusion_h5.png)
-- [20260925-020712_congestion_level_metr_la_smoke/macro_f1_by_model.png](congestion/20260925-020712_congestion_level_metr_la_smoke/macro_f1_by_model.png)
 - [20260925-020819_congestion_level_metr_la/confusion_h15.png](congestion/20260925-020819_congestion_level_metr_la/confusion_h15.png)
 - [20260925-020819_congestion_level_metr_la/confusion_h30.png](congestion/20260925-020819_congestion_level_metr_la/confusion_h30.png)
 - [20260925-020819_congestion_level_metr_la/confusion_h5.png](congestion/20260925-020819_congestion_level_metr_la/confusion_h5.png)
@@ -34,15 +30,6 @@ per experiment: test macro-F1 by model and horizon, confusion matrix of the mode
 
 UA-DETRAC test: PR/F1/P/R curves per model and input size, per-class mAP, confusion matrix, class distribution, sample predictions; ultralytics_* = training curves and validation samples from the Ultralytics run
 
-- [20260925-020606_ua_detrac_finetune_smoke/model_comparison.png](detection/20260925-020606_ua_detrac_finetune_smoke/model_comparison.png)
-- [20260925-020606_ua_detrac_finetune_smoke/yolo11s_coco_zero_shot_imgsz960/F1_curve.png](detection/20260925-020606_ua_detrac_finetune_smoke/yolo11s_coco_zero_shot_imgsz960/F1_curve.png)
-- [20260925-020606_ua_detrac_finetune_smoke/yolo11s_coco_zero_shot_imgsz960/P_curve.png](detection/20260925-020606_ua_detrac_finetune_smoke/yolo11s_coco_zero_shot_imgsz960/P_curve.png)
-- [20260925-020606_ua_detrac_finetune_smoke/yolo11s_coco_zero_shot_imgsz960/PR_curve.png](detection/20260925-020606_ua_detrac_finetune_smoke/yolo11s_coco_zero_shot_imgsz960/PR_curve.png)
-- [20260925-020606_ua_detrac_finetune_smoke/yolo11s_coco_zero_shot_imgsz960/R_curve.png](detection/20260925-020606_ua_detrac_finetune_smoke/yolo11s_coco_zero_shot_imgsz960/R_curve.png)
-- [20260925-020606_ua_detrac_finetune_smoke/yolo11s_ua_detrac_imgsz960/F1_curve.png](detection/20260925-020606_ua_detrac_finetune_smoke/yolo11s_ua_detrac_imgsz960/F1_curve.png)
-- [20260925-020606_ua_detrac_finetune_smoke/yolo11s_ua_detrac_imgsz960/P_curve.png](detection/20260925-020606_ua_detrac_finetune_smoke/yolo11s_ua_detrac_imgsz960/P_curve.png)
-- [20260925-020606_ua_detrac_finetune_smoke/yolo11s_ua_detrac_imgsz960/PR_curve.png](detection/20260925-020606_ua_detrac_finetune_smoke/yolo11s_ua_detrac_imgsz960/PR_curve.png)
-- [20260925-020606_ua_detrac_finetune_smoke/yolo11s_ua_detrac_imgsz960/R_curve.png](detection/20260925-020606_ua_detrac_finetune_smoke/yolo11s_ua_detrac_imgsz960/R_curve.png)
 - [20260925-025338_ua_detrac_finetune/confusion_yolo11s_ua_detrac_imgsz1280.png](detection/20260925-025338_ua_detrac_finetune/confusion_yolo11s_ua_detrac_imgsz1280.png)
 - [20260925-025338_ua_detrac_finetune/confusion_yolo11s_ua_detrac_imgsz960.png](detection/20260925-025338_ua_detrac_finetune/confusion_yolo11s_ua_detrac_imgsz960.png)
 - [20260925-025338_ua_detrac_finetune/ultralytics_yolo11s_ua_detrac/confusion_matrix_normalized.png](detection/20260925-025338_ua_detrac_finetune/ultralytics_yolo11s_ua_detrac/confusion_matrix_normalized.png)
@@ -74,10 +61,39 @@ UA-DETRAC test: PR/F1/P/R curves per model and input size, per-class mAP, confus
 - [20260925-025338_ua_detrac_finetune/yolo11s_ua_detrac_imgsz960/P_curve.png](detection/20260925-025338_ua_detrac_finetune/yolo11s_ua_detrac_imgsz960/P_curve.png)
 - [20260925-025338_ua_detrac_finetune/yolo11s_ua_detrac_imgsz960/PR_curve.png](detection/20260925-025338_ua_detrac_finetune/yolo11s_ua_detrac_imgsz960/PR_curve.png)
 - [20260925-025338_ua_detrac_finetune/yolo11s_ua_detrac_imgsz960/R_curve.png](detection/20260925-025338_ua_detrac_finetune/yolo11s_ua_detrac_imgsz960/R_curve.png)
+- [20260930-044419_ua_detrac_finetune/confusion_yolo11m_coco_zero_shot_imgsz1280.png](detection/20260930-044419_ua_detrac_finetune/confusion_yolo11m_coco_zero_shot_imgsz1280.png)
+- [20260930-044419_ua_detrac_finetune/confusion_yolo11m_coco_zero_shot_imgsz960.png](detection/20260930-044419_ua_detrac_finetune/confusion_yolo11m_coco_zero_shot_imgsz960.png)
+- [20260930-044419_ua_detrac_finetune/model_comparison.png](detection/20260930-044419_ua_detrac_finetune/model_comparison.png)
+- [20260930-044419_ua_detrac_finetune/yolo11m_coco_zero_shot_imgsz1280/F1_curve.png](detection/20260930-044419_ua_detrac_finetune/yolo11m_coco_zero_shot_imgsz1280/F1_curve.png)
+- [20260930-044419_ua_detrac_finetune/yolo11m_coco_zero_shot_imgsz1280/P_curve.png](detection/20260930-044419_ua_detrac_finetune/yolo11m_coco_zero_shot_imgsz1280/P_curve.png)
+- [20260930-044419_ua_detrac_finetune/yolo11m_coco_zero_shot_imgsz1280/PR_curve.png](detection/20260930-044419_ua_detrac_finetune/yolo11m_coco_zero_shot_imgsz1280/PR_curve.png)
+- [20260930-044419_ua_detrac_finetune/yolo11m_coco_zero_shot_imgsz1280/R_curve.png](detection/20260930-044419_ua_detrac_finetune/yolo11m_coco_zero_shot_imgsz1280/R_curve.png)
+- [20260930-044419_ua_detrac_finetune/yolo11m_coco_zero_shot_imgsz960/F1_curve.png](detection/20260930-044419_ua_detrac_finetune/yolo11m_coco_zero_shot_imgsz960/F1_curve.png)
+- [20260930-044419_ua_detrac_finetune/yolo11m_coco_zero_shot_imgsz960/P_curve.png](detection/20260930-044419_ua_detrac_finetune/yolo11m_coco_zero_shot_imgsz960/P_curve.png)
+- [20260930-044419_ua_detrac_finetune/yolo11m_coco_zero_shot_imgsz960/PR_curve.png](detection/20260930-044419_ua_detrac_finetune/yolo11m_coco_zero_shot_imgsz960/PR_curve.png)
+- [20260930-044419_ua_detrac_finetune/yolo11m_coco_zero_shot_imgsz960/R_curve.png](detection/20260930-044419_ua_detrac_finetune/yolo11m_coco_zero_shot_imgsz960/R_curve.png)
+- [20260930-045326_ua_detrac_finetune_rfs/confusion_yolo11s_ua_detrac_rfs_imgsz1280.png](detection/20260930-045326_ua_detrac_finetune_rfs/confusion_yolo11s_ua_detrac_rfs_imgsz1280.png)
+- [20260930-045326_ua_detrac_finetune_rfs/confusion_yolo11s_ua_detrac_rfs_imgsz960.png](detection/20260930-045326_ua_detrac_finetune_rfs/confusion_yolo11s_ua_detrac_rfs_imgsz960.png)
+- [20260930-045326_ua_detrac_finetune_rfs/model_comparison.png](detection/20260930-045326_ua_detrac_finetune_rfs/model_comparison.png)
+- [20260930-045326_ua_detrac_finetune_rfs/ultralytics_yolo11s_ua_detrac_rfs/confusion_matrix_normalized.png](detection/20260930-045326_ua_detrac_finetune_rfs/ultralytics_yolo11s_ua_detrac_rfs/confusion_matrix_normalized.png)
+- [20260930-045326_ua_detrac_finetune_rfs/ultralytics_yolo11s_ua_detrac_rfs/labels.jpg](detection/20260930-045326_ua_detrac_finetune_rfs/ultralytics_yolo11s_ua_detrac_rfs/labels.jpg)
+- [20260930-045326_ua_detrac_finetune_rfs/ultralytics_yolo11s_ua_detrac_rfs/results.png](detection/20260930-045326_ua_detrac_finetune_rfs/ultralytics_yolo11s_ua_detrac_rfs/results.png)
+- [20260930-045326_ua_detrac_finetune_rfs/ultralytics_yolo11s_ua_detrac_rfs/val_batch0_labels.jpg](detection/20260930-045326_ua_detrac_finetune_rfs/ultralytics_yolo11s_ua_detrac_rfs/val_batch0_labels.jpg)
+- [20260930-045326_ua_detrac_finetune_rfs/ultralytics_yolo11s_ua_detrac_rfs/val_batch0_pred.jpg](detection/20260930-045326_ua_detrac_finetune_rfs/ultralytics_yolo11s_ua_detrac_rfs/val_batch0_pred.jpg)
+- [20260930-045326_ua_detrac_finetune_rfs/yolo11s_ua_detrac_rfs_imgsz1280/F1_curve.png](detection/20260930-045326_ua_detrac_finetune_rfs/yolo11s_ua_detrac_rfs_imgsz1280/F1_curve.png)
+- [20260930-045326_ua_detrac_finetune_rfs/yolo11s_ua_detrac_rfs_imgsz1280/P_curve.png](detection/20260930-045326_ua_detrac_finetune_rfs/yolo11s_ua_detrac_rfs_imgsz1280/P_curve.png)
+- [20260930-045326_ua_detrac_finetune_rfs/yolo11s_ua_detrac_rfs_imgsz1280/PR_curve.png](detection/20260930-045326_ua_detrac_finetune_rfs/yolo11s_ua_detrac_rfs_imgsz1280/PR_curve.png)
+- [20260930-045326_ua_detrac_finetune_rfs/yolo11s_ua_detrac_rfs_imgsz1280/R_curve.png](detection/20260930-045326_ua_detrac_finetune_rfs/yolo11s_ua_detrac_rfs_imgsz1280/R_curve.png)
+- [20260930-045326_ua_detrac_finetune_rfs/yolo11s_ua_detrac_rfs_imgsz960/F1_curve.png](detection/20260930-045326_ua_detrac_finetune_rfs/yolo11s_ua_detrac_rfs_imgsz960/F1_curve.png)
+- [20260930-045326_ua_detrac_finetune_rfs/yolo11s_ua_detrac_rfs_imgsz960/P_curve.png](detection/20260930-045326_ua_detrac_finetune_rfs/yolo11s_ua_detrac_rfs_imgsz960/P_curve.png)
+- [20260930-045326_ua_detrac_finetune_rfs/yolo11s_ua_detrac_rfs_imgsz960/PR_curve.png](detection/20260930-045326_ua_detrac_finetune_rfs/yolo11s_ua_detrac_rfs_imgsz960/PR_curve.png)
+- [20260930-045326_ua_detrac_finetune_rfs/yolo11s_ua_detrac_rfs_imgsz960/R_curve.png](detection/20260930-045326_ua_detrac_finetune_rfs/yolo11s_ua_detrac_rfs_imgsz960/R_curve.png)
 - [class_distribution.png](detection/class_distribution.png)
 - [per_class_map.png](detection/per_class_map.png)
 - [samples_yolo11m_coco_zero_shot.jpg](detection/samples_yolo11m_coco_zero_shot.jpg)
+- [samples_yolo11s_coco_zero_shot.jpg](detection/samples_yolo11s_coco_zero_shot.jpg)
 - [samples_yolo11s_ua_detrac.jpg](detection/samples_yolo11s_ua_detrac.jpg)
+- [samples_yolo11s_ua_detrac_rfs.jpg](detection/samples_yolo11s_ua_detrac_rfs.jpg)
 
 ## forecasting
 
@@ -112,7 +128,9 @@ per experiment: RMSE by horizon, prediction vs actual (selected model), error ov
 
 AI City 2021 Track 4 (real video): window scores, PR/ROC, reliability (calibration)
 
-- [20260925-021232_aic21_track4_smoke/reliability.png](incident/20260925-021232_aic21_track4_smoke/reliability.png)
-- [20260925-021232_aic21_track4_smoke/roc_pr.png](incident/20260925-021232_aic21_track4_smoke/roc_pr.png)
-- [20260925-021232_aic21_track4_smoke/scores_video_9.png](incident/20260925-021232_aic21_track4_smoke/scores_video_9.png)
+- [20260930-012228_aic21_track4/reliability.png](incident/20260930-012228_aic21_track4/reliability.png)
+- [20260930-012228_aic21_track4/roc_pr.png](incident/20260930-012228_aic21_track4/roc_pr.png)
+- [20260930-012228_aic21_track4/scores_video_2.png](incident/20260930-012228_aic21_track4/scores_video_2.png)
+- [20260930-012228_aic21_track4/scores_video_33.png](incident/20260930-012228_aic21_track4/scores_video_33.png)
+- [20260930-012228_aic21_track4/scores_video_74.png](incident/20260930-012228_aic21_track4/scores_video_74.png)
 

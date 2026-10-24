@@ -166,6 +166,10 @@ def test_learned_detectors_train_save_load(tmp_path: Path) -> None:
     assert {"isolation_forest", "autoencoder", "sudden_slowdown", "fused_probability"} <= set(m.index)
     assert ((m["false_alarms_per_h"] >= 0) & (m["pr_auc"].fillna(0) >= 0)).all()
     assert (Path(res.directory) / "report.md").exists()
+    # a run outside the real experiments folder keeps its figures with it (never in reports/)
+    assert (Path(res.directory) / "figures" / "score_timeline.png").exists()
+    from traffic_intel.ai.evaluation.figures import FIG
+    assert not (FIG / "anomaly" / res.experiment_id).exists()
     for kind in ("isolation_forest", "autoencoder"):
         det = store.load(ModelTask.ANOMALY, kind, res.experiment_id)
         assert det.q_normal > 0 and det.metadata is not None and det.metadata.metrics["detector"] == kind

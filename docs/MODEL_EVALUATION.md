@@ -34,13 +34,13 @@ experiments passed that check, so the artifacts in `models/` reproduce the repor
 
 | Task | Serving now | Evidence | Status |
 |---|---|---|---|
-| Vehicle detection | YOLO11m, COCO-pretrained, 1280 px | UA-DETRAC test: zero-shot COCO beats fine-tuning overall; fine-tuning cannot keep pedestrian / bicycle / motorcycle (§5) | unchanged |
+| Vehicle detection | YOLO11m, COCO-pretrained, 1280 px | UA-DETRAC test: zero-shot YOLO11m mAP50-95 0.634 vs 0.434 for the best fine-tune; fine-tuning loses trucks and the pedestrian / bicycle / motorcycle classes (§5) | unchanged |
 | Tracking | ByteTrack, `new_track_thresh` 0.4 (was 0.6) | UA-DETRAC test MOTA 0.737 → 0.749; BoT-SORT equal MOTA at 33× the time (§6) | **tuned** |
 | Forecasting (+5/+15/+30 min) | `xgboost_d8` trained on the live feature set | best on validation for the live domain, 33% lower RMSE than persistence; tree ensembles match or beat deep models on the public datasets (§1) | **new, PRODUCTION** |
 | Congestion level, now | explainable rules (`configs/congestion_rules.yaml`) | no independent labels exist; a classifier would imitate the rules (§2) | unchanged |
 | Congestion level, future | forecast → the same rules | best on validation for the live domain at every horizon (§2) | unchanged |
 | Traffic anomalies | statistical detectors, fused | event recall 0.83–0.92 on incidents that affect traffic; learned detectors are at chance level (§3) | unchanged; learned detectors stay off |
-| Incident probability | fused evidence, **UNCALIBRATED** | no labelled incidents in the live domain; the real-video study (§4) does not transfer | label stays "UNCALIBRATED" |
+| Incident probability | fused evidence, **UNCALIBRATED** | real video (§4): stopped vehicles rank incidents well (ROC-AUC 0.987), but calibration fitted on 3 incident videos makes probabilities worse on new videos | label stays "UNCALIBRATED" |
 | Risk | explainable weighted engine | no risk labels exist in any dataset | unchanged |
 
 ---
@@ -194,41 +194,133 @@ The base rate (the PR-AUC of a random score) is 0.0085.
 
 ## 4. Incident detection on real video (AI City 2021 Track 4)
 
-_In progress: the 100 labelled training videos are being processed (detections and tracks at
-1280 px, 5 fps). This section will report the window-level and event-level metrics, the AI City
-timing score and the calibration study (Platt / isotonic, Brier score) from that run._
+Experiment `20260930-012228`, run on the 100 labelled training videos (about 15 min each).
+- **Perception:** YOLO11m at 1280 px, 5 frames per second, with the tracker thresholds tuned on
+  UA-DETRAC.
+- **Split by video:** train 60 / val 20 / test 20. Each split has few incident videos: 11 / 3 / 3.
+- **Windows:** 10-s windows, 3,535 of them on test, 342 positive (base rate 9.7%).
+- **Thresholds:** always chosen on validation.
+
+**Window level** (does the score rank incident windows above normal ones?):
+
+| Method | ROC-AUC | PR-AUC | Precision | Recall | F1 |
+|---|--:|--:|--:|--:|--:|
+| **stationary rule** (longest time a box stays in place) | **0.987** | **0.891** | 0.703 | 0.956 | 0.810 |
+| autoencoder | 0.925 | 0.659 | 0.709 | 0.883 | 0.786 |
+| isolation forest | 0.846 | 0.596 | 0.712 | 0.702 | 0.707 |
+
+**Per-video alarms** (the first alarm in each of the 20 test videos, 3 of which contain an incident):
+
+| Method | Threshold chosen on validation for | Incidents found | False-alarm videos | Precision | Recall | F1 | Median delay |
+|---|---|--:|--:|--:|--:|--:|--:|
+| stationary rule | window F1 (30 s) | 2 / 3 | 7 | 0.22 | 0.67 | 0.33 | 34 s |
+| stationary rule | **per-video alarm F1 (45.8 s)** | 2 / 3 | 4 | 0.33 | 0.67 | 0.44 | 49 s |
+| isolation forest | per-video alarm F1 | 2 / 3 | 4 | 0.33 | 0.67 | 0.44 | 94 s |
+| autoencoder | per-video alarm F1 | 1 / 3 | 7 | 0.13 | 0.33 | 0.18 | 40 s |
+
+The AI City timing score (S4) of the stationary rule is 0.31 with the window threshold and 0.40
+with the alarm threshold.
+
+**What the results show**
+
+- **Stopped vehicles are the signal, and a transparent rule beats the learned detectors.** The
+  ID-free "how long has something stayed in place" feature ranks incident windows almost
+  perfectly (ROC-AUC 0.987). The learned detectors add nothing over it.
+- **Alarms are the hard part, and 3 incident videos per split cannot pin them down.** On the
+  test set, the incident videos contain stops of 596–774 s, and normal videos stop at most 102 s.
+  That gap does not generalise:
+  - on validation, one incident (video 35) involved a stop of only 80 s;
+  - in test video 2, a vehicle stood still from the first minute, long before the labelled onset
+    at 587 s, so the first alarm came "too early" and the video counts as missed.
+
+  Short incidents and ordinary stops overlap. Picking a longer threshold from the test videos
+  would look perfect here and be wrong elsewhere, so it was not done.
+- **Calibration does not transfer.** Platt and isotonic maps fitted on the validation windows
+  make the test Brier score *worse* (0.040 / 0.039) than the unmapped score (0.031); the base-rate
+  predictor scores 0.088. They are over-confident on new videos
+  (`reports/figures/incident/<experiment>/reliability.png`). Three incident videos are too few to
+  calibrate a probability.
+
+**Decision.**
+
+- Nothing from this study is deployed. The features are in pixels (the AI City cameras are not
+  calibrated), while the live system works in metres and km/h.
+- The study supports the live design: stopped-vehicle and queue evidence carry the signal, and a
+  learned outlier model adds little.
+- The live incident score stays **"Incident probability: UNCALIBRATED"**. A calibrated
+  probability needs labelled incidents from the deployed cameras (the Incident Center's operator
+  feedback collects them).
+
+Figures: per-video score timelines of the three test incidents, ROC / PR curves and the reliability
+plot, all in `reports/figures/incident/20260930-012228_aic21_track4/`.
 
 ## 5. Vehicle detection (UA-DETRAC)
 
-_The first run is complete (below). A zero-shot evaluation of YOLO11m (the production model) and a
-follow-up fine-tune with repeat-factor sampling are queued behind the video extraction, because
-only one GPU-heavy job runs at a time. This section will be completed with them._
+**Test data:** the official UA-DETRAC test split (40 sequences, every 10th frame, 5,625 images,
+63,377 boxes), scored through the production detector adapter.
 
-Test = the official UA-DETRAC test split (40 sequences, every 10th frame, 5,625 images, 63,377
-boxes), scored through the production detector adapter. Precision and recall are measured at the
-pipeline's confidence threshold of 0.25.
+**Metrics:** precision and recall at the pipeline's confidence threshold of 0.25; per-class
+columns are mAP50-95. Latency depends on GPU load at the time of each run, so compare it only
+within a run.
+
+**Experiments:**
+- `20260925-025338`: first fine-tune, plus YOLO11s zero-shot;
+- `20260930-044419`: YOLO11m zero-shot;
+- `20260930-045326`: repeat-factor fine-tune.
 
 | Model | P | R | mAP50 | mAP50-95 | car | bus | truck | ms / image |
 |---|--:|--:|--:|--:|--:|--:|--:|--:|
+| **YOLO11m COCO, zero-shot @960** | 0.860 | 0.848 | **0.874** | **0.634** | 0.617 | **0.617** | **0.669** | 12.0 |
+| YOLO11m COCO, zero-shot @1280 (current pipeline setting) | 0.826 | 0.882 | 0.875 | 0.628 | 0.624 | 0.590 | 0.671 | 21.7 |
 | YOLO11s COCO, zero-shot @960 | 0.850 | 0.858 | 0.781 | 0.551 | 0.618 | 0.605 | 0.428 | 12.6 |
 | YOLO11s COCO, zero-shot @1280 | 0.805 | 0.879 | 0.803 | 0.561 | 0.620 | 0.578 | 0.485 | 22.0 |
 | YOLO11s fine-tuned @960 | 0.848 | 0.834 | 0.592 | 0.397 | 0.638 | 0.506 | 0.045 | 13.5 |
-| YOLO11s fine-tuned @1280 | 0.846 | 0.847 | 0.599 | 0.399 | 0.645 | 0.498 | 0.053 | 23.2 |
+| YOLO11s fine-tuned + repeat-factor sampling @960 | **0.890** | 0.829 | 0.629 | 0.434 | **0.641** | 0.559 | 0.102 | 6.5 |
+| YOLO11s fine-tuned + repeat-factor sampling @1280 | 0.891 | 0.829 | 0.617 | 0.421 | 0.644 | 0.526 | 0.094 | 12.3 |
 
-Per-class columns are mAP50-95. Fine-tuning took 4,092 s; the best epoch was 10 of 18 (early
-stopping).
+**Training:**
+- The plain fine-tune took 4,092 s (best epoch 10 of 18).
+- The repeat-factor fine-tune took 3,789 s (best epoch 9 of 17), with training images resampled
+  6,669 → 7,846: truck boxes ×3.8, bus boxes ×1.4. Validation and test were unchanged.
+- The YOLO11m fine-tune was stopped after one epoch. It was not rerun: the YOLO11s runs had already
+  located the problem (below) at half the cost, and a larger model trained on the same labels would
+  inherit it.
 
-**What the first run shows**
+**Where the truck accuracy goes** (ground-truth trucks at IoU 0.5, confidence ≥ 0.25):
 
-- Fine-tuning improves **cars** (0.62 → 0.64 mAP50-95) but loses most of **truck** AP (0.43 →
-  0.05) and some **bus** AP.
-- The training data explains it (`reports/figures/detection/class_distribution.png`):
-  - trucks are 0.5% of training boxes but 2.6% of test boxes, and appear in only 233 of 6,669
-    training images;
-  - buses are 5.6% of training boxes vs 10.4% of test boxes.
-- A fine-tuned UA-DETRAC model also cannot detect pedestrians, bicycles or motorcycles (no labels),
-  and the pipeline uses those classes. COCO weights therefore stay in production unless a
-  fine-tuned model is clearly better on the classes it has.
+| Model @960 | Labelled truck | Labelled car | Missed | Non-trucks predicted as truck |
+|---|--:|--:|--:|--:|
+| YOLO11m COCO, zero-shot | 87% | 5% | 6% | 1,539 |
+| YOLO11s fine-tuned | 13% | 33% | 44% | 1,315 |
+| YOLO11s fine-tuned + repeat-factor | 11% | 47% | 36% | 134 |
+
+**What the results show**
+
+- **Fine-tuning helps cars and hurts everything rare.** Car mAP50-95 rises (0.62 → 0.64) and
+  precision rises (0.85 → 0.89), but trucks and buses drop sharply.
+- **Rarity is only part of the cause** (`reports/figures/detection/class_distribution.png`).
+  Trucks are 0.5% of training boxes (in 233 of 6,669 images) but 2.6% of test boxes; buses are 5.6%
+  vs 10.4%. Repeat-factor sampling recovered some bus and truck AP (truck 0.045 → 0.102), but the
+  fine-tuned models still call about half of all real trucks "car".
+- **The labels themselves conflict.** UA-DETRAC's "van" is mapped to car, and its "others" class
+  (mostly trucks) is small and mixed, so the training data teaches "large vehicle → car". The
+  sampler made the model *more cautious* about saying truck (false truck predictions 1,315 → 134)
+  but not better at recognising one. A proper fix needs a relabelled van / truck boundary, not
+  more samples.
+
+**Decision: production stays YOLO11m COCO-pretrained.**
+1. **Compatibility decides it on its own terms.** UA-DETRAC has no pedestrian, bicycle or
+   motorcycle labels, so any model fine-tuned on it drops classes the pipeline uses.
+2. **The measurements agree.** YOLO11m zero-shot has the best mAP50-95 overall and on bus and
+   truck. The fine-tuned models win only on cars and precision.
+
+The fine-tuned weights stay registered as CANDIDATES (`models/detection/yolo11s_ua_detrac*`).
+They could serve a cars-only deployment.
+
+**Input size.** On UA-DETRAC, 960 px scores about the same as 1280 px (0.634 vs 0.628) at half
+the latency. That is expected: the frames are natively 960 px wide, so upscaling adds nothing. The
+pipeline keeps 1280 px for higher-resolution live cameras, where distant vehicles are small; this
+dataset cannot test that setting.
 
 ## 6. Tracking (UA-DETRAC)
 

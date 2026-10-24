@@ -43,7 +43,15 @@
       "event_precision": 0.2222222222222222,
       "event_recall": 0.6666666666666666,
       "event_f1": 0.3333333333333333,
-      "event_median_delay_s": 33.5
+      "event_median_delay_s": 33.5,
+      "alarm_threshold": 45.799999999999955,
+      "alarm_tp": 2,
+      "alarm_fp": 4,
+      "alarm_fn": 1,
+      "alarm_precision": 0.3333333333333333,
+      "alarm_recall": 0.6666666666666666,
+      "alarm_f1": 0.4444444444444444,
+      "alarm_median_delay_s": 48.5
     },
     {
       "method": "isolation_forest",
@@ -60,7 +68,15 @@
       "event_precision": 0.3333333333333333,
       "event_recall": 0.6666666666666666,
       "event_f1": 0.4444444444444444,
-      "event_median_delay_s": 93.5
+      "event_median_delay_s": 93.5,
+      "alarm_threshold": 0.0028164858949198362,
+      "alarm_tp": 2,
+      "alarm_fp": 4,
+      "alarm_fn": 1,
+      "alarm_precision": 0.3333333333333333,
+      "alarm_recall": 0.6666666666666666,
+      "alarm_f1": 0.4444444444444444,
+      "alarm_median_delay_s": 93.5
     },
     {
       "method": "autoencoder",
@@ -77,7 +93,15 @@
       "event_precision": 0.1111111111111111,
       "event_recall": 0.3333333333333333,
       "event_f1": 0.16666666666666666,
-      "event_median_delay_s": 30.0
+      "event_median_delay_s": 30.0,
+      "alarm_threshold": 0.08508460956531018,
+      "alarm_tp": 1,
+      "alarm_fp": 7,
+      "alarm_fn": 2,
+      "alarm_precision": 0.125,
+      "alarm_recall": 0.3333333333333333,
+      "alarm_f1": 0.18181818181818182,
+      "alarm_median_delay_s": 40.0
     }
   ],
   "aic21_timing_rule": {
@@ -232,5 +256,22 @@
       "33",
       "74"
     ]
-  }
+  },
+  "aic21_timing_rule_alarm_threshold": {
+    "tp": 2,
+    "fp": 4,
+    "fn": 2,
+    "precision": 0.3333,
+    "recall": 0.5,
+    "f1": 0.4,
+    "rmse_s": 1.581,
+    "nrmse": 0.0053,
+    "s4": 0.3979
+  },
+  "addenda": [
+    {
+      "at": "2026-09-29T23:17:21.252886+00:00",
+      "what": "added alarm_* metrics: threshold chosen on VALIDATION videos for per-video alarm F1; re-scored from windows.parquet + fitted_models.joblib; all earlier metrics reproduced exactly"
+    }
+  ]
 }

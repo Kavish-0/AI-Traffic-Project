@@ -101,7 +101,7 @@ def forecasting_figures(exp_dir: Path, rescore: bool = True) -> list[Path]:
 
 
 # --------------------------------------------------------------------------- anomaly
-def anomaly_figures(exp_dir: Path, days: int = 3) -> list[Path]:
+def anomaly_figures(exp_dir: Path, days: int = 3, fig_dir: Path | None = None) -> list[Path]:
     """Needs ``scores.parquet`` (written by anomaly runs since the figures were added)."""
     if not (exp_dir / "scores.parquet").exists():
         log.warning("%s has no scores.parquet - rerun the anomaly experiment for its figures", exp_dir.name)
@@ -110,7 +110,7 @@ def anomaly_figures(exp_dir: Path, days: int = 3) -> list[Path]:
     m = pd.read_csv(exp_dir / "metrics.csv")
     ev = pd.read_csv(exp_dir / "events.csv")
     ev["start"], ev["end"] = pd.to_datetime(ev["start"], utc=True), pd.to_datetime(ev["end"], utc=True)
-    out = FIG / "anomaly" / exp_dir.name
+    out = fig_dir or FIG / "anomaly" / exp_dir.name
     ranked = m.sort_values("pr_auc", ascending=False)
     learned = [d for d in ("isolation_forest", "autoencoder") if d in set(m["detector"])]
     stat = [d for d in ranked["detector"] if d not in learned and d != "fused_probability"][:2]

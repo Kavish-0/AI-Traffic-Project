@@ -1,0 +1,2 @@
+model,weights,imgsz,test_images,instances,precision,recall,operating_conf,mAP50,mAP50-95,ms_per_image,device,kind,train_seconds,car_mAP50-95,bus_mAP50-95,truck_mAP50-95
+yolo11s_ua_detrac_rfs,C:\Users\Kavish Gupta\AI-Project-Traffic\experiments\detection\20260930-044941_ua_detrac_finetune_rfs_smoke\runs\yolo11s_ua_detrac_rfs\weights\best.pt,960,160,1812,0.8683,0.7312,0.25,0.6567,0.4316,8.83,"cuda:0 [NVIDIA GeForce RTX 4060 Laptop GPU, CUDA 13.0, torch 2.14.0+cu130, fp16]",fine-tuned,76.3,0.5526,0.5166,0.2255

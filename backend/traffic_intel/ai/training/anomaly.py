@@ -175,6 +175,7 @@ def run_anomaly_experiment(cfg: AnomalyExperimentConfig, *, experiments_root: Pa
                            store: FileModelStore | None = None) -> AnomalyExperimentResult:
     from traffic_intel.anomaly.fusion import WeightedLogisticFuser
 
+    default_root = experiments_root is None          # figures go to reports/ only for the real experiments folder
     experiments_root = experiments_root or PROJECT_ROOT / "experiments" / "anomaly"
     store = store or FileModelStore(get_settings().models_dir)
     exp_id = f"{datetime.now().strftime('%Y%m%d-%H%M%S')}_{cfg.name}"
@@ -260,7 +261,7 @@ def run_anomaly_experiment(cfg: AnomalyExperimentConfig, *, experiments_root: Pa
     (out / "report.md").write_text(_report(exp_id, cfg, metrics, len(events)), encoding="utf-8")
     from traffic_intel.ai.evaluation.figures import anomaly_figures
 
-    anomaly_figures(out)
+    anomaly_figures(out, fig_dir=None if default_root else out / "figures")
     return AnomalyExperimentResult(experiment_id=exp_id, directory=str(out), metrics=metrics)
 
 

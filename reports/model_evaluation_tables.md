@@ -352,11 +352,29 @@ Experiment `20260930-014744_synthetic_anomaly` (synthetic junction, injected cap
 
 ## Incident detection on real video (AI City 2021 Track 4)
 
-_not run_
+Experiment `20260930-012228_aic21_track4` · 100 videos · windows {'train': 10438, 'val': 3532, 'test': 3535} · positive windows {'train': 1309, 'val': 262, 'test': 342} · test videos 20
+
+| method | window_roc_auc | window_pr_auc | window_precision | window_recall | window_f1 | event_precision | event_recall | event_f1 | event_median_delay_s |
+|---|--:|--:|--:|--:|--:|--:|--:|--:|--:|
+| stationary_rule | 0.987 | 0.891 | 0.703 | 0.956 | 0.810 | 0.222 | 0.667 | 0.333 | 33.500 |
+| isolation_forest | 0.846 | 0.596 | 0.712 | 0.702 | 0.707 | 0.333 | 0.667 | 0.444 | 93.500 |
+| autoencoder | 0.925 | 0.659 | 0.709 | 0.883 | 0.786 | 0.111 | 0.333 | 0.167 | 30.000 |
+
+Per-video alarms, threshold chosen on the validation videos for alarm F1:
+
+| method | alarm_threshold | alarm_tp | alarm_fp | alarm_fn | alarm_precision | alarm_recall | alarm_f1 | alarm_median_delay_s |
+|---|--:|--:|--:|--:|--:|--:|--:|--:|
+| stationary_rule | 45.800 | 2 | 4 | 1 | 0.333 | 0.667 | 0.444 | 48.500 |
+| isolation_forest | 0.003 | 2 | 4 | 1 | 0.333 | 0.667 | 0.444 | 93.500 |
+| autoencoder | 0.085 | 1 | 7 | 2 | 0.125 | 0.333 | 0.182 | 40.000 |
+
+AI City timing score (stationary rule, onset back-dated): `{'tp': 2, 'fp': 7, 'fn': 2, 'precision': 0.2222, 'recall': 0.5, 'f1': 0.3077, 'rmse_s': 0.707, 'nrmse': 0.0024, 's4': 0.307}`
+
+Calibration (best score on validation windows -> test windows): `{'method': 'stationary_rule', 'fitted_on': 'validation windows', 'evaluated_on': 'test windows', 'brier_uncalibrated_scaled': 0.030865397244398646, 'brier_platt': 0.040292023285332115, 'brier_isotonic': 0.03935496008968708, 'brier_constant_base_rate': 0.08789618013709066}`
 
 ## Vehicle detection (UA-DETRAC)
 
-Experiments `20260925-025338_ua_detrac_finetune` · UA-DETRAC official test split (40 sequences, every 10th frame), scored through the production detector adapter
+Experiments `20260925-025338_ua_detrac_finetune`, `20260930-044419_ua_detrac_finetune`, `20260930-045326_ua_detrac_finetune_rfs` · UA-DETRAC official test split (40 sequences, every 10th frame), scored through the production detector adapter
 
 | model | precision | recall | mAP50 | mAP50-95 | car_mAP50-95 | bus_mAP50-95 | truck_mAP50-95 | ms_per_image | train_seconds | experiment |
 |---|--:|--:|--:|--:|--:|--:|--:|--:|--:|---|
@@ -364,6 +382,10 @@ Experiments `20260925-025338_ua_detrac_finetune` · UA-DETRAC official test spli
 | yolo11s_coco_zero_shot @1280 | 0.805 | 0.879 | 0.803 | 0.561 | 0.620 | 0.578 | 0.485 | 22.020 | 0.000 | 20260925-025338_ua_detrac_finetune |
 | yolo11s_ua_detrac @960 | 0.848 | 0.834 | 0.592 | 0.397 | 0.638 | 0.506 | 0.045 | 13.520 | 4092 | 20260925-025338_ua_detrac_finetune |
 | yolo11s_ua_detrac @1280 | 0.846 | 0.847 | 0.599 | 0.399 | 0.645 | 0.498 | 0.053 | 23.190 | 4092 | 20260925-025338_ua_detrac_finetune |
+| yolo11m_coco_zero_shot @960 | 0.860 | 0.848 | 0.874 | 0.634 | 0.617 | 0.617 | 0.669 | 11.960 | 0.000 | 20260930-044419_ua_detrac_finetune |
+| yolo11m_coco_zero_shot @1280 | 0.826 | 0.881 | 0.875 | 0.628 | 0.624 | 0.590 | 0.671 | 21.740 | 0.000 | 20260930-044419_ua_detrac_finetune |
+| yolo11s_ua_detrac_rfs @960 | 0.889 | 0.829 | 0.629 | 0.434 | 0.641 | 0.559 | 0.102 | 6.450 | 3789 | 20260930-045326_ua_detrac_finetune_rfs |
+| yolo11s_ua_detrac_rfs @1280 | 0.891 | 0.829 | 0.617 | 0.421 | 0.644 | 0.526 | 0.094 | 12.260 | 3789 | 20260930-045326_ua_detrac_finetune_rfs |
 
 ## Tracking (UA-DETRAC)
 

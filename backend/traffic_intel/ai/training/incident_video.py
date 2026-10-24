@@ -384,9 +384,71 @@ def event_metrics(df: pd.DataFrame, s: np.ndarray, thr: float, intervals: dict[s
             "median_delay_s": float(np.median(delays)) if delays else float("nan")}
 
 
+def _best_event_threshold(df: pd.DataFrame, s: np.ndarray, intervals: dict[str, list[tuple[float, float]]],
+                          tol: float) -> float:
+    """Lowest threshold with the best PER-VIDEO alarm F1 (first alarm per video, event_metrics) on the given
+    (validation) videos. An operator sees alarms, not windows; the lowest tied threshold alarms earliest."""
+    cands = np.unique(s) if len(np.unique(s)) <= 4000 else np.unique(np.quantile(s, np.linspace(0, 1, 4001)))
+    best_f1, best_thr = -1.0, float("inf")
+    for thr in cands:                                        # ascending
+        f1 = float(event_metrics(df, s, float(thr), intervals, tol)["f1"])
+        if f1 > best_f1 + 1e-12:
+            best_f1, best_thr = f1, float(thr)
+    return best_thr
+
+
+def _aic_timing(test: pd.DataFrame, rule_scores: np.ndarray, thr: float, labels: list[Any], tol: float) -> Any:  # noqa: ANN401
+    """AIC21 timing score: rule alarms back-dated to the moment the vehicle became stationary."""
+    from traffic_intel.ai.evaluation.incidents import TimedPrediction, anomaly_timing_score
+
+    preds = []
+    for vid, g in test.assign(score=rule_scores).groupby("video"):
+        al = g[g["score"] >= thr]
+        if len(al):
+            r = al.iloc[0]
+            preds.append(TimedPrediction(str(vid), max(0.0, float(r["t_end"]) - float(r["score"]))))
+    return anomaly_timing_score(labels, preds, window_s=tol)
+
+
+def evaluate_methods(sets: dict[str, pd.DataFrame], scores: dict[str, dict[str, np.ndarray]],
+                     intervals: dict[str, list[tuple[float, float]]], ann: list[Any], split: dict[str, list[str]],
+                     cfg: IncidentExperimentConfig) -> tuple[list[dict[str, Any]], list[tuple[str, float]], Any, Any]:
+    """TEST metrics per method with two thresholds, both chosen on VALIDATION:
+    ``window_*`` / ``event_*``: the threshold with the best window-level F1;
+    ``alarm_*``: the threshold with the best per-video alarm F1 (_best_event_threshold)."""
+    tol = cfg.event_tolerance_s
+    rows: list[dict[str, Any]] = []
+    events: list[tuple[str, float]] = []
+    alarm_thr: dict[str, float] = {}
+    for method in scores["test"]:
+        thr = _best_threshold(sets["val"]["y"].to_numpy(), scores["val"][method])
+        athr = _best_event_threshold(sets["val"], scores["val"][method], intervals, tol)
+        wm = window_metrics(sets["test"]["y"].to_numpy(), scores["test"][method], thr)
+        em = event_metrics(sets["test"], scores["test"][method], thr, intervals, tol)
+        am = event_metrics(sets["test"], scores["test"][method], athr, intervals, tol)
+        rows.append({"method": method, **{f"window_{k}": v for k, v in wm.items()},
+                     **{f"event_{k}": v for k, v in em.items()},
+                     "alarm_threshold": athr, **{f"alarm_{k}": v for k, v in am.items()}})
+        events.append((method, thr))
+        alarm_thr[method] = athr
+    labels = [x for x in ann if x.video_id in split["test"]]
+    rule = scores["test"]["stationary_rule"]
+    aic = _aic_timing(sets["test"], rule, dict(events)["stationary_rule"], labels, tol)
+    aic_alarm = _aic_timing(sets["test"], rule, alarm_thr["stationary_rule"], labels, tol)
+    return rows, events, aic, aic_alarm
+
+
+def normal_reference(models: dict[str, Any], train: pd.DataFrame) -> dict[str, Any]:
+    """Rebuild score_methods' input from saved models (fitted_models.joblib) and the TRAIN windows."""
+    normal = train[~train["y"]]
+    Xn = models["scaler"].transform(normal[FEATURES])
+    return {**models, "raw_iso_normal": -models["isolation_forest"].score_samples(Xn),
+            "raw_ae_normal": np.mean((models["autoencoder"].predict(Xn) - Xn) ** 2, axis=1),
+            "n_normal_windows": len(normal)}
+
+
 # --------------------------------------------------------------------------- experiment
 def run_incident_experiment(cfg: IncidentExperimentConfig, smoke: bool = False) -> dict[str, Any]:
-    from traffic_intel.ai.evaluation.incidents import TimedPrediction, anomaly_timing_score
     from traffic_intel.datasets.adapters.base import IncidentAdapter, adapter_for
 
     exp_id = datetime.now().strftime("%Y%m%d-%H%M%S") + f"_{cfg.name}" + ("_smoke" if smoke else "")
@@ -446,24 +508,7 @@ def run_incident_experiment(cfg: IncidentExperimentConfig, smoke: bool = False) 
     fitted = fit_methods(sets["train"], cfg)
     fit_s = time.perf_counter() - t0
     scores = {k: score_methods(v, fitted) for k, v in sets.items()}
-    rows, events = [], []
-    for method in scores["test"]:
-        thr = _best_threshold(sets["val"]["y"].to_numpy(), scores["val"][method])
-        wm = window_metrics(sets["test"]["y"].to_numpy(), scores["test"][method], thr)
-        em = event_metrics(sets["test"], scores["test"][method], thr, intervals, cfg.event_tolerance_s)
-        rows.append({"method": method, **{f"window_{k}": v for k, v in wm.items()},
-                     **{f"event_{k}": v for k, v in em.items()}})
-        events.append((method, thr))
-    # AIC21 timing score: rule alarms back-dated to the moment the vehicle became stationary
-    preds = []
-    thr_rule = dict(events)["stationary_rule"]
-    for vid, g in sets["test"].assign(score=scores["test"]["stationary_rule"]).groupby("video"):
-        al = g[g["score"] >= thr_rule]
-        if len(al):
-            r = al.iloc[0]
-            preds.append(TimedPrediction(str(vid), max(0.0, float(r["t_end"]) - float(r["score"]))))
-    test_labels = [x for x in ann if x.video_id in split["test"]]
-    aic = anomaly_timing_score(test_labels, preds, window_s=cfg.event_tolerance_s)
+    rows, events, aic, aic_alarm = evaluate_methods(sets, scores, intervals, ann, split, cfg)
     metrics = pd.DataFrame(rows)
     metrics.to_csv(out / "metrics_test.csv", index=False)
 
@@ -478,7 +523,8 @@ def run_incident_experiment(cfg: IncidentExperimentConfig, smoke: bool = False) 
               "videos": len(ids), "windows": {k: len(v) for k, v in sets.items()},
               "positive_windows": {k: int(v["y"].sum()) for k, v in sets.items()},
               "normal_train_windows": fitted["n_normal_windows"], "fit_seconds": round(fit_s, 2),
-              "metrics": rows, "aic21_timing_rule": aic, "calibration": calib, "split": split,
+              "metrics": rows, "aic21_timing_rule": aic, "aic21_timing_rule_alarm_threshold": aic_alarm,
+              "calibration": calib, "split": split,
               "labelled": {k: [x for x in v if x in intervals] for k, v in split.items()}}
     (out / "experiment.json").write_text(json.dumps(record, indent=2, default=str), encoding="utf-8")
     import joblib
@@ -592,8 +638,19 @@ def _report(rec: dict[str, Any], metrics: pd.DataFrame, cfg: IncidentExperimentC
              "| " + " | ".join(cols) + " |", "|" + "---|" * len(cols)]
     for _, r in metrics.iterrows():
         lines.append("| " + " | ".join(str(r[c]) if c == "method" else f"{r[c]:.3f}" for c in cols) + " |")
-    lines += ["", f"AIC21 timing score (stationary rule, onset back-dated): `{rec['aic21_timing_rule']}`", "",
-              f"Calibration: `{rec['calibration']}`", ""]
+    lines += ["", "Thresholds above: best window-level F1 on validation windows.", ""]
+    if "alarm_threshold" in metrics:
+        acols = ["method", "alarm_threshold", "alarm_tp", "alarm_fp", "alarm_fn", "alarm_precision", "alarm_recall",
+                 "alarm_f1", "alarm_median_delay_s"]
+        lines += ["Per-video alarms with the threshold chosen for alarms (best per-video F1 on the validation videos, "
+                  "lowest such threshold):", "", "| " + " | ".join(acols) + " |", "|" + "---|" * len(acols)]
+        for _, r in metrics.iterrows():
+            lines.append("| " + " | ".join(str(r[c]) if c == "method" else f"{r[c]:.3f}" for c in acols) + " |")
+        lines.append("")
+    lines += [f"AIC21 timing score (stationary rule, onset back-dated): `{rec['aic21_timing_rule']}`", ""]
+    if "aic21_timing_rule_alarm_threshold" in rec:
+        lines += [f"... with the alarm threshold: `{rec['aic21_timing_rule_alarm_threshold']}`", ""]
+    lines += [f"Calibration: `{rec['calibration']}`", ""]
     return "\n".join(lines)
 
 

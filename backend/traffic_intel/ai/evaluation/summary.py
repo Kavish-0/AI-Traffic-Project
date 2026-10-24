@@ -138,6 +138,10 @@ def incident() -> list[str]:
              f"{rec['positive_windows']} · test videos {len(rec['split']['test'])}", ""]
     lines += _table(m, ["method", "window_roc_auc", "window_pr_auc", "window_precision", "window_recall", "window_f1",
                         "event_precision", "event_recall", "event_f1", "event_median_delay_s"])
+    if "alarm_threshold" in m:
+        lines += ["", "Per-video alarms, threshold chosen on the validation videos for alarm F1:", ""]
+        lines += _table(m, ["method", "alarm_threshold", "alarm_tp", "alarm_fp", "alarm_fn", "alarm_precision",
+                            "alarm_recall", "alarm_f1", "alarm_median_delay_s"])
     lines += ["", f"AI City timing score (stationary rule, onset back-dated): `{rec['aic21_timing_rule']}`", "",
               f"Calibration (best score on validation windows -> test windows): `{rec['calibration']}`", ""]
     return lines

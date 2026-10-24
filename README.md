@@ -254,8 +254,11 @@ npm run lint && npm run typecheck && npm run build
 
 ## 10. Known limitations
 
-- **No real incident labels yet.** Incident scores are uncalibrated and the fusion weights are
-  hand-set. Detection quality on real incidents has not been measured.
+- **No incident labels from this site yet.** Incident scores are uncalibrated and the fusion
+  weights are hand-set. On real video (AI City 2021 Track 4), the stopped-vehicle signal ranks
+  incident windows well (ROC-AUC 0.987), but with 3 incident videos per split, alarm rates are
+  uncertain and a calibration does not transfer
+  ([docs/MODEL_EVALUATION.md §4](docs/MODEL_EVALUATION.md)).
 - **Synthetic demo data.** The demo profile's junction approaches are simulated test scenes.
   Their numbers demonstrate the pipeline, not a real site. Only the public highway camera is
   real footage, and its calibration is approximate.
