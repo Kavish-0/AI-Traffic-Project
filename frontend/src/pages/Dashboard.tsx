@@ -2,19 +2,19 @@ import { useEffect, useMemo, useState } from "react";
 import { api } from "../api/client";
 import type { Camera, Junction, NetworkGeoJSON, Road, Summary } from "../api/types";
 import { CameraPanel } from "../components/CameraPanel";
-import { IncidentList, RiskPanel } from "../components/IncidentList";
-import { JunctionTree } from "../components/JunctionTree";
+import { RiskPanel } from "../components/IncidentList";
 import { KpiBar } from "../components/KpiBar";
 import { MapView } from "../components/MapView";
 import { RoadPanel } from "../components/RoadPanel";
 import { TrendCharts } from "../components/TrendCharts";
-import { WhatIfPanel } from "../components/WhatIfPanel";
 import { Card, StateMessage } from "../components/ui";
 import { POLL } from "../config";
 import { useResource, type Resource } from "../hooks/useResource";
 import { useLive } from "../state/live";
 import { useSelection } from "../state/selection";
 import { CONGESTION_COLORS, UNKNOWN_COLOR } from "../theme/congestion";
+import { LEVEL_LABEL, NO_DATA_LABEL } from "../lib/labels";
+import { NeedsAttention } from "../components/NeedsAttention";
 
 export interface SharedData {
   junctions: Resource<Junction[]>;
@@ -28,19 +28,19 @@ function Legend() {
   return (
     <div className="absolute bottom-3 left-3 flex flex-wrap gap-3 rounded-lg bg-slate-950/85 px-3 py-2 text-[11px] text-slate-300">
       {Object.entries(CONGESTION_COLORS).map(([level, color]) => (
-        <span key={level} className="flex items-center gap-1 capitalize">
+        <span key={level} className="flex items-center gap-1">
           <span className="inline-block h-1.5 w-4 rounded" style={{ background: color }} />
-          {level}
+          {LEVEL_LABEL[level as keyof typeof LEVEL_LABEL]}
         </span>
       ))}
-      <span className="flex items-center gap-1"><span className="inline-block h-1.5 w-4 rounded" style={{ background: UNKNOWN_COLOR }} />no data</span>
+      <span className="flex items-center gap-1"><span className="inline-block h-1.5 w-4 rounded" style={{ background: UNKNOWN_COLOR }} />{NO_DATA_LABEL}</span>
       <span className="flex items-center gap-1"><span className="inline-block h-2.5 w-2.5 rounded-full bg-red-500" />incident</span>
       <span className="flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full bg-cyan-400" />camera</span>
     </div>
   );
 }
 
-export function Dashboard({ shared, onOpenIncidents }: { shared: SharedData; onOpenIncidents: () => void }) {
+export function Dashboard({ shared }: { shared: SharedData }) {
   const live = useLive();
   const sel = useSelection();
   const [horizon, setHorizon] = useState(15);
@@ -65,7 +65,6 @@ export function Dashboard({ shared, onOpenIncidents }: { shared: SharedData; onO
   const history = useResource(aid ? () => api.history(aid, 120) : null, `hist:${aid}`, perWindow);
   const riskHist = useResource(aid ? () => api.riskHistory(aid) : null, `riskh:${aid}`, perWindow);
   const fva = useResource(aid ? () => api.forecastVsActual(aid, horizon) : null, `fva:${aid}:${horizon}`, perWindow);
-  const incidents = useResource(() => api.incidents({ active_only: true, limit: 20 }), "incidents:active", perWindow);
   const risk = useResource(api.risk, "risk", perWindow);
 
   const names = useMemo(
@@ -79,13 +78,15 @@ export function Dashboard({ shared, onOpenIncidents }: { shared: SharedData; onO
     return mine.find((c) => c.status === "online") ?? mine.find((c) => c.preview_available) ?? mine[0] ?? null;
   }, [sel.cameraId, shared.cameras, aid]);
 
+  const trends = aid ? <TrendCharts history={history} risk={riskHist} fva={fva} horizon={horizon} onHorizon={setHorizon} /> : null;
+
   return (
-    <div className="space-y-4 p-5">
+    <div className="space-y-3 p-4">
       <KpiBar summary={shared.summary} />
 
-      <div className="grid gap-4 xl:grid-cols-3">
-        {/* on wide screens the map fills the row (as tall as the junction list + camera beside it) */}
-        <div className="relative h-[520px] overflow-hidden rounded-xl border border-slate-800 xl:col-span-2 xl:h-auto xl:min-h-[520px]">
+      {/* row 1: the map is the main view; the junction / road list scrolls beside it */}
+      <div className="grid gap-3 xl:grid-cols-4">
+        <div className="relative h-[62vh] min-h-[480px] overflow-hidden rounded-xl border border-slate-800 xl:col-span-3">
           {shared.network.error && !shared.network.data ? (
             <div className="p-4"><StateMessage tone="error">Map data unavailable: {shared.network.error.detail}</StateMessage></div>
           ) : (
@@ -100,7 +101,7 @@ export function Dashboard({ shared, onOpenIncidents }: { shared: SharedData; onO
                   setNotice(null);
                   sel.selectApproach(approachId);
                 } else {
-                  setNotice(`${roadId}: not monitored - no camera on this road (map shows it for routing / what-if only).`);
+                  setNotice(`${roadId}: not monitored - no camera or sensor on this road (map shows it for routing / what-if only).`);
                 }
               }}
               onJunction={(id) => sel.selectJunction(id)}
@@ -108,32 +109,37 @@ export function Dashboard({ shared, onOpenIncidents }: { shared: SharedData; onO
             />
           )}
           <Legend />
+          {shared.network.data?.geo_referenced === false && (
+            <div className="absolute top-3 left-3 max-w-md rounded bg-slate-950/90 px-3 py-2 text-xs text-slate-300" role="note">
+              {shared.network.data.location_note ?? "Schematic view: location unknown, so no city map is shown."}
+            </div>
+          )}
           {notice && (
             <div className="absolute top-3 left-3 max-w-sm rounded bg-slate-950/90 px-3 py-2 text-xs text-slate-300" role="status">
               {notice}
             </div>
           )}
         </div>
-        <div className="space-y-4">
-          <JunctionTree junctions={shared.junctions} cameras={shared.cameras} />
-          <CameraPanel camera={camera} sensorNote={snapshot.data?.speed_only ? snapshot.data.source_note ?? "Road sensor" : null} />
+        <div className="max-h-[62vh] min-h-[480px] overflow-y-auto">
+          <NeedsAttention junctions={shared.junctions} />
         </div>
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-3">
-        <div className="xl:col-span-1">
-          {aid ? <RoadPanel snapshot={snapshot} /> :<Card title="Selected road"><StateMessage>Select a road on the map or in the junction list.</StateMessage></Card>}
+      {/* row 2: the selected road beside its video - or beside its speed trend when the road has no camera,
+          so no space goes to an empty video box */}
+      <div className="grid gap-3 xl:grid-cols-5">
+        <div className="xl:col-span-2">
+          {aid ? <RoadPanel snapshot={snapshot} /> : <Card title="Selected road"><StateMessage>Select a road on the map or in the list.</StateMessage></Card>}
         </div>
-        <div className="space-y-4 xl:col-span-2">
-          {aid && <TrendCharts history={history} risk={riskHist} fva={fva} horizon={horizon} onHorizon={setHorizon} speedOnly={!!snapshot.data?.speed_only} />}
-          <div className="grid gap-4 md:grid-cols-2">
-            <IncidentList incidents={incidents} onOpen={onOpenIncidents} />
-            <RiskPanel risk={risk} names={names} />
-          </div>
+        <div className="xl:col-span-3">
+          {camera ? <CameraPanel camera={camera} /> : trends}
         </div>
       </div>
 
-      <WhatIfPanel junctions={shared.junctions} roads={shared.roads} />
+      {/* row 3 (roads with a camera): the speed trend; then the riskiest roads. Incidents have their own page,
+          the what-if its own Simulate page and the component health the System page. */}
+      {camera && trends}
+      <RiskPanel risk={risk} names={names} />
     </div>
   );
 }

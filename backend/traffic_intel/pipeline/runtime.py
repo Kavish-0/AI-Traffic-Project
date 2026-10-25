@@ -53,6 +53,7 @@ class CameraRef(BaseModel):
     duration_s: float | None = None
     seed: int | None = None
     arrival_rate_veh_h_per_lane: float | None = None
+    process_fps: float | None = None         # override the camera's analysed frames/s (e.g. CPU-only profiles)
 
     @model_validator(mode="after")
     def _one_source(self) -> CameraRef:
@@ -205,6 +206,8 @@ class Runtime:
             kind = "synthetic"
         else:
             camera = _find_camera(ref.camera or "")
+            if ref.process_fps is not None:
+                camera = camera.model_copy(update={"process_fps": ref.process_fps})
             kind = camera.source_type if camera.source_type != "auto" else (
                 "webcam" if camera.source.startswith("webcam:") else
                 "stream" if "://" in camera.source else "file")

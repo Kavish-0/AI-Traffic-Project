@@ -1,0 +1,17 @@
+# VIDEO mode on the GPU: the real public highway footage through the serving detector (pipeline.yaml:
+# YOLO11m at 1280 px, CUDA if available) + ByteTrack. Use pipeline_video_cpu.yaml while the GPU is busy.
+#
+#   PowerShell, from backend/ (BOTH terminals need the variable):
+#     $env:TI_PIPELINE_FILE="pipeline_video.yaml"; python -m traffic_intel.pipeline run --profile video
+#     $env:TI_PIPELINE_FILE="pipeline_video.yaml"; uvicorn traffic_intel.api.main:app --port 8001
+#   and a dashboard pointed at it (from frontend/):
+#     $env:VITE_BACKEND_URL="http://localhost:8001"; npx vite --port 5174
+extends: pipeline.yaml
+
+network_file: network/video_site.yaml   # one monitoring point; schematic (location of the clip unknown)
+
+camera_files:
+  - cameras/public_highway.yaml
+
+settings:
+  database_file: traffic_video_site.db  # same data as the CPU video mode: one site, one database

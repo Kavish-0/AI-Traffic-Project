@@ -47,6 +47,22 @@ profiles:
     cameras:
       - {camera: public_highway_01}
 
+  video:
+    description: >
+      Real public highway footage through the serving detector on the GPU (full quality: counts, speeds).
+      Needs TI_PIPELINE_FILE=pipeline_video.yaml for BOTH this process and the API.
+    pipeline_file: pipeline_video.yaml
+    cameras:
+      - {camera: public_highway_01, process_fps: 10}
+
+  video_cpu:
+    description: >
+      Real public highway footage through YOLO + ByteTrack on the CPU (GPU left free), a few frames per
+      second. Needs TI_PIPELINE_FILE=pipeline_video_cpu.yaml for BOTH this process and the API.
+    pipeline_file: pipeline_video_cpu.yaml
+    cameras:
+      - {camera: public_highway_01, process_fps: 1}   # YOLO11m on this CPU manages ~1.5 frames/s; 1 keeps up with real time
+
   pems_bay:
     description: >
       REAL DATA: the 325 PEMS-BAY loop-detector stations (South Bay freeways, 2017) replayed as live road

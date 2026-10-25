@@ -93,3 +93,18 @@ def test_clahe_only_on_dark_frames() -> None:
     rng = np.random.default_rng(0)
     dark = rng.integers(10, 40, (50, 50, 3), dtype=np.uint8)
     assert pre.process(Frame("c", 0, START, dark.copy())).image.std() > dark.std()
+
+
+def test_live_replay_loops_a_file_source_opened_without_loop(video: Path) -> None:
+    from traffic_intel.computer_vision.sources.live_replay import LiveReplaySource
+
+    inner = OpenCVVideoSource("c", str(video), process_fps=10, replay_start=START)      # loop=False, 30 frames
+    src = LiveReplaySource(inner, loop=True, realtime=False, start=START)
+    frames = []
+    for f in src.frames():
+        frames.append(f)
+        if len(frames) == 75:
+            break
+    src.close()
+    assert len(frames) == 75 and src.loops == 2                    # restarted twice, not stopped after one pass
+    assert frames[30].timestamp > frames[29].timestamp             # time keeps running across the restart

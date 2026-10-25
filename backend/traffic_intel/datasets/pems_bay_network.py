@@ -12,7 +12,9 @@ Measured from the data: free-flow speed per station = 90th percentile of its spe
 part of the recording (first 70%, the same split the forecaster uses), clipped to 60..120 km/h.
 
 Assumed (not in the data, labelled in the names): interchange connectors between freeways where two
-corridors pass within ``connector_max_m`` of each other, so what-if closures have alternative routes.
+corridors pass within ``connector_max_m`` of each other, and a one-lane local-street detour beside every
+freeway segment (ids ``detour_*``), so what-if closures have alternative routes. The dashboard hides the
+detours on the map unless a what-if run puts traffic on them.
 
 The station metadata file stores its text columns (direction, name) as a pickled NumPy object array;
 it is read with the inventory's restricted unpickler (NumPy arrays only), never with plain pickle.
@@ -108,7 +110,7 @@ def corridor_id(fwy: int, d: str) -> str:
 
 
 def build_network(meta: pd.DataFrame, free_flow: dict[str, float], *, offset_m: float = 12.0,
-                  connector_max_m: float = 800.0) -> dict[str, Any]:
+                  connector_max_m: float = 800.0, detour_offset_m: float = 120.0) -> dict[str, Any]:
     junctions: list[dict[str, Any]] = []
     nodes: list[dict[str, Any]] = []
     segments: list[dict[str, Any]] = []
@@ -155,6 +157,21 @@ def build_network(meta: pd.DataFrame, free_flow: dict[str, float], *, offset_m: 
                 "free_flow_speed_kmh": free_flow.get(str(sid), SPEED_LIMIT_KMH), "importance": 0.9})
             approaches.append({"id": aid, "junction_id": cid, "road_segment_id": seg_id,
                                "name": f"{road} · {label} ({sid})", "direction": DIRECTIONS.get(d, d)})
+            # assumed local-street detour around this freeway segment (exit before it, re-enter after it), so
+            # a what-if closure has somewhere to go; via its own mid node because the road graph is a DiGraph
+            e, n = _metres(tuple(prev_loc), loc)
+            norm = math.hypot(e, n) or 1.0
+            mid_loc = _shift(((prev_loc[0] + loc[0]) / 2, (prev_loc[1] + loc[1]) / 2),
+                             n / norm * detour_offset_m, -e / norm * detour_offset_m)
+            mid_pt = [round(mid_loc[0], 6), round(mid_loc[1], 6)]
+            did = f"n_detour_pems_bay_{sid}"
+            nodes.append({"id": did, "location": mid_pt})
+            for part, (a_id, a_loc, b_id, b_loc) in (("a", (prev, prev_loc, did, mid_pt)),
+                                                       ("b", (did, mid_pt, nid, [round(loc[0], 6), round(loc[1], 6)]))):
+                segments.append({
+                    "id": f"detour_pems_bay_{sid}_{part}", "name": f"Local streets around {road} · {label} "
+                    "(assumed detour)", "from_node": a_id, "to_node": b_id, "geometry": [a_loc, b_loc],
+                    "lanes": 1, "speed_limit_kmh": 40.0})
             corridor_nodes[cid].append((nid, loc))
             prev = nid
 
@@ -184,7 +201,8 @@ HEADER = """\
 # PEMS-BAY real-data network: {n} loop-detector stations at their real locations (South Bay, CA),
 # chained per freeway direction in post-mile order. Free-flow speed per station = 90th percentile of
 # its speeds in the training period (first 70% of the recording). Segments named "(assumed connector)"
-# are NOT in the data: they join freeways that pass close to each other so what-if has detours.
+# are NOT in the data: they join freeways that pass close to each other; "(assumed detour)" segments are
+# one-lane local streets beside each freeway segment. Both exist only so what-if closures can reroute.
 """
 
 

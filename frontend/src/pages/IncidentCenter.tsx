@@ -7,16 +7,17 @@ import { dateTime, pct, time, titleCase } from "../lib/format";
 import { useLive } from "../state/live";
 import { useSelection } from "../state/selection";
 import { scoreLabel } from "../components/RoadPanel";
-import { Badge, Card, RiskBadge, StateMessage } from "../components/ui";
+import { Badge, Card, PageLayout, RiskBadge, StateMessage } from "../components/ui";
+import { STATUS, TEXT } from "../theme/tokens";
 
 const TYPE_COLOR: Record<string, string> = {
-  possible_incident: "#F43F5E",
-  stopped_vehicle: "#FB923C",
-  wrong_way: "#e11d48",
-  abnormal_queue: "#FDE047",
-  sudden_slowdown: "#FDE047",
-  abnormal_trajectory: "#a855f7",
-  normal: "#2DD4BF",
+  possible_incident: STATUS.error,
+  stopped_vehicle: STATUS.alert,
+  wrong_way: STATUS.error,
+  abnormal_queue: STATUS.warn,
+  sudden_slowdown: STATUS.warn,
+  abnormal_trajectory: STATUS.alert,
+  normal: STATUS.ok,
 };
 
 function Detail({ incident, onChanged }: { incident: Incident; onChanged: () => void }) {
@@ -116,7 +117,8 @@ export function IncidentCenter() {
   );
   const current = list.data?.find((i) => i.incident_id === selected) ?? null;
   return (
-    <div className="grid gap-4 p-5 lg:grid-cols-3">
+    <PageLayout title="Incidents" description="Possible incidents found by the anomaly detectors, with their evidence. Scores are UNCALIBRATED: each entry is for an operator to verify, and the TRUE / FALSE feedback is stored for calibration.">
+    <div className="grid gap-4 lg:grid-cols-3">
       <div className="lg:col-span-2">
         <Card
           title="Incident center"
@@ -132,11 +134,11 @@ export function IncidentCenter() {
           }
         >
           {list.loading ? (
-            <StateMessage>Loading incidents…</StateMessage>
+            <StateMessage tone="loading">Loading incidents…</StateMessage>
           ) : !list.data ? (
             <StateMessage tone="error">Incidents unavailable: {list.error?.detail}</StateMessage>
           ) : list.data.length === 0 ? (
-            <StateMessage>{filter === "active" ? "No active incidents." : "No incidents recorded."}</StateMessage>
+            <StateMessage tone="info">{filter === "active" ? "No active incidents: none of the anomaly detectors has flagged a road." : "No incidents recorded."}</StateMessage>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
@@ -155,7 +157,7 @@ export function IncidentCenter() {
                         <td className="py-1.5 text-slate-300">{time(i.timestamp, false)}</td>
                         <td className="text-slate-200">{i.road_id ?? i.approach_id}</td>
                         <td className="text-slate-400">{i.junction_id ?? "—"}</td>
-                        <td><span style={{ color: TYPE_COLOR[i.incident_type] ?? "#C7C0E6" }}>{i.label || titleCase(i.incident_type)}</span></td>
+                        <td><span style={{ color: TYPE_COLOR[i.incident_type] ?? TEXT.secondary }}>{i.label || titleCase(i.incident_type)}</span></td>
                         <td className="pr-4 text-right text-slate-100 tabular-nums" title={scoreLabel(i.calibrated)}>
                           {pct(i.probability)}{!i.calibrated && <span className="text-slate-500">*</span>}
                         </td>
@@ -180,5 +182,6 @@ export function IncidentCenter() {
         )}
       </div>
     </div>
+    </PageLayout>
   );
 }

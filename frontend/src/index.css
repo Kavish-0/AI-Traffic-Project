@@ -35,3 +35,16 @@ body {
   background-color: #0c0a18;
   color: #f3f0ff;
 }
+
+/* Motion: short, purposeful, and off for people who ask for reduced motion */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+.page-enter { animation: fade-in 180ms ease-out; }
+.fade-in { animation: fade-in 220ms ease-out; }
+button, a { transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease; }
+@media (prefers-reduced-motion: reduce) {
+  .page-enter, .fade-in { animation: none; }
+  button, a { transition: none; }
+}

@@ -2,16 +2,17 @@ import { useEffect, useState } from "react";
 import { api } from "./api/client";
 import { Header, type Page } from "./components/Header";
 import { StateMessage } from "./components/ui";
-import { WhatIfPanel } from "./components/WhatIfPanel";
 import { POLL } from "./config";
 import { useResource } from "./hooks/useResource";
 import { Dashboard, type SharedData } from "./pages/Dashboard";
 import { IncidentCenter } from "./pages/IncidentCenter";
-import { SystemPage, SystemStatusCard } from "./pages/SystemPage";
+import { ModelsPage } from "./pages/ModelsPage";
+import { WhatIfPage } from "./pages/WhatIfPage";
+import { SystemPage } from "./pages/SystemPage";
 import { LiveProvider, useLive } from "./state/live";
 import { SelectionProvider } from "./state/selection";
 
-const PAGES: Page[] = ["dashboard", "incidents", "whatif", "system"];
+const PAGES: Page[] = ["dashboard", "incidents", "whatif", "models", "system"];
 const pageFromHash = (): Page => {
   const h = location.hash.replace("#", "") as Page;
   return PAGES.includes(h) ? h : "dashboard";
@@ -46,6 +47,8 @@ function Shell() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <Header page={page} onPage={go} system={system.data} activeIncidents={live.summary.data?.active_incidents} />
+      <main className="lg:pl-60">
+        <div key={page} className="page-enter">
       {backendDown && (
         <div className="px-5 pt-4">
           <StateMessage tone="error">
@@ -56,18 +59,13 @@ function Shell() {
       {system.data && !system.data.database.ok && (
         <div className="px-5 pt-4"><StateMessage tone="error">Database unavailable: {system.data.database.detail}</StateMessage></div>
       )}
-      {page === "dashboard" && <Dashboard shared={shared} onOpenIncidents={() => go("incidents")} />}
+      {page === "dashboard" && <Dashboard shared={shared} />}
       {page === "incidents" && <IncidentCenter />}
-      {page === "whatif" && (
-        <div className="p-5">
-          <WhatIfPanel junctions={junctions} roads={roads} />
-          <p className="mt-2 text-xs text-slate-500">Affected roads are highlighted on the dashboard map after a run.</p>
-        </div>
-      )}
+      {page === "whatif" && <WhatIfPage junctions={junctions} roads={roads} network={network} />}
+      {page === "models" && <ModelsPage />}
       {page === "system" && <SystemPage system={system} />}
-      {page === "dashboard" && (
-        <div className="px-5 pb-6"><SystemStatusCard system={system} /></div>
-      )}
+        </div>
+      </main>
     </div>
   );
 }

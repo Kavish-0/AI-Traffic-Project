@@ -6,36 +6,37 @@
  * If the style cannot be loaded, the map falls back to the plain background - roads still draw.
  */
 import type { LayerSpecification, StyleSpecification } from "maplibre-gl";
+import { MAP } from "../theme/tokens";
 
 export const DEFAULT_STYLE_URL = "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json";
 
-const GROUND = "#120E22";
+const GROUND = MAP.ground;
 export const OFFLINE_STYLE: StyleSpecification = {
   version: 8,
   sources: {},
   layers: [{ id: "bg", type: "background", paint: { "background-color": GROUND } }],
 };
 
-// Aurora map colours; labels are bright enough to read on the dark ground
+// Aurora map colours (theme/tokens.ts); labels are bright enough to read on the dark ground
 const C = {
   ground: GROUND,
-  landuse: "#161129",
-  park: "#132526",
-  water: "#15163A",
-  building: "#1A1530",
-  street: "#1F1A36",
-  streetMajor: "#2A2447",
-  freeway: "#352D58",
-  casing: "#0C0A18",
-  rail: "#2A2447",
-  boundary: "#3A3460",
-  city: "#F3F0FF",
-  district: "#D5CEF2",
-  neighbourhood: "#B8B0DC",
-  roadLabel: "#A49DC4",
-  waterLabel: "#7E86D6",
-  poi: "#9A92C0",
-  halo: "#0C0A18",
+  landuse: MAP.landuse,
+  park: MAP.park,
+  water: MAP.water,
+  building: MAP.building,
+  street: MAP.street,
+  streetMajor: MAP.streetMajor,
+  freeway: MAP.freeway,
+  casing: MAP.halo,
+  rail: MAP.rail,
+  boundary: MAP.boundary,
+  city: MAP.labelCity,
+  district: MAP.labelDistrict,
+  neighbourhood: MAP.labelNeighbourhood,
+  roadLabel: MAP.labelRoad,
+  waterLabel: MAP.labelWater,
+  poi: MAP.labelPoi,
+  halo: MAP.halo,
 };
 
 function lineColor(id: string): string | null {

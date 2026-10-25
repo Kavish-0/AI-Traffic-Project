@@ -5,6 +5,8 @@ import type { NetworkGeoJSON } from "../api/types";
 import { loadBasemap } from "../lib/basemap";
 import { mapLabels } from "../lib/mapLabels";
 import { AURORA, CONGESTION_COLORS, ROAD_CASING, ROAD_STYLE, UNKNOWN_COLOR } from "../theme/congestion";
+import { TEXT } from "../theme/tokens";
+import { CHANGE } from "../theme/tokens";
 
 const MAX_ROAD_LABELS_ALWAYS = 40;
 const ROAD_LABEL_MIN_ZOOM = 13;
@@ -39,7 +41,12 @@ const LEVEL_WIDTH: maplibregl.ExpressionSpecification = [
     "severe", ROAD_STYLE.severe.width,
     ROAD_STYLE.none.width],
 ];
-const OPEN_ROAD: maplibregl.ExpressionSpecification = ["all", ["==", ["get", "kind"], "road"], ["!=", ["get", "closed"], true]];
+// assumed what-if detours (PEMS-BAY network, ids "detour_*") are drawn only while a what-if run puts traffic on them
+const SHOWN_ROAD: maplibregl.ExpressionSpecification = [
+  "all", ["==", ["get", "kind"], "road"],
+  ["any", ["!=", ["slice", ["to-string", ["get", "id"]], 0, 7], "detour_"], [">", ["get", "whatif"], 0]],
+];
+const OPEN_ROAD: maplibregl.ExpressionSpecification = ["all", SHOWN_ROAD, ["!=", ["get", "closed"], true]];
 /** MapLibre dash lengths are in line widths; the Aurora spec gives them in px. */
 const dashFor = (level: "high" | "severe" | "none"): number[] => {
   const s = ROAD_STYLE[level];
@@ -52,6 +59,8 @@ export interface MapProps {
   selectedJunction: string | null;
   whatIfChanges: Record<string, number> | null;
   closedRoads: string[];
+  /** Simulate page: the road chosen for the what-if (outlined before the run). */
+  pickedRoad?: string | null;
   onRoad: (approachId: string | null, roadId: string) => void;
   onJunction: (id: string) => void;
   onCamera: (id: string, approachId: string | null) => void;
@@ -70,6 +79,8 @@ function decorate(net: NetworkGeoJSON, props: MapProps): NetworkGeoJSON {
         p.selected = p.approach_id !== null && p.approach_id === props.selectedApproach;
         const ch = props.whatIfChanges?.[p.id as string];
         p.whatif = ch === undefined ? 0 : Math.min(Math.abs(ch), 200);
+        p.whatifdir = ch === undefined ? 0 : Math.sign(ch);       // +1 more traffic, -1 less
+        p.picked = props.pickedRoad != null && p.id === props.pickedRoad;
         p.closed = props.closedRoads.includes(p.id as string);
       }
       if (p.kind === "junction") p.selected = p.id === props.selectedJunction;
@@ -90,7 +101,7 @@ export function MapView(props: MapProps) {
   const data = useMemo(
     () => (props.network ? decorate(props.network, props) : undefined),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [props.network, props.selectedApproach, props.selectedJunction, props.whatIfChanges, props.closedRoads],
+    [props.network, props.selectedApproach, props.selectedJunction, props.whatIfChanges, props.closedRoads, props.pickedRoad],
   );
 
   useEffect(() => {
@@ -121,14 +132,25 @@ export function MapView(props: MapProps) {
     map.on("load", () => {
       map.addSource("net", { type: "geojson", data: { type: "FeatureCollection", features: [] }, promoteId: "id" });
       map.addLayer({
-        id: "roads-casing", type: "line", source: "net", filter: ["==", ["get", "kind"], "road"],
+        id: "roads-casing", type: "line", source: "net", filter: SHOWN_ROAD,
         paint: { "line-color": ROAD_CASING, "line-width": ["+", LEVEL_WIDTH, 4] },
         layout: { "line-cap": "round" },
       });
       map.addLayer({
         id: "roads-whatif", type: "line", source: "net",
         filter: ["all", ["==", ["get", "kind"], "road"], [">", ["get", "whatif"], 0]],
-        paint: { "line-color": AURORA.data, "line-opacity": 0.35, "line-width": ["+", 10, ["/", ["get", "whatif"], 6]] },
+        // glow under each road the what-if changes: orange = more traffic, teal = less; wider = bigger change
+        paint: {
+          "line-color": ["case", [">", ["get", "whatifdir"], 0], CHANGE.up, CHANGE.down],
+          "line-opacity": 0.45,
+          "line-width": ["+", 10, ["/", ["get", "whatif"], 6]],
+        },
+      });
+      map.addLayer({
+        id: "roads-picked", type: "line", source: "net",
+        filter: ["all", ["==", ["get", "kind"], "road"], ["==", ["get", "picked"], true]],
+        paint: { "line-color": AURORA.data, "line-opacity": 0.7, "line-width": 14 },
+        layout: { "line-cap": "round" },
       });
       // solid levels share one layer; each dashed level has its own (line-dasharray cannot be data-driven)
       map.addLayer({
@@ -154,7 +176,7 @@ export function MapView(props: MapProps) {
           "circle-radius": 9,
           "circle-color": CONGESTION_COLORS.severe,
           "circle-opacity": 0.9,
-          "circle-stroke-color": "#F3F0FF",
+          "circle-stroke-color": TEXT.primary,
           "circle-stroke-width": 2,
         },
       });
@@ -162,7 +184,7 @@ export function MapView(props: MapProps) {
         id: "junctions", type: "circle", source: "net", filter: ["==", ["get", "kind"], "junction"],
         paint: {
           "circle-radius": ["case", ["get", "selected"], 11, 8],
-          "circle-color": "#F3F0FF",
+          "circle-color": TEXT.primary,
           "circle-stroke-color": ["case", ["get", "selected"], AURORA.data, ROAD_CASING],
           "circle-stroke-width": 3,
         },
@@ -280,6 +302,29 @@ export function MapView(props: MapProps) {
     };
   });
 
+  // after a what-if run, bring the closed and changed roads into view (once per result)
+  useEffect(() => {
+    const map = mapRef.current;
+    const ids = new Set([...Object.keys(props.whatIfChanges ?? {}), ...props.closedRoads]);
+    if (!map || !props.network || ids.size === 0) return;
+    const xs: number[] = [];
+    const ys: number[] = [];
+    for (const f of props.network.features) {
+      const p = (f.properties ?? {}) as Record<string, unknown>;
+      if (p.kind !== "road" || !ids.has(String(p.id))) continue;
+      for (const c of (f.geometry as { coordinates?: number[][] }).coordinates ?? []) {
+        xs.push(c[0]);
+        ys.push(c[1]);
+      }
+    }
+    if (!xs.length) return;
+    const fit = () => map.fitBounds([[Math.min(...xs), Math.min(...ys)], [Math.max(...xs), Math.max(...ys)]],
+                                    { padding: 120, maxZoom: 15, duration: 600 });
+    if (loaded.current) fit();
+    else map.once("load", fit);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.whatIfChanges, props.closedRoads]);
+
   // zoom to the selected junction (once per selection, not on every data refresh)
   const fittedJunction = useRef<string | null>(null);
   useEffect(() => {
@@ -326,8 +371,19 @@ function junctionBounds(net: NetworkGeoJSON, jid: string): maplibregl.LngLatBoun
 
 const fitted = new WeakSet<maplibregl.Map>();
 
+/** Basemap layers (everything not drawn from our "net" source) are hidden when the network's coordinates are
+ *  schematic, so roads are never shown on a city they do not belong to. */
+function showBasemap(map: maplibregl.Map, visible: boolean) {
+  for (const layer of map.getStyle().layers ?? []) {
+    const src = (layer as { source?: string }).source;
+    if (layer.type === "background" || src === "net") continue;
+    map.setLayoutProperty(layer.id, "visibility", visible ? "visible" : "none");
+  }
+}
+
 function apply(map: maplibregl.Map, data: NetworkGeoJSON) {
   (map.getSource("net") as GeoJSONSource | undefined)?.setData(data);
+  showBasemap(map, data.geo_referenced !== false);
   if (!fitted.has(map) && data.bbox) {
     const b = data.bbox as number[];
     map.fitBounds([[b[0], b[1]], [b[2], b[3]]], { padding: 60, duration: 0 });

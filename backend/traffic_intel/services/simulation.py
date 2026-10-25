@@ -11,10 +11,15 @@ from traffic_intel.services.context import ServiceContext
 
 def baseline(ctx: ServiceContext) -> dict[str, Any]:
     """road_id -> latest fresh window features (only flow is used by the static model)."""
+    from traffic_intel.services.network import sensor_sources
+
+    sensors = sensor_sources(ctx)
     out = {}
     for d in ctx.store.latest_traffic_states():
         if (ctx.age_s(d["timestamp"]) or 1e9) > ctx.settings.window_stale_s or d["traffic_state"] is None:
             continue
+        if d.get("camera_id") in sensors:
+            continue                  # speed-only road sensor: its flow is "not measured", not 0 veh/h
         st = TrafficState.model_validate({k: v for k, v in d.items() if k in TrafficState.model_fields})
         out[st.road_id] = features_from_state(st)
     return out

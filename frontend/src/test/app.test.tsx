@@ -52,7 +52,6 @@ describe("App (UI integration against mocked backend responses)", () => {
     // trend charts: no windows -> explicit waiting message, not an empty chart
     expect(await screen.findByText(/no closed window/)).toBeInTheDocument();
     expect(screen.getByTestId("map")).toBeInTheDocument();
-    expect(screen.getByText("System status")).toBeInTheDocument();
     expect(await screen.findByText("LIVE")).toBeInTheDocument();
   });
 
@@ -77,7 +76,6 @@ describe("App (UI integration against mocked backend responses)", () => {
       snapshot: calls("/api/v1/approaches/junction_a_north/snapshot"),
       roads: calls("/api/v1/roads"),
       network: calls("/api/v1/network"),
-      incidents: calls("/api/v1/incidents"),
     };
 
     // one live interval, nothing new in the database: only the live endpoints are polled again
@@ -87,20 +85,17 @@ describe("App (UI integration against mocked backend responses)", () => {
     expect(calls("/api/v1/approaches/junction_a_north/snapshot")).toBeGreaterThan(before.snapshot);
     expect(calls("/api/v1/roads")).toBe(before.roads);
     expect(calls("/api/v1/network")).toBe(before.network);
-    expect(calls("/api/v1/incidents")).toBe(before.incidents);
 
     // new values are rendered in place (no page reload)
     routes["/api/v1/traffic/summary"] = summary({ fresh_approaches: 1, vehicles: 41, avg_speed_kmh: 12, active_incidents: 1 });
     await act(() => vi.advanceTimersByTimeAsync(POLL.liveMs + 100));
     expect(await screen.findByText("41")).toBeInTheDocument();
 
-    // a new 60 s window appears -> map and incidents are refetched without waiting for their slow interval
+    // a new 60 s window appears -> the map is refetched without waiting for their slow interval
     routes["/api/v1/traffic/current"] = [state({ approach_id: "junction_a_north", timestamp: "2026-09-24T10:16:00Z" })];
     const network = calls("/api/v1/network");
-    const incidents = calls("/api/v1/incidents");
     await act(() => vi.advanceTimersByTimeAsync(POLL.liveMs + 100));
     expect(calls("/api/v1/network")).toBeGreaterThan(network);
-    expect(calls("/api/v1/incidents")).toBeGreaterThan(incidents);
 
     expect(wsAttempts).toEqual([]);
   });

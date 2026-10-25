@@ -1,15 +1,16 @@
 import type { CongestionLevel, RiskLevel } from "../api/types";
+import { ACCENT, LEVEL, MAP, SURFACE } from "./tokens";
 
-// Aurora palette. Road levels are shown by colour AND width AND dash pattern, so the map stays readable
-// without colour vision. The level itself always comes from the backend - these are only the styles.
+// Road levels are shown by colour AND width AND dash pattern, so the map stays readable without colour
+// vision. The level itself always comes from the backend - these are only the styles (values: tokens.ts).
 export const CONGESTION_COLORS: Record<CongestionLevel, string> = {
-  free: "#2DD4BF", // free flow
-  moderate: "#FDE047", // slow
-  high: "#FB923C", // heavy
-  severe: "#F43F5E", // jammed
+  free: LEVEL.free,
+  moderate: LEVEL.moderate,
+  high: LEVEL.high,
+  severe: LEVEL.severe,
 };
 
-export const UNKNOWN_COLOR = "#6E6790"; // no recent data / camera offline / road not monitored
+export const UNKNOWN_COLOR = LEVEL.none; // no recent data / camera offline / road not monitored
 
 /** Line width and dash pattern (both px; null = solid) per level; "none" = no fresh data. */
 export const ROAD_STYLE: Record<CongestionLevel | "none", { width: number; dash: [number, number] | null }> = {
@@ -20,20 +21,19 @@ export const ROAD_STYLE: Record<CongestionLevel | "none", { width: number; dash:
   severe: { width: 7, dash: [5, 3] },
 };
 
-export const ROAD_CASING = "#07060F"; // drawn under every road, 4 px wider
+export const ROAD_CASING = SURFACE.casing; // drawn under every road, 4 px wider
 
 export const RISK_COLORS: Record<RiskLevel, string> = {
-  low: "#2DD4BF",
-  medium: "#FDE047",
-  high: "#FB923C",
-  critical: "#F43F5E",
+  low: LEVEL.free,
+  medium: LEVEL.moderate,
+  high: LEVEL.high,
+  critical: LEVEL.severe,
 };
 
-/** Aurora accents: magenta = data / AI output, violet = actions. */
+/** Accents used by the map layers. */
 export const AURORA = {
-  data: "#E879F9",
-  action: "#7C3AED",
-  actionHover: "#8B5CF6",
-  mapGround: "#120E22",
-  mapLabel: "#6A6390",
+  data: ACCENT.data,
+  action: ACCENT.action,
+  actionHover: ACCENT.actionHover,
+  mapGround: MAP.ground,
 } as const;

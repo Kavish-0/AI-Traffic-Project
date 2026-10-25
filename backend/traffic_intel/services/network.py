@@ -193,4 +193,6 @@ def network_geojson(ctx: ServiceContext) -> dict[str, Any]:
     lons = [p[0] for g in ctx.network.segments for p in g.geometry]
     lats = [p[1] for g in ctx.network.segments for p in g.geometry]
     return {"type": "FeatureCollection", "features": feats,
-            "bbox": [min(lons), min(lats), max(lons), max(lats)] if lons else None}
+            "bbox": [min(lons), min(lats), max(lons), max(lats)] if lons else None,
+            # False: coordinates are schematic (real location unknown) - the dashboard then shows no city map
+            "geo_referenced": ctx.network.geo_referenced, "location_note": ctx.network.location_note}

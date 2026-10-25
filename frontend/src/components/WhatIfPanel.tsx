@@ -6,6 +6,7 @@ import { pct } from "../lib/format";
 import { useSelection } from "../state/selection";
 import { CONGESTION_COLORS } from "../theme/congestion";
 import { Badge, Card, StateMessage } from "./ui";
+import { ACCENT, CHANGE } from "../theme/tokens";
 
 type Action = "close" | "lane_closure" | "demand";
 
@@ -22,17 +23,26 @@ export function buildRequest(action: Action, roadId: string): SimulationRequest 
 }
 
 /** What-if (static assignment on the road graph, run by the backend). Decision support - not a prediction. */
-export function WhatIfPanel({ junctions, roads }: { junctions: Resource<Junction[]>; roads: Resource<Road[]> }) {
+export function WhatIfPanel({ junctions, roads, road: pickedRoad, onRoadChange }: {
+  junctions: Resource<Junction[]>;
+  roads: Resource<Road[]>;
+  /** controlled road (e.g. picked on the Simulate page map); uncontrolled when omitted */
+  road?: string;
+  onRoadChange?: (roadId: string) => void;
+}) {
   const sel = useSelection();
   const [junction, setJunction] = useState<string>("");
-  const [road, setRoad] = useState<string>("");
+  const [ownRoad, setOwnRoad] = useState<string>("");
+  const road = pickedRoad ?? ownRoad;
+  const setRoad = (id: string) => (onRoadChange ? onRoadChange(id) : setOwnRoad(id));
   const [action, setAction] = useState<Action>("close");
   const [running, setRunning] = useState(false);
   const [result, setResult] = useState<SimulationResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const roadOptions = useMemo(() => {
-    const all = roads.data ?? [];
+    // assumed detours / connectors exist only for rerouting; a user closes real roads
+    const all = (roads.data ?? []).filter((r) => !r.id.startsWith("detour_") && !r.id.startsWith("conn_"));
     if (!junction) return all;
     const j = junctions.data?.find((x) => x.id === junction);
     const ids = new Set(j?.approaches.map((a) => a.road_id));
@@ -67,10 +77,10 @@ export function WhatIfPanel({ junctions, roads }: { junctions: Resource<Junction
     <Card
       title="What-if simulation"
       subtitle="Simulation / Decision Support - static macroscopic re-assignment, NOT a guaranteed real-world prediction"
-      right={<Badge color="#E879F9">decision support</Badge>}
+      right={<Badge color={ACCENT.data}>decision support</Badge>}
     >
       {roads.loading || junctions.loading ? (
-        <StateMessage>Loading road network…</StateMessage>
+        <StateMessage tone="loading">Loading road network…</StateMessage>
       ) : !roads.data ? (
         <StateMessage tone="error">Road network unavailable: {roads.error?.detail}</StateMessage>
       ) : (
@@ -86,6 +96,7 @@ export function WhatIfPanel({ junctions, roads }: { junctions: Resource<Junction
           <label className="flex flex-col gap-1 text-xs text-slate-400">
             Road
             <select value={road} onChange={(e) => setRoad(e.target.value)} disabled={action === "demand"}
+              title="Pick a road here or click it on the map"
               className="rounded border border-slate-700 bg-slate-900 px-2 py-1 text-slate-100 disabled:opacity-40" aria-label="Road">
               {roadOptions.map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
             </select>
@@ -124,8 +135,8 @@ export function WhatIfPanel({ junctions, roads }: { junctions: Resource<Junction
                 <tbody>
                   {changed.map((i) => (
                     <tr key={i.segment_id} className="border-t border-slate-800">
-                      <td className="py-1 text-slate-200">{i.name}{!i.baseline_observed && <span className="ml-1 text-slate-500" title="baseline flow assumed (no camera)">*</span>}</td>
-                      <td className="text-right tabular-nums" style={{ color: i.status === "closed" ? "#f87171" : i.flow_change_pct > 0 ? "#fbbf24" : "#86efac" }}>
+                      <td className="py-1 text-slate-200">{i.name}{!i.baseline_observed && <span className="ml-1 text-slate-500" title="baseline flow assumed (no measurement on this road)">*</span>}</td>
+                      <td className="text-right tabular-nums" style={{ color: i.status === "closed" ? CHANGE.closed : i.flow_change_pct > 0 ? CHANGE.up : CHANGE.down }}>
                         {i.status === "closed" ? "CLOSED" : `${i.flow_change_pct > 0 ? "+" : ""}${i.flow_change_pct.toFixed(0)}%`}
                       </td>
                       <td className="text-right text-slate-300 tabular-nums">
@@ -141,13 +152,16 @@ export function WhatIfPanel({ junctions, roads }: { junctions: Resource<Junction
             ) : (
               <StateMessage>No material change predicted by the static model.</StateMessage>
             )}
-            <p className="mt-1 text-[10px] text-slate-500">* baseline flow assumed (no camera on that road).</p>
+            <p className="mt-1 text-[10px] text-slate-500">* baseline flow assumed (no camera or flow measurement on that road).</p>
           </div>
           <div className="space-y-3">
             <div>
               <h3 className="mb-1 text-[11px] font-semibold tracking-widest text-slate-500 uppercase">Junction congestion probability</h3>
               <ul className="space-y-1 text-xs">
-                {result.junctions.map((j) => (
+                {result.junctions
+                  // only the junctions the scenario actually changes (>= 1 percentage point)
+                  .filter((j) => Math.abs(j.scenario_congestion_prob - j.baseline_congestion_prob) >= 0.01)
+                  .map((j) => (
                   <li key={j.junction_id} className="flex justify-between">
                     <span className="text-slate-300">{j.name}</span>
                     <span className="text-slate-200 tabular-nums">{pct(j.baseline_congestion_prob)} → {pct(j.scenario_congestion_prob)}</span>

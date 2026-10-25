@@ -7,6 +7,7 @@ import type { ForecastVsActual, Risk, TrafficState } from "../api/types";
 import type { Resource } from "../hooks/useResource";
 import { withGaps } from "../lib/format";
 import { Card, StateMessage } from "./ui";
+import { SERIES, SURFACE, TEXT } from "../theme/tokens";
 
 echarts.use([LineChart, GridComponent, TooltipComponent, LegendComponent, CanvasRenderer]);
 
@@ -18,15 +19,15 @@ function Chart({ title, unit, series, yMax }: { title: string; unit: string; ser
     animation: false,
     grid: { left: 44, right: 12, top: 30, bottom: 26 },
     tooltip: { trigger: "axis", valueFormatter: (v: number | null) => (v === null ? "—" : `${v.toFixed(1)} ${unit}`) },
-    legend: series.length > 1 ? { top: 0, right: 0, textStyle: { color: "#A49DC4", fontSize: 10 } } : undefined,
-    xAxis: { type: "time", axisLabel: { color: "#8A83AD", fontSize: 10 }, axisLine: { lineStyle: { color: "#2F2A4D" } } },
+    legend: series.length > 1 ? { top: 0, right: 0, textStyle: { color: TEXT.muted, fontSize: 10 } } : undefined,
+    xAxis: { type: "time", axisLabel: { color: TEXT.faint, fontSize: 10 }, axisLine: { lineStyle: { color: SURFACE.border } } },
     yAxis: {
       type: "value",
       max: yMax,
       name: unit,
-      nameTextStyle: { color: "#8A83AD", fontSize: 10 },
-      axisLabel: { color: "#8A83AD", fontSize: 10 },
-      splitLine: { lineStyle: { color: "#1D1933" } },
+      nameTextStyle: { color: TEXT.faint, fontSize: 10 },
+      axisLabel: { color: TEXT.faint, fontSize: 10 },
+      splitLine: { lineStyle: { color: SURFACE.raised } },
     },
     series: series.map((s) => ({
       name: s.name,
@@ -57,17 +58,14 @@ export function TrendCharts({
   fva,
   horizon,
   onHorizon,
-  speedOnly = false,
 }: {
   history: Resource<TrafficState[]>;
   risk: Resource<Risk[]>;
   fva: Resource<ForecastVsActual>;
   horizon: number;
   onHorizon: (h: number) => void;
-  /** road sensor: only speed is measured - the count / density / queue / flow charts would be flat zeros */
-  speedOnly?: boolean;
 }) {
-  if (history.loading) return <Card title="Traffic trends"><StateMessage>Loading history…</StateMessage></Card>;
+  if (history.loading) return <Card title="Traffic trends"><StateMessage tone="loading">Loading history…</StateMessage></Card>;
   if (!history.data)
     return <Card title="Traffic trends"><StateMessage tone="error">History unavailable: {history.error?.detail}</StateMessage></Card>;
   const h = history.data;
@@ -99,27 +97,14 @@ export function TrendCharts({
     >
       {insufficient && <StateMessage tone="warn">Insufficient data - only {h.length} window(s) so far; trends become meaningful after a few minutes.</StateMessage>}
       <div className="mt-2 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
-        <Chart title="Speed vs time" unit="km/h" series={[{ name: "avg speed", color: "#E879F9", data: pick(h, (s) => s.average_speed_kmh) }]} />
-        {speedOnly ? (
-          <div className="rounded-lg border border-slate-800 p-3 text-xs text-slate-400 md:col-span-2 xl:col-span-2">
-            Density, vehicle count, queue length and flow are not measured by this road sensor (it reports speed only),
-            so their charts are not shown.
-          </div>
-        ) : (
-          <>
-            <Chart title="Density vs time" unit="%" series={[{ name: "density", color: "#FB923C", data: pick(h, (s) => s.density_pct) }]} />
-            <Chart title="Vehicle count vs time" unit="veh" series={[{ name: "vehicles", color: "#a3e635", data: pick(h, (s) => s.vehicle_count) }]} />
-            <Chart title="Queue length vs time" unit="m" series={[{ name: "queue", color: "#f43f5e", data: pick(h, (s) => s.queue_length_m) }]} />
-            <Chart title="Traffic flow vs time" unit="veh/h" series={[{ name: "flow", color: "#c084fc", data: pick(h, (s) => s.flow_veh_h) }]} />
-          </>
-        )}
+        <Chart title="Speed vs time" unit="km/h" series={[{ name: "avg speed", color: SERIES.speed, data: pick(h, (s) => s.average_speed_kmh) }]} />
         {fc && fc.forecast.length > 0 ? (
           <Chart
             title={`Forecast vs actual speed (+${horizon} min)`}
             unit="km/h"
             series={[
-              { name: "actual", color: "#E879F9", data: fc.actual.map((a) => [a.timestamp, a.value]) },
-              { name: `forecast +${horizon}`, color: "#facc15", dashed: true, data: fc.forecast.map((f) => [f.target_time, f.value]) },
+              { name: "actual", color: SERIES.speed, data: fc.actual.map((a) => [a.timestamp, a.value]) },
+              { name: `forecast +${horizon}`, color: SERIES.forecast, dashed: true, data: fc.forecast.map((f) => [f.target_time, f.value]) },
             ]}
           />
         ) : (
@@ -137,7 +122,7 @@ export function TrendCharts({
             title="Incident score vs time (uncalibrated)"
             unit="score"
             yMax={1}
-            series={[{ name: "incident score", color: "#F43F5E", data: riskRows.map((r) => [r.timestamp, r.incident_score]) }]}
+            series={[{ name: "incident score", color: SERIES.incident, data: riskRows.map((r) => [r.timestamp, r.incident_score]) }]}
           />
         ) : (
           <div className="rounded-lg border border-slate-800 p-3">

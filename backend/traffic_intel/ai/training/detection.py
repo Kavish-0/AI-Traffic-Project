@@ -265,7 +265,8 @@ def _device() -> str:
 
 
 # --------------------------------------------------------------------------- evaluation
-def _test_set(data_dir: Path, classes: list[ObjectClass]) -> list[tuple[Path, np.ndarray, np.ndarray, np.ndarray]]:
+def _test_set(data_dir: Path, classes: list[ObjectClass],
+              split: str = "test") -> list[tuple[Path, np.ndarray, np.ndarray, np.ndarray]]:
     """(image, gt xyxy [N,4] px, gt project class ids [N], ignored regions [K,4]) per test image."""
     import cv2
 
@@ -273,14 +274,14 @@ def _test_set(data_dir: Path, classes: list[ObjectClass]) -> list[tuple[Path, np
     out = []
     ids = [class_id_of(c) for c in classes]
     size: tuple[int, int] | None = None
-    for img in sorted((data_dir / "images" / "test").glob("*.jpg")):
+    for img in sorted((data_dir / "images" / split).glob("*.jpg")):
         if size is None:
             first = cv2.imread(str(img))
             if first is None:
                 raise OSError(f"unreadable test image {img}")
             size = (first.shape[1], first.shape[0])
         w, h = size
-        rows = [ln.split() for ln in (data_dir / "labels" / "test" / f"{img.stem}.txt").read_text().splitlines()
+        rows = [ln.split() for ln in (data_dir / "labels" / split / f"{img.stem}.txt").read_text().splitlines()
                 if ln.strip()]
         a = np.array(rows, float).reshape(-1, 5)
         xyxy = np.c_[(a[:, 1] - a[:, 3] / 2) * w, (a[:, 2] - a[:, 4] / 2) * h,
@@ -331,8 +332,9 @@ def _in_regions(boxes: np.ndarray, regions: np.ndarray) -> np.ndarray:
 
 
 def evaluate(weights: str, data_dir: Path, cfg: DetectionExperimentConfig, imgsz: int, label: str,
-             fig_dir: Path | None = None) -> dict[str, Any]:
-    """Score one model on the held-out TEST split through the production detector adapter."""
+             fig_dir: Path | None = None, split: str = "test") -> dict[str, Any]:
+    """Score one model on a split (the held-out TEST split for reporting; "val" for model selection)
+    through the production detector adapter."""
     from ultralytics.utils.metrics import ap_per_class
 
     from traffic_intel.computer_vision.detectors.yolo import YOLODetector
@@ -341,7 +343,7 @@ def evaluate(weights: str, data_dir: Path, cfg: DetectionExperimentConfig, imgsz
     class_map: dict[str | int, str] = {c.value: c.value for c in cfg.classes}  # model label -> ObjectClass
     det = YOLODetector(weights, conf_threshold=cfg.eval_conf, iou_threshold=0.7, imgsz=imgsz, max_det=300,
                        class_map=class_map, device="auto", half="auto")
-    test = _test_set(data_dir, cfg.classes)
+    test = _test_set(data_dir, cfg.classes, split)
     tp_all, conf_all, pcls_all, tcls_all = [], [], [], []
     op_tp = op_fp = 0
     n_gt = 0
@@ -384,7 +386,8 @@ def evaluate(weights: str, data_dir: Path, cfg: DetectionExperimentConfig, imgsz
     per_class = {names[int(c)]: {"P_maxF1": round(float(p[j]), 4), "R_maxF1": round(float(r[j]), 4),
                                  "mAP50": round(float(ap[j, 0]), 4), "mAP50-95": round(float(ap[j].mean()), 4),
                                  "instances": int((tcls == c).sum())} for j, c in enumerate(uc)}
-    out = {"model": label, "weights": str(weights), "imgsz": imgsz, "test_images": len(test), "instances": n_gt,
+    out = {"model": label, "weights": str(weights), "imgsz": imgsz, "split": split, "test_images": len(test),
+           "instances": n_gt,
            "precision": round(op_tp / max(op_tp + op_fp, 1), 4), "recall": round(op_tp / max(n_gt, 1), 4),
            "operating_conf": cfg.operating_conf,
            "mAP50": round(float(ap[:, 0].mean()), 4) if len(ap) else 0.0,
@@ -480,6 +483,7 @@ def run_detection_experiment(cfg: DetectionExperimentConfig, only: list[str] | N
     data_dir = build_dataset(cfg)
     split = json.loads((data_dir / "split.json").read_text(encoding="utf-8"))
     rows: list[dict[str, Any]] = []
+    val_rows: list[dict[str, Any]] = []      # VALIDATION split, training input size: the switch decision
     record: dict[str, Any] = {"experiment_id": exp_id, "config": cfg.model_dump(mode="json"), "dataset_split": split,
                               "started": datetime.now(UTC).isoformat(), "models": []}
     for base in cfg.models:
@@ -489,7 +493,10 @@ def run_detection_experiment(cfg: DetectionExperimentConfig, only: list[str] | N
             for s in cfg.eval_imgsz:
                 m = evaluate(base.weights, data_dir, cfg, s, f"{Path(base.weights).stem}_coco_zero_shot", fig)
                 rows.append(m | {"kind": "COCO-pretrained (zero-shot)", "train_seconds": 0})
-            _write(out, record, rows)                   # recorded even if a later training is interrupted
+            v = evaluate(base.weights, data_dir, cfg, cfg.train.imgsz, f"{Path(base.weights).stem}_coco_zero_shot",
+                         None, split="val")
+            val_rows.append(v | {"kind": "COCO-pretrained (zero-shot)", "train_seconds": 0})
+            _write(out, record, rows, val_rows)         # recorded even if a later training is interrupted
         if baselines_only:
             continue
         info = train_model(base, cfg, data_dir, out / "runs")
@@ -499,22 +506,48 @@ def run_detection_experiment(cfg: DetectionExperimentConfig, only: list[str] | N
             m = evaluate(info["best"], data_dir, cfg, s, base.name, fig)
             rows.append(m | {"kind": "fine-tuned", "train_seconds": info["train_seconds"]})
             best_metrics.append(m)
+        v = evaluate(info["best"], data_dir, cfg, cfg.train.imgsz, base.name, None, split="val")
+        val_rows.append(v | {"kind": "fine-tuned", "train_seconds": info["train_seconds"]})
         path = None if smoke else register(base.name, exp_id, info["best"], cfg, split, info,
                                            {"by_imgsz": best_metrics})
         record["models"].append({"name": base.name, "artifact": str(path), **info, "test": best_metrics})
-        _write(out, record, rows)
+        _write(out, record, rows, val_rows)
+    record["selection_on_validation"] = _selection(val_rows)
     record["finished"] = datetime.now(UTC).isoformat()
-    _write(out, record, rows)
+    _write(out, record, rows, val_rows)
     _plots(rows, fig)
     return record
 
 
-def _write(out: Path, record: dict[str, Any], rows: list[dict[str, Any]]) -> None:
-    full = record | {"evaluations": rows}          # every evaluated model incl. baselines (per class, confusion)
-    (out / "experiment.json").write_text(json.dumps(full, indent=2, default=str), encoding="utf-8")
-    flat = [{k: v for k, v in r.items() if k not in ("per_class", "confusion_iou50")} |
+def _flat(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    return [{k: v for k, v in r.items() if k not in ("per_class", "confusion_iou50")} |
             {f"{c}_mAP50-95": pc["mAP50-95"] for c, pc in r.get("per_class", {}).items()} for r in rows]
+
+
+def _selection(val_rows: list[dict[str, Any]]) -> dict[str, Any]:
+    """Validation mAP50-95 (production adapter, training input size) of each model, and whether a
+    fine-tuned model beats the COCO zero-shot weights it started from. Class coverage is separate:
+    UA-DETRAC has no pedestrian / bicycle / motorcycle labels."""
+    by = {r["model"]: r for r in val_rows}
+    out: dict[str, Any] = {"metric": "mAP50-95 on the validation sequences", "models": {
+        m: {"mAP50-95": r["mAP50-95"], **{f"{c}_mAP50-95": pc["mAP50-95"] for c, pc in r["per_class"].items()}}
+        for m, r in by.items()}}
+    for m, r in by.items():
+        if r.get("kind") == "fine-tuned":
+            base = next((b for b in by if b.endswith("_coco_zero_shot") and m.startswith(b.split("_coco")[0])), None)
+            if base is not None:
+                out[f"{m}_beats_{base}"] = bool(r["mAP50-95"] > by[base]["mAP50-95"])
+    return out
+
+
+def _write(out: Path, record: dict[str, Any], rows: list[dict[str, Any]],
+           val_rows: list[dict[str, Any]] | None = None) -> None:
+    full = record | {"evaluations": rows, "validation": val_rows or []}   # incl. baselines (per class, confusion)
+    (out / "experiment.json").write_text(json.dumps(full, indent=2, default=str), encoding="utf-8")
+    flat = _flat(rows)
     pd.DataFrame(flat).to_csv(out / "metrics_test.csv", index=False)
+    if val_rows:
+        pd.DataFrame(_flat(val_rows)).to_csv(out / "metrics_val.csv", index=False)
     idx = out.parent / "index.csv"
     df = pd.DataFrame([{"experiment_id": record["experiment_id"], **r} for r in flat])
     old = pd.read_csv(idx) if idx.exists() else pd.DataFrame()

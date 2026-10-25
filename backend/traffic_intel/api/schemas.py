@@ -62,6 +62,23 @@ class ModelInfo(BaseModel):
     metrics: dict[str, Any] = {}
 
 
+class Evidence(BaseModel):
+    dataset: str
+    experiment: str                            # experiment id / model version the numbers come from
+    metrics: dict[str, float | None]
+    unit_note: str | None = None
+
+
+class ServingComponent(BaseModel):
+    """One pipeline stage as it runs now, with its measured evidence (Models page)."""
+
+    stage: str
+    implementation: str
+    detail: str = ""
+    evidence: Evidence | None = None
+    no_evidence_reason: str | None = None
+
+
 class ForecastHorizon(BaseModel):
     horizon_min: int
     target_time: datetime

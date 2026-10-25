@@ -132,3 +132,19 @@ def test_pipeline_file_extends_base_and_sets_mode_defaults(configs_dir) -> None:
 def test_replay_week_must_be_a_monday() -> None:
     with pytest.raises(ValueError, match="Monday"):
         _worker(datetime(2026, 9, 28, tzinfo=UTC), replay_week="2017-06-06")
+
+
+def test_network_has_assumed_detours_and_a_closure_reroutes_onto_them() -> None:
+    from traffic_intel.core.schemas import SimulationRequest
+    from traffic_intel.simulation.static_assignment import StaticAssignmentSimulator
+
+    net = _network()
+    detours = [s for s in net.segments if s.id.startswith("detour_")]
+    assert len(detours) == 2 * len(net.approaches)              # two halves (via a mid node) per segment
+    assert all("assumed detour" in s.name and s.lanes == 1 for s in detours)
+    sim = StaticAssignmentSimulator()
+    sim.load_network(net)
+    res = sim.what_if(SimulationRequest(closed_segment_ids=["seg_pems_bay_2"]), {})
+    assert res.unserved_demand_veh_h == 0
+    moved = {i.segment_id: i.scenario_flow_veh_h for i in res.impacts}
+    assert moved["detour_pems_bay_2_a"] > 0 and moved["detour_pems_bay_2_b"] > 0

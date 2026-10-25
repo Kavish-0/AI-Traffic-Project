@@ -75,7 +75,7 @@ describe("map labels", () => {
       road("Road X", { monitored: false, level: null }),                  // context road: no label
       { geometry: { type: "Point", coordinates: [1, 1] }, properties: { kind: "junction", id: "j", name: "Junction A" } },
     ]);
-    expect(labels.map((l) => l.text)).toEqual(["Road A · Severe", "Road B · no data", "Junction A"]);
+    expect(labels.map((l) => l.text)).toEqual(["Road A · Jammed", "Road B · No data", "Junction A"]);
     expect(labels[0].lngLat).toEqual([0, 1]);
   });
 });

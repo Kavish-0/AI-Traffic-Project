@@ -13,6 +13,7 @@ import type {
   SimulationResult,
   Snapshot,
   Summary,
+  ServingComponent,
   SystemStatus,
   TrafficState,
 } from "./types";
@@ -61,6 +62,7 @@ const q = (params: Record<string, string | number | boolean | undefined | null>)
 export const api = {
   health: () => request<{ status: string; version: string; database: string }>("/health"),
   system: () => request<SystemStatus>("/system/status"),
+  servingModels: () => request<ServingComponent[]>("/models/serving"),
   network: () => request<NetworkGeoJSON>("/network"),
   junctions: () => request<Junction[]>("/junctions"),
   roads: () => request<Road[]>("/roads"),

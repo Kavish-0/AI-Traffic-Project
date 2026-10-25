@@ -1,15 +1,17 @@
 import type { CongestionLevel, Forecast } from "../api/types";
 import { CONGESTION_COLORS, UNKNOWN_COLOR } from "../theme/congestion";
-import { num, time, titleCase } from "../lib/format";
+import { num } from "../lib/format";
 import { StateMessage } from "./ui";
+import { TEXT } from "../theme/tokens";
+import { levelLabel } from "../lib/labels";
 
 function Tile({ label, level, sub }: { label: string; level: CongestionLevel | null | undefined; sub?: string }) {
   const color = level ? CONGESTION_COLORS[level] : UNKNOWN_COLOR;
   return (
     <div className="rounded-lg border px-3 py-2 text-center" style={{ borderColor: `${color}88`, background: `${color}14` }}>
       <div className="text-[11px] tracking-widest text-slate-400 uppercase">{label}</div>
-      <div className="text-base font-bold uppercase" style={{ color: level ? color : "#A49DC4" }}>
-        {level ?? "—"}
+      <div className="text-base font-bold uppercase" style={{ color: level ? color : TEXT.muted }}>
+        {level ? levelLabel(level) : "—"}
       </div>
       {sub && <div className="text-[11px] text-slate-400 tabular-nums">{sub}</div>}
     </div>
@@ -33,15 +35,7 @@ export function ForecastStrip({ forecast, currentLevel }: { forecast: Forecast; 
           />
         ))}
       </div>
-      {ok ? (
-        <p className="text-[11px] text-slate-500">
-          {forecast.model?.name} · issued {time(forecast.issued_at)} · model trained on{" "}
-          <span className="text-slate-300">{titleCase(forecast.model?.trained_on)}</span> data
-          {forecast.model?.trained_on === "synthetic" && " (pipeline demonstration, not a real-world benchmark)"}
-        </p>
-      ) : (
-        <StateMessage tone="warn">{forecast.message}</StateMessage>
-      )}
+      {!ok && <StateMessage tone="warn">{forecast.message}</StateMessage>}
     </div>
   );
 }

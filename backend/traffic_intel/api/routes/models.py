@@ -10,7 +10,7 @@ from typing import Any
 from fastapi import APIRouter, Depends, HTTPException
 
 from traffic_intel.api.deps import get_ctx
-from traffic_intel.api.schemas import ModelInfo
+from traffic_intel.api.schemas import ModelInfo, ServingComponent
 from traffic_intel.core.config import PROJECT_ROOT
 from traffic_intel.core.enums import ModelTask
 from traffic_intel.services import models as svc
@@ -23,6 +23,12 @@ router = APIRouter(prefix="/models", tags=["models"])
 def list_models(task: ModelTask | None = None, production_only: bool = False,
                 ctx: ServiceContext = Depends(get_ctx)) -> list[ModelInfo]:
     return svc.list_models(ctx, task, production_only)
+
+
+@router.get("/serving")
+def serving(ctx: ServiceContext = Depends(get_ctx)) -> list[ServingComponent]:
+    """What every pipeline stage runs now, with its measured evidence from the experiment records."""
+    return svc.serving_components(ctx)
 
 
 @router.get("/{task}/evaluation")

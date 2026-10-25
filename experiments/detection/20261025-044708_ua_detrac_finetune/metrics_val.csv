@@ -1,0 +1,2 @@
+model,weights,imgsz,split,test_images,instances,precision,recall,operating_conf,mAP50,mAP50-95,ms_per_image,device,kind,train_seconds,car_mAP50-95,bus_mAP50-95,truck_mAP50-95
+yolo11m_coco_zero_shot,models/detection/yolo11m.pt,960,val,1563,11274,0.8138,0.9286,0.25,0.7904,0.5673,15.73,"cuda:0 [NVIDIA GeForce RTX 4060 Laptop GPU, CUDA 13.0, torch 2.14.0+cu130, fp16]",COCO-pretrained (zero-shot),0,0.6459,0.6745,0.3815

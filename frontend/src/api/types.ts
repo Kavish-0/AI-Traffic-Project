@@ -40,6 +40,21 @@ export interface TrafficState {
   quality: number;
 }
 
+export interface Evidence {
+  dataset: string;
+  experiment: string;
+  metrics: Record<string, number | null>;
+  unit_note: string | null;
+}
+
+export interface ServingComponent {
+  stage: string;
+  implementation: string;
+  detail: string;
+  evidence: Evidence | null;
+  no_evidence_reason: string | null;
+}
+
 export interface ModelInfo {
   task: string;
   name: string;
@@ -304,4 +319,9 @@ export interface SimulationResult {
   summary: string[];
 }
 
-export type NetworkGeoJSON = GeoJSON.FeatureCollection & { bbox?: [number, number, number, number] | null };
+export type NetworkGeoJSON = GeoJSON.FeatureCollection & {
+  bbox?: [number, number, number, number] | null;
+  /** false: schematic coordinates (real location unknown) - draw on a plain background, never a city map */
+  geo_referenced?: boolean;
+  location_note?: string | null;
+};

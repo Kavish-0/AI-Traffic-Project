@@ -3,14 +3,15 @@ import type { Resource } from "../hooks/useResource";
 import { POLL } from "../config";
 import { useLive } from "../state/live";
 import { dateTime, titleCase } from "../lib/format";
-import { Card, Dot, StateMessage } from "../components/ui";
+import { Card, Dot, PageLayout, StateMessage } from "../components/ui";
+import { STATUS, TEXT } from "../theme/tokens";
 
 function Row({ name, s }: { name: string; s: ComponentStatus | { ok: boolean | null; status: string; detail: string } }) {
   return (
     <li className="flex items-start gap-3 border-t border-slate-800 py-2 first:border-t-0">
       <span className="mt-1.5"><Dot ok={s.ok} /></span>
       <span className="w-32 shrink-0 font-semibold text-slate-200">{name}</span>
-      <span className="w-40 shrink-0 text-xs font-bold tracking-wider uppercase" style={{ color: s.ok ? "#6ee7b7" : s.ok === null ? "#A49DC4" : "#fca5a5" }}>
+      <span className="w-40 shrink-0 text-xs font-bold tracking-wider uppercase" style={{ color: s.ok ? STATUS.ok : s.ok === null ? TEXT.muted : STATUS.error }}>
         {s.status.replace(/_/g, " ")}
       </span>
       <span className="min-w-0 text-xs break-words text-slate-400">{s.detail}</span>
@@ -58,7 +59,8 @@ export function SystemStatusCard({ system }: { system: Resource<SystemStatus> })
 
 export function SystemPage({ system }: { system: Resource<SystemStatus> }) {
   return (
-    <div className="grid gap-4 p-5 lg:grid-cols-2">
+    <PageLayout title="System" description="Health of every component from real signals (API, database, pipeline heartbeat, model registry, cameras and sensors, weather) and the models in production.">
+    <div className="grid gap-4 lg:grid-cols-2">
       <SystemStatusCard system={system} />
       <Card title="Production models" subtitle="Model registry (models/<task>/<name>/PRODUCTION) - read-only">
         {!system.data ? (
@@ -81,11 +83,13 @@ export function SystemPage({ system }: { system: Resource<SystemStatus> }) {
           </table>
         )}
         <p className="mt-3 text-[11px] text-slate-500">
-          The serving forecaster is trained on the synthetic live feature set; real-data results (METR-LA, PEMS-BAY,
-          PEMS08, UA-DETRAC, AI City) and the reasons for each choice are in docs/MODEL_EVALUATION.md. Incident scores
-          stay uncalibrated until labelled incidents from this site are available.
+          The serving forecaster is the one named in the Forecast model row above (and its "trained on" data).
+          Measured results on real data (METR-LA, PEMS-BAY, PEMS08, UA-DETRAC, AI City) and the reasons for each choice
+          are in docs/MODEL_EVALUATION.md. Incident scores stay uncalibrated until labelled incidents from this site are
+          available.
         </p>
       </Card>
     </div>
+    </PageLayout>
   );
 }

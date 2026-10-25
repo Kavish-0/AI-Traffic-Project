@@ -124,6 +124,10 @@ class ApproachConfig(BaseModel):
 
 class NetworkConfig(BaseModel):
     name: str
+    # False when the coordinates are schematic, e.g. a public video whose recording site is not published: the
+    # dashboard then draws the roads on a plain background instead of a real city map.
+    geo_referenced: bool = True
+    location_note: str | None = None
     junctions: list[JunctionConfig]
     nodes: list[RoadNodeConfig]
     segments: list[RoadSegmentConfig]

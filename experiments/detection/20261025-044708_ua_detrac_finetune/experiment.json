@@ -1,0 +1,369 @@
+{
+  "experiment_id": "20261025-044708_ua_detrac_finetune",
+  "config": {
+    "name": "ua_detrac_finetune",
+    "description": "Does fine-tuning COCO-pretrained YOLO11 on traffic-camera footage improve vehicle detection on held-out sequences, and at what cost in latency?\n",
+    "seed": 0,
+    "dataset": {
+      "id": "ua_detrac",
+      "val_sequences": 10,
+      "frame_step_train": 10,
+      "frame_step_eval": 10,
+      "mask_ignored": true,
+      "output": "data/processed/ua_detrac_yolo",
+      "repeat_factor_threshold": null
+    },
+    "classes": [
+      "car",
+      "bus",
+      "truck"
+    ],
+    "models": [
+      {
+        "name": "yolo11s_ua_detrac",
+        "weights": "models/detection/yolo11s.pt",
+        "batch": 8
+      },
+      {
+        "name": "yolo11m_ua_detrac",
+        "weights": "models/detection/yolo11m.pt",
+        "batch": 4
+      }
+    ],
+    "train": {
+      "epochs": 30,
+      "imgsz": 960,
+      "batch": 8,
+      "patience": 8,
+      "optimizer": "auto",
+      "cos_lr": true,
+      "close_mosaic": 5,
+      "workers": 2,
+      "amp": true
+    },
+    "eval_imgsz": [
+      960,
+      1280
+    ],
+    "eval_conf": 0.001,
+    "operating_conf": 0.25,
+    "baselines": true
+  },
+  "dataset_split": {
+    "dataset": "ua_detrac",
+    "train_sequences": [
+      "MVI_20012",
+      "MVI_20032",
+      "MVI_20033",
+      "MVI_20034",
+      "MVI_20035",
+      "MVI_20052",
+      "MVI_20061",
+      "MVI_20062",
+      "MVI_20063",
+      "MVI_20064",
+      "MVI_39761",
+      "MVI_39771",
+      "MVI_39801",
+      "MVI_39811",
+      "MVI_39821",
+      "MVI_39851",
+      "MVI_39861",
+      "MVI_39931",
+      "MVI_40131",
+      "MVI_40141",
+      "MVI_40161",
+      "MVI_40162",
+      "MVI_40171",
+      "MVI_40172",
+      "MVI_40181",
+      "MVI_40192",
+      "MVI_40201",
+      "MVI_40204",
+      "MVI_40211",
+      "MVI_40212",
+      "MVI_40241",
+      "MVI_40243",
+      "MVI_40244",
+      "MVI_40751",
+      "MVI_40752",
+      "MVI_40871",
+      "MVI_40962",
+      "MVI_40963",
+      "MVI_40981",
+      "MVI_40992",
+      "MVI_41063",
+      "MVI_41073",
+      "MVI_63521",
+      "MVI_63525",
+      "MVI_63544",
+      "MVI_63553",
+      "MVI_63554",
+      "MVI_63561",
+      "MVI_63562",
+      "MVI_63563"
+    ],
+    "val_sequences": [
+      "MVI_40152",
+      "MVI_40191",
+      "MVI_40213",
+      "MVI_39781",
+      "MVI_40732",
+      "MVI_40991",
+      "MVI_63552",
+      "MVI_20011",
+      "MVI_20051",
+      "MVI_20065"
+    ],
+    "test_sequences": [
+      "MVI_39031",
+      "MVI_39051",
+      "MVI_39211",
+      "MVI_39271",
+      "MVI_39311",
+      "MVI_39361",
+      "MVI_39371",
+      "MVI_39401",
+      "MVI_39501",
+      "MVI_39511",
+      "MVI_40701",
+      "MVI_40711",
+      "MVI_40712",
+      "MVI_40714",
+      "MVI_40742",
+      "MVI_40743",
+      "MVI_40761",
+      "MVI_40762",
+      "MVI_40763",
+      "MVI_40771",
+      "MVI_40772",
+      "MVI_40773",
+      "MVI_40774",
+      "MVI_40775",
+      "MVI_40792",
+      "MVI_40793",
+      "MVI_40851",
+      "MVI_40852",
+      "MVI_40853",
+      "MVI_40854",
+      "MVI_40855",
+      "MVI_40863",
+      "MVI_40864",
+      "MVI_40891",
+      "MVI_40892",
+      "MVI_40901",
+      "MVI_40902",
+      "MVI_40903",
+      "MVI_40904",
+      "MVI_40905"
+    ],
+    "stats": {
+      "train": {
+        "sequences": 50,
+        "images": 6669,
+        "boxes": 47971,
+        "dropped_in_ignored": 2102
+      },
+      "val": {
+        "sequences": 10,
+        "images": 1563,
+        "boxes": 11274,
+        "dropped_in_ignored": 739
+      },
+      "test": {
+        "sequences": 40,
+        "images": 5625,
+        "boxes": 63377,
+        "dropped_in_ignored": 5024
+      }
+    },
+    "frame_step": {
+      "train": 10,
+      "eval": 10
+    },
+    "classes": [
+      "car",
+      "bus",
+      "truck"
+    ],
+    "mask_ignored": true,
+    "created": "2026-09-24T20:31:43.998513+00:00"
+  },
+  "started": "2026-10-24T23:17:08.322474+00:00",
+  "models": [],
+  "evaluations": [
+    {
+      "model": "yolo11m_coco_zero_shot",
+      "weights": "models/detection/yolo11m.pt",
+      "imgsz": 960,
+      "split": "test",
+      "test_images": 5625,
+      "instances": 63377,
+      "precision": 0.8603,
+      "recall": 0.8483,
+      "operating_conf": 0.25,
+      "mAP50": 0.8741,
+      "mAP50-95": 0.6342,
+      "ms_per_image": 15.92,
+      "device": "cuda:0 [NVIDIA GeForce RTX 4060 Laptop GPU, CUDA 13.0, torch 2.14.0+cu130, fp16]",
+      "per_class": {
+        "car": {
+          "P_maxF1": 0.9407,
+          "R_maxF1": 0.7705,
+          "mAP50": 0.8862,
+          "mAP50-95": 0.6169,
+          "instances": 55183
+        },
+        "bus": {
+          "P_maxF1": 0.9094,
+          "R_maxF1": 0.8254,
+          "mAP50": 0.8896,
+          "mAP50-95": 0.6168,
+          "instances": 6565
+        },
+        "truck": {
+          "P_maxF1": 0.702,
+          "R_maxF1": 0.8171,
+          "mAP50": 0.8464,
+          "mAP50-95": 0.6688,
+          "instances": 1629
+        }
+      },
+      "confusion_iou50": {
+        "background->car": 6277,
+        "background->bus": 997,
+        "background->truck": 811,
+        "car->background": 8240,
+        "car->car": 46209,
+        "car->bus": 149,
+        "car->truck": 585,
+        "bus->background": 633,
+        "bus->car": 70,
+        "bus->bus": 5719,
+        "bus->truck": 143,
+        "truck->background": 99,
+        "truck->car": 86,
+        "truck->bus": 22,
+        "truck->truck": 1422
+      },
+      "kind": "COCO-pretrained (zero-shot)",
+      "train_seconds": 0
+    },
+    {
+      "model": "yolo11m_coco_zero_shot",
+      "weights": "models/detection/yolo11m.pt",
+      "imgsz": 1280,
+      "split": "test",
+      "test_images": 5625,
+      "instances": 63377,
+      "precision": 0.8257,
+      "recall": 0.8815,
+      "operating_conf": 0.25,
+      "mAP50": 0.8748,
+      "mAP50-95": 0.6283,
+      "ms_per_image": 29.32,
+      "device": "cuda:0 [NVIDIA GeForce RTX 4060 Laptop GPU, CUDA 13.0, torch 2.14.0+cu130, fp16]",
+      "per_class": {
+        "car": {
+          "P_maxF1": 0.9296,
+          "R_maxF1": 0.8151,
+          "mAP50": 0.8942,
+          "mAP50-95": 0.6241,
+          "instances": 55183
+        },
+        "bus": {
+          "P_maxF1": 0.8798,
+          "R_maxF1": 0.8408,
+          "mAP50": 0.8844,
+          "mAP50-95": 0.5897,
+          "instances": 6565
+        },
+        "truck": {
+          "P_maxF1": 0.7717,
+          "R_maxF1": 0.7766,
+          "mAP50": 0.8458,
+          "mAP50-95": 0.6709,
+          "instances": 1629
+        }
+      },
+      "confusion_iou50": {
+        "background->car": 8991,
+        "background->bus": 1288,
+        "background->truck": 819,
+        "car->background": 6178,
+        "car->car": 48256,
+        "car->bus": 204,
+        "car->truck": 545,
+        "bus->background": 547,
+        "bus->car": 146,
+        "bus->bus": 5707,
+        "bus->truck": 165,
+        "truck->background": 90,
+        "truck->car": 83,
+        "truck->bus": 22,
+        "truck->truck": 1434
+      },
+      "kind": "COCO-pretrained (zero-shot)",
+      "train_seconds": 0
+    }
+  ],
+  "validation": [
+    {
+      "model": "yolo11m_coco_zero_shot",
+      "weights": "models/detection/yolo11m.pt",
+      "imgsz": 960,
+      "split": "val",
+      "test_images": 1563,
+      "instances": 11274,
+      "precision": 0.8138,
+      "recall": 0.9286,
+      "operating_conf": 0.25,
+      "mAP50": 0.7904,
+      "mAP50-95": 0.5673,
+      "ms_per_image": 15.73,
+      "device": "cuda:0 [NVIDIA GeForce RTX 4060 Laptop GPU, CUDA 13.0, torch 2.14.0+cu130, fp16]",
+      "per_class": {
+        "car": {
+          "P_maxF1": 0.9546,
+          "R_maxF1": 0.8309,
+          "mAP50": 0.9368,
+          "mAP50-95": 0.6459,
+          "instances": 10621
+        },
+        "bus": {
+          "P_maxF1": 0.8796,
+          "R_maxF1": 0.8701,
+          "mAP50": 0.8984,
+          "mAP50-95": 0.6745,
+          "instances": 529
+        },
+        "truck": {
+          "P_maxF1": 0.5256,
+          "R_maxF1": 0.5565,
+          "mAP50": 0.536,
+          "mAP50-95": 0.3815,
+          "instances": 124
+        }
+      },
+      "confusion_iou50": {
+        "background->car": 1910,
+        "background->bus": 134,
+        "background->truck": 158,
+        "car->background": 571,
+        "car->car": 9761,
+        "car->bus": 83,
+        "car->truck": 206,
+        "bus->background": 17,
+        "bus->car": 9,
+        "bus->bus": 484,
+        "bus->truck": 19,
+        "truck->background": 23,
+        "truck->car": 13,
+        "truck->bus": 5,
+        "truck->truck": 83
+      },
+      "kind": "COCO-pretrained (zero-shot)",
+      "train_seconds": 0
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+# Video-mode network: the single monitoring point of the public highway clip
+# (data/raw/public/roboflow_vehicles.mp4). The clip's recording location is NOT published, so the
+# coordinates below are schematic (they only give the road a length and direction for the map) and the
+# network is marked geo_referenced: false - the dashboard shows it on a plain background, not a city map.
+name: video_site
+geo_referenced: false
+location_note: "Public sample clip (Roboflow vehicles video). Recording location not published - schematic view, no city map."
+
+junctions:
+  - {id: dev_highway, name: "Public highway clip", location: [77.6200, 12.9800], signalized: false}
+
+nodes:
+  - {id: n_hw_up,   location: [77.6200, 12.9850]}
+  - {id: n_hw_site, junction_id: dev_highway, location: [77.6200, 12.9800]}
+
+segments:
+  - {id: dev_highway_approach_seg, name: "Highway (towards camera)", from_node: n_hw_up, to_node: n_hw_site,
+     geometry: [[77.6200, 12.9850], [77.6200, 12.9800]], lanes: 2, speed_limit_kmh: 130, free_flow_speed_kmh: 120}
+
+approaches:
+  - {id: dev_highway_approach, junction_id: dev_highway, road_segment_id: dev_highway_approach_seg,
+     name: "Highway (public clip)", direction: towards_camera}

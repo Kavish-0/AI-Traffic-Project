@@ -15,7 +15,7 @@ export function IncidentList({ incidents, onOpen }: { incidents: Resource<Incide
       right={<button onClick={onOpen} className="text-xs text-sky-400 hover:underline">Incident center →</button>}
     >
       {incidents.loading ? (
-        <StateMessage>Loading incidents…</StateMessage>
+        <StateMessage tone="loading">Loading incidents…</StateMessage>
       ) : !incidents.data ? (
         <StateMessage tone="error">Incidents unavailable: {incidents.error?.detail}</StateMessage>
       ) : incidents.data.length === 0 ? (
@@ -52,7 +52,7 @@ export function RiskPanel({ risk, names }: { risk: Resource<Risk[]>; names: Reco
   return (
     <Card title="Risk" subtitle="Weighted, documented score (0-100) with reason codes">
       {risk.loading ? (
-        <StateMessage>Loading risk…</StateMessage>
+        <StateMessage tone="loading">Loading risk…</StateMessage>
       ) : !risk.data ? (
         <StateMessage tone="error">Risk unavailable: {risk.error?.detail}</StateMessage>
       ) : risk.data.length === 0 ? (

@@ -1,0 +1,33 @@
+# VIDEO mode on CPU: the real public highway footage through YOLO + ByteTrack, without using the GPU
+# (for when the GPU is busy, e.g. training). Same detector weights as pipeline.yaml, smaller image size,
+# and the runtime profile `video_cpu` analyses one frame per second (what the CPU keeps up with).
+#
+#   PowerShell, from backend/ (BOTH terminals need the variable):
+#     $env:TI_PIPELINE_FILE="pipeline_video_cpu.yaml"; python -m traffic_intel.pipeline run --profile video_cpu
+#     $env:TI_PIPELINE_FILE="pipeline_video_cpu.yaml"; uvicorn traffic_intel.api.main:app --port 8001
+#   and a second dashboard pointed at it (from frontend/):
+#     $env:VITE_BACKEND_URL="http://localhost:8001"; npx vite --port 5174
+extends: pipeline.yaml
+
+network_file: network/video_site.yaml   # one monitoring point; schematic (location of the clip unknown)
+
+camera_files:
+  - cameras/public_highway.yaml
+
+detector:
+  type: yolo
+  params:
+    weights: models/detection/yolo11m.pt     # the serving detector
+    auto_download: true
+    conf_threshold: 0.25
+    iou_threshold: 0.5
+    imgsz: 640                               # 1280 in pipeline.yaml; 640 keeps CPU inference to a few frames/s
+    device: cpu
+    fallback_to_cpu: true
+    half: false
+    max_det: 300
+    class_map: {car: car, motorcycle: motorcycle, bus: bus, truck: truck, bicycle: bicycle, person: pedestrian}
+    class_confidence: {pedestrian: 0.35, bicycle: 0.3}
+
+settings:
+  database_file: traffic_video_site.db       # own database: never mixed with the demo or PEMS-BAY data

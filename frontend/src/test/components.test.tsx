@@ -57,7 +57,7 @@ describe("RoadPanel", () => {
     expect(screen.getByText(/Data is stale/)).toBeInTheDocument();
     rerender(<Wrap><RoadPanel snapshot={res(snapshot({ window: null, incident: null, risk: null, incident_score: null }))} /></Wrap>);
     expect(screen.getByText(/Waiting for traffic data/)).toBeInTheDocument();
-    expect(screen.getByText(/Risk unavailable/)).toBeInTheDocument();
+    expect(screen.getByText(/No assessment for this road yet/)).toBeInTheDocument();
     expect(screen.getByText(/UNCALIBRATED — unavailable/)).toBeInTheDocument();
   });
 
@@ -77,9 +77,9 @@ describe("ForecastStrip", () => {
       })),
     });
     render(<ForecastStrip forecast={f} currentLevel="high" />);
-    expect(screen.getAllByText("severe")).toHaveLength(2);
+    expect(screen.getAllByText("Jammed")).toHaveLength(2);         // plain-language label for "severe"
     expect(screen.getByText("+15 min")).toBeInTheDocument();
-    expect(screen.getByText(/trained on/)).toHaveTextContent(/Synthetic/);
+    expect(screen.queryByText(/trained on/)).toBeNull();            // model details live on the AI models page
   });
 });
 
@@ -144,7 +144,7 @@ describe("IncidentCenter", () => {
   it("shows an explicit empty state", async () => {
     vi.spyOn(api, "incidents").mockResolvedValue([]);
     render(<Wrap><IncidentCenter /></Wrap>);
-    expect(await screen.findByText("No active incidents.")).toBeInTheDocument();
+    expect(await screen.findByText(/^No active incidents/)).toBeInTheDocument();
   });
 });
 

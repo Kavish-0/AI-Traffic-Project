@@ -308,6 +308,12 @@ class OpenCVVideoSource(VideoSource):
             next_due = max(next_due + step, time.monotonic())
             yield Frame(camera_id=self.camera_id, index=idx, timestamp=ts, image=self._resize(img))
 
+    def rewind(self) -> None:
+        """Back to the first frame of a file, so ``frames()`` can be iterated again (LiveReplaySource loops
+        over a source opened with loop=False). No effect on live sources."""
+        if self.kind == "file":
+            self._cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+
     def close(self) -> None:
         self._closed = True
         with self._latest_lock:

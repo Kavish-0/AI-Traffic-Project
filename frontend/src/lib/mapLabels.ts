@@ -1,5 +1,6 @@
 /** Map label helpers (pure, so they are unit-tested without a WebGL map). */
 import { CONGESTION_COLORS, UNKNOWN_COLOR } from "../theme/congestion";
+import { LEVEL_LABEL, NO_DATA_LABEL } from "./labels";
 
 export interface MapLabel {
   id: string;
@@ -40,7 +41,7 @@ export function mapLabels(features: { geometry: unknown; properties: unknown }[]
       const name = String(p.name ?? p.id).split(" (")[0];
       out.push({
         id: String(p.id), kind: "road", lngLat: lineMidpoint(g.coordinates as number[][]),
-        text: `${name} · ${level ? level[0].toUpperCase() + level.slice(1) : "no data"}`,
+        text: `${name} · ${level ? LEVEL_LABEL[level] : NO_DATA_LABEL}`,
         color: level ? CONGESTION_COLORS[level] ?? UNKNOWN_COLOR : UNKNOWN_COLOR,
         approachId: (p.approach_id as string | null) ?? null, roadId: String(p.id),
       });

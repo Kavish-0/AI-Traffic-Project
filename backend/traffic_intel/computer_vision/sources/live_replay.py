@@ -72,6 +72,9 @@ class LiveReplaySource(VideoSource):
                 return
             offset += t_rel + step
             self.loops += 1
+            rewind = getattr(self.inner, "rewind", None)   # a file source must seek back before re-iterating
+            if rewind is not None:
+                rewind()
 
     def close(self) -> None:
         self._closed = True
