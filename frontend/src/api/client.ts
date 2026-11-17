@@ -19,6 +19,11 @@ import type {
 } from "./types";
 
 export const API_BASE = "/api/v1";
+/**
+ * The video-mode API (YOLO camera on the public highway clip), reached through the dev-server proxy
+ * (vite.config.ts, VITE_VIDEO_BACKEND_URL). The main dashboard shows its camera as a sample feed.
+ */
+export const SAMPLE_FEED_BASE = "/video-api/api/v1";
 
 /** HTTP error with the backend's explanation (FastAPI `detail`). */
 export class ApiError extends Error {
@@ -31,10 +36,10 @@ export class ApiError extends Error {
   }
 }
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
+async function request<T>(path: string, init?: RequestInit, base = API_BASE): Promise<T> {
   let res: Response;
   try {
-    res = await fetch(`${API_BASE}${path}`, { headers: { "Content-Type": "application/json" }, ...init });
+    res = await fetch(`${base}${path}`, { headers: { "Content-Type": "application/json" }, ...init });
   } catch {
     throw new ApiError(0, "Backend unavailable - is the API running (uvicorn traffic_intel.api.main:app)?", path);
   }
@@ -94,4 +99,8 @@ export const api = {
     request<SimulationResult>("/simulation/what-if", { method: "POST", body: JSON.stringify(body) }),
   cameraFrameUrl: (cameraId: string, bust: number) =>
     `${API_BASE}/cameras/${encodeURIComponent(cameraId)}/frame.jpg?t=${bust}`,
+  /** Cameras of the video-mode API (sample feed; its location is unknown). */
+  sampleCameras: () => request<Camera[]>("/cameras", undefined, SAMPLE_FEED_BASE),
+  sampleFrameUrl: (cameraId: string, bust: number) =>
+    `${SAMPLE_FEED_BASE}/cameras/${encodeURIComponent(cameraId)}/frame.jpg?t=${bust}`,
 };

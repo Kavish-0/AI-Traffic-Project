@@ -15,6 +15,7 @@ import { useSelection } from "../state/selection";
 import { CONGESTION_COLORS, UNKNOWN_COLOR } from "../theme/congestion";
 import { LEVEL_LABEL, NO_DATA_LABEL } from "../lib/labels";
 import { NeedsAttention } from "../components/NeedsAttention";
+import { SampleFeedPanel } from "../components/SampleFeedPanel";
 
 export interface SharedData {
   junctions: Resource<Junction[]>;
@@ -45,6 +46,9 @@ export function Dashboard({ shared }: { shared: SharedData }) {
   const sel = useSelection();
   const [horizon, setHorizon] = useState(15);
   const [notice, setNotice] = useState<string | null>(null);
+  // clicking a monitored road on the map opens the sample camera feed (video mode) when that road has no
+  // camera of its own; the default selection on load does not, so no camera is shown until a click
+  const [sampleFeed, setSampleFeed] = useState(false);
   const windowKey = live.windowKey ?? undefined;
   const aid = sel.approachId;
 
@@ -78,6 +82,7 @@ export function Dashboard({ shared }: { shared: SharedData }) {
     return mine.find((c) => c.status === "online") ?? mine.find((c) => c.preview_available) ?? mine[0] ?? null;
   }, [sel.cameraId, shared.cameras, aid]);
 
+  const video = camera ? <CameraPanel camera={camera} /> : sampleFeed ? <SampleFeedPanel onClose={() => setSampleFeed(false)} /> : null;
   const trends = aid ? <TrendCharts history={history} risk={riskHist} fva={fva} horizon={horizon} onHorizon={setHorizon} /> : null;
 
   return (
@@ -99,6 +104,7 @@ export function Dashboard({ shared }: { shared: SharedData }) {
               onRoad={(approachId, roadId) => {
                 if (approachId) {
                   setNotice(null);
+                  setSampleFeed(true);
                   sel.selectApproach(approachId);
                 } else {
                   setNotice(`${roadId}: not monitored - no camera or sensor on this road (map shows it for routing / what-if only).`);
@@ -125,20 +131,20 @@ export function Dashboard({ shared }: { shared: SharedData }) {
         </div>
       </div>
 
-      {/* row 2: the selected road beside its video - or beside its speed trend when the road has no camera,
-          so no space goes to an empty video box */}
+      {/* row 2: the selected road beside its video (its own camera, or the sample feed after a map click) - or
+          beside its speed trend when there is no video, so no space goes to an empty video box */}
       <div className="grid gap-3 xl:grid-cols-5">
         <div className="xl:col-span-2">
           {aid ? <RoadPanel snapshot={snapshot} junctionName={shared.junctions.data?.find((j) => j.approaches.some((a) => a.id === aid))?.name} /> : <Card title="Selected road"><StateMessage>Select a road on the map or in the list.</StateMessage></Card>}
         </div>
         <div className="xl:col-span-3">
-          {camera ? <CameraPanel camera={camera} /> : trends}
+          {video ?? trends}
         </div>
       </div>
 
       {/* row 3 (roads with a camera): the speed trend; then the riskiest roads. Incidents have their own page,
           the what-if its own Simulate page and the component health the System page. */}
-      {camera && trends}
+      {video && trends}
       <RiskPanel risk={risk} names={names} />
     </div>
   );

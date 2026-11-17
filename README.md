@@ -169,6 +169,7 @@ All are optional. See [.env.example](.env.example) and [frontend/.env.example](f
 | `TI_WS_ENABLED` | `false` | optional future push channel `/ws/traffic`; the dashboard does not use it |
 | `TI_API_CORS_ORIGINS` | `["http://localhost:5173"]` | allowed browser origins |
 | `VITE_BACKEND_URL` | `http://localhost:8000` | where the dev server proxies `/api` |
+| `VITE_VIDEO_BACKEND_URL` | `http://localhost:8001` | video-mode API behind `/video-api`; its camera is the "Sample camera feed" on the main map |
 | `VITE_POLL_LIVE_MS`, `VITE_POLL_STATUS_MS`, `VITE_POLL_SLOW_MS` | 3000, 10000, 30000 | dashboard REST polling: live values, camera/system status, per-window safety refresh |
 | `VITE_MAP_STYLE_URL` | unset → offline schematic map | any MapLibre basemap style URL |
 

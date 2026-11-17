@@ -1,4 +1,5 @@
 import { act, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi, type MockInstance } from "vitest";
 import App from "../App";
 import { POLL } from "../config";
@@ -6,7 +7,11 @@ import { junctions, snapshot, state, summary, system } from "./fixtures";
 import { wsAttempts } from "./setup";
 
 // WebGL map and canvas charts do not run in jsdom; everything else is the real UI.
-vi.mock("../components/MapView", () => ({ MapView: () => <div data-testid="map" /> }));
+vi.mock("../components/MapView", () => ({
+  MapView: ({ onRoad }: { onRoad: (approachId: string | null, roadId: string) => void }) => (
+    <div data-testid="map"><button type="button" onClick={() => onRoad("junction_a_north", "road_a_sb")}>map road</button></div>
+  ),
+}));
 vi.mock("echarts-for-react/lib/core", () => ({ default: () => <div data-testid="chart" /> }));
 
 let routes: Record<string, unknown>;
@@ -53,6 +58,21 @@ describe("App (UI integration against mocked backend responses)", () => {
     expect(await screen.findByText(/no closed window/)).toBeInTheDocument();
     expect(screen.getByTestId("map")).toBeInTheDocument();
     expect(await screen.findByText("LIVE")).toBeInTheDocument();
+  });
+
+  it("shows no camera until a road is clicked on the map, then the sample camera feed from video mode", async () => {
+    routes["/video-api/api/v1/cameras"] = [{
+      id: "public_highway", name: "Public highway", approach_id: "site_main", junction_id: null, source_kind: "file",
+      synthetic: false, configured: true, lon: null, lat: null, status: "online", state: "running", last_frame_at: null,
+      updated_at: null, processing_fps: 13, frames: 10, detector: "yolo11m", device: "cuda:0", error: null, preview_available: true,
+    }];
+    render(<App />);
+    await screen.findByText(/Incident probability: UNCALIBRATED/);
+    expect(screen.queryByText("Sample camera feed")).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "map road" }));
+    expect(await screen.findByText("Sample camera feed")).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Close camera feed" }));
+    expect(screen.queryByText("Sample camera feed")).not.toBeInTheDocument();
   });
 
   it("says so when the backend is down (and shows no values)", async () => {

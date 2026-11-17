@@ -106,6 +106,16 @@ export function Dot({ ok, pulse = false }: { ok: boolean | null; pulse?: boolean
   );
 }
 
+/** Small text button for a card header that dismisses the card. */
+export function CloseButton({ label, onClick }: { label: string; onClick: () => void }) {
+  return (
+    <button type="button" onClick={onClick} aria-label={label}
+            className="rounded-md px-2 py-0.5 text-xs text-slate-400 hover:bg-slate-800 hover:text-slate-100">
+      Close
+    </button>
+  );
+}
+
 /** Every page starts the same way: a title, one sentence on what it shows, optional actions on the right. */
 export function PageLayout({ title, description, actions, children }: {
   title: string; description?: ReactNode; actions?: ReactNode; children: ReactNode;

@@ -56,6 +56,11 @@ Design points worth saying out loud:
 |---|---|---|---|
 | **Real data (recommended for the demo)** | PEMS-BAY: 325 real freeway speed sensors in San Jose, recorded 2017, replayed at today's time of day | API 8000, dashboard 5173 | Real map, live colours, forecasts, incidents, risk, what-if |
 | **Video (GPU)** | Public highway clip through YOLO11m + ByteTrack on the RTX 4060 | API 8001, dashboard 5174 | Live camera view with boxes, vehicle counts and speeds |
+
+**Both together:** when the video API (8001) is running, clicking a road on the real-data map (5173)
+opens a **Sample camera feed** panel with the YOLO-annotated video frames. It is labelled as a sample
+because the clip's location is unknown, so it is not that road's camera. Without a click, no camera is
+shown; if video mode is not running, the panel says so. The 5174 video dashboard still works on its own.
 | Demo (synthetic) | Simulated junction scenes | API 8000, dashboard 5173 | Pipeline testing only |
 
 ## 5. The modules and their measured results
@@ -124,7 +129,8 @@ Design points worth saying out loud:
    and that feedback is stored for future calibration.
 2. **Real-data mode replays recorded 2017 sensors** at today's time of day; it is not a live feed.
 3. **The video clip has no known location**, so the video dashboard shows a schematic view instead of a
-   city map, and weather is switched off for it.
+   city map, weather is switched off for it, and on the San Jose map it appears only as a labelled
+   "Sample camera feed", never as the clicked road's own camera.
 4. **What-if is static**, not a microscopic simulator; roads without measurements use assumed flows
    (marked with *).
 5. **Camera view is about one annotated frame per second**, not a video stream.
@@ -155,9 +161,26 @@ npm run dev
 
 Open http://localhost:5173 and wait about a minute until the header says **LIVE**.
 
-Optional video mode (3 more terminals, same pattern): pipeline with `pipeline_video.yaml` and
-`--profile video`, API with `--port 8001`, and the dashboard with
-`$env:VITE_BACKEND_URL="http://localhost:8001"; npx vite --port 5174`. Open http://localhost:5174.
+Video mode, for the sample camera feed on the map (2 more terminals, both from `backend`):
+
+Terminal 4, video pipeline (GPU):
+```powershell
+cd "C:\Users\Kavish Gupta\AI-Project-Traffic\backend"
+$env:TI_PIPELINE_FILE="pipeline_video.yaml"; .\.venv\Scripts\python.exe -m traffic_intel.pipeline run --profile video
+```
+
+Terminal 5, video API:
+```powershell
+cd "C:\Users\Kavish Gupta\AI-Project-Traffic\backend"
+$env:TI_PIPELINE_FILE="pipeline_video.yaml"; .\.venv\Scripts\python.exe -m uvicorn traffic_intel.api.main:app --port 8001
+```
+
+Optional backup, the separate video dashboard (terminal 6, from `frontend`):
+```powershell
+cd "C:\Users\Kavish Gupta\AI-Project-Traffic\frontend"
+$env:VITE_BACKEND_URL="http://localhost:8001"; npx vite --port 5174
+```
+Open http://localhost:5174.
 
 To stop: press Ctrl+C in each terminal.
 
@@ -166,12 +189,12 @@ To stop: press Ctrl+C in each terminal.
 | Time | Show | Say |
 |---|---|---|
 | 0:00 | Overview: 3 numbers, map | "325 real freeway sensors in San Jose. Colours come from our congestion rules. LIVE means fresh data." |
-| 0:45 | Click a red/orange road in **Needs attention** | "The road card shows current speed, our XGBoost forecast for the next 30 minutes, the incident score marked uncalibrated, and the risk score." |
+| 0:45 | Click a red/orange road **on the map** | "The road card shows current speed, our XGBoost forecast for the next 30 minutes, the incident score marked uncalibrated, and the risk score. Below it is a sample camera feed: real highway video through YOLO11m and ByteTrack. Its location is unknown, so we label it a sample, not this road's camera." |
 | 1:30 | Traffic trends | "Speed over time, forecast vs actual so you can see how accurate the forecast is, and the incident score over time." |
 | 2:00 | **Incidents** page, click one, show evidence | "Each alert is a possible incident with its evidence. The operator confirms or rejects it, and that feedback will calibrate the model later." |
 | 2:45 | **Simulate**: click a road on the map, Close road, Run | "Where would traffic go? Orange roads take more, the closed road is dashed. It is decision support, not a guarantee." |
 | 3:30 | **AI models** page | "Every model with the number it scored on real data: detector mAP 0.634, tracker MOTA 0.749, forecast 15% better than persistence, incident ROC-AUC 0.987." |
-| 4:15 | Video dashboard (5174) if running | "The same pipeline on real video: YOLO11m on the GPU detects and tracks vehicles and measures their speed." |
+| 4:15 | Back to the sample camera feed (or 5174 as backup) | "The same pipeline on real video: YOLO11m on the GPU detects and tracks vehicles and measures their speed." |
 | 4:45 | **System** page | "Health of each part from real signals. That's the system; happy to go deeper on any model." |
 
 ## 9. Likely questions and answers
@@ -215,7 +238,7 @@ direction and scale, not exact minutes.
 workers, GPU inference servers, and a WebSocket push channel (already in the code, switched off). This
 design is in `docs/DEPLOYMENT_FUTURE.md`.
 
-**How is it tested?** 236 backend tests (unit and an end-to-end run of the real pipeline) and 28
+**How is it tested?** 236 backend tests (unit and an end-to-end run of the real pipeline) and 31
 dashboard tests, plus type checking and linting on both sides.
 
 ## 10. Where to find more

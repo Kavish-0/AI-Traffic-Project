@@ -7,8 +7,9 @@ import { ForecastStrip } from "../components/ForecastStrip";
 import { useLiveIndicator } from "../components/Header";
 import { KpiBar } from "../components/KpiBar";
 import { RoadPanel } from "../components/RoadPanel";
+import { SampleFeedPanel } from "../components/SampleFeedPanel";
 import { WhatIfPanel, buildRequest } from "../components/WhatIfPanel";
-import type { Snapshot } from "../api/types";
+import type { Camera, Snapshot } from "../api/types";
 import type { Resource } from "../hooks/useResource";
 import { IncidentCenter } from "../pages/IncidentCenter";
 import { LiveContext, type LiveState } from "../state/live";
@@ -186,6 +187,35 @@ describe("WhatIfPanel", () => {
     render(<Wrap><WhatIfPanel junctions={res(junctions)} roads={res(roads)} /></Wrap>);
     await userEvent.click(screen.getByRole("button", { name: /run simulation/i }));
     expect(await screen.findByText(/Simulation failed: unknown segment/)).toBeInTheDocument();
+  });
+});
+
+describe("SampleFeedPanel", () => {
+  const cam: Camera = {
+    id: "public_highway", name: "Public highway", approach_id: "site_main", junction_id: null, source_kind: "file",
+    synthetic: false, configured: true, lon: null, lat: null, status: "online", state: "running",
+    last_frame_at: null, updated_at: null, processing_fps: 13.2, frames: 900, detector: "yolo11m", device: "cuda:0",
+    error: null, preview_available: true,
+  };
+
+  it("shows the video-mode camera labelled as a sample of unknown location, with its frames from the video API", async () => {
+    vi.spyOn(api, "sampleCameras").mockResolvedValue([cam]);
+    const onClose = vi.fn();
+    render(<SampleFeedPanel onClose={onClose} />);
+    const frame = await screen.findByRole("img");
+    expect(screen.getByText("Sample camera feed")).toBeInTheDocument();
+    expect(screen.getByText(/location unknown, not the selected road/)).toBeInTheDocument();
+    expect(frame).toHaveAttribute("src", expect.stringMatching(/^\/video-api\/api\/v1\/cameras\/public_highway\/frame\.jpg/));
+    expect(screen.queryByText("Approach")).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Close camera feed" }));
+    expect(onClose).toHaveBeenCalled();
+  });
+
+  it("says how to start video mode when its API is not reachable", async () => {
+    vi.spyOn(api, "sampleCameras").mockRejectedValue(new Error("down"));
+    render(<SampleFeedPanel onClose={() => {}} />);
+    expect(await screen.findByText(/Sample camera feed unavailable - start video mode/)).toBeInTheDocument();
+    expect(screen.queryByRole("img")).not.toBeInTheDocument();
   });
 });
 

@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { api } from "../api/client";
 import type { Camera } from "../api/types";
 import { ago, num, titleCase } from "../lib/format";
-import { Card, Dot, StateMessage, SyntheticBadge } from "./ui";
+import { ACCENT } from "../theme/tokens";
+import { Badge, Card, CloseButton, Dot, StateMessage, SyntheticBadge } from "./ui";
 
 const STATUS_TEXT: Record<Camera["status"], string> = {
   online: "Online",
@@ -15,8 +16,21 @@ const STATUS_TEXT: Record<Camera["status"], string> = {
  * Latest processed frame of the camera (boxes, class, track id, speed - drawn by the camera worker),
  * refreshed about once per second. This is a low-rate preview, not a video stream; if no processed
  * frame exists, the panel says so rather than showing anything else.
+ *
+ * `sample`: the camera belongs to another site (the video-mode clip, location unknown) and is shown
+ * as an example of the perception stage, so it is labelled as such and not tied to the selected road.
  */
-export function CameraPanel({ camera }: { camera: Camera | null }) {
+export function CameraPanel({
+  camera,
+  frameUrl = api.cameraFrameUrl,
+  sample = false,
+  onClose,
+}: {
+  camera: Camera | null;
+  frameUrl?: (cameraId: string, bust: number) => string;
+  sample?: boolean;
+  onClose?: () => void;
+}) {
   const [tick, setTick] = useState(0);
   const [imgError, setImgError] = useState(false);
   const online = camera?.status === "online";
@@ -30,11 +44,15 @@ export function CameraPanel({ camera }: { camera: Camera | null }) {
 
   if (!camera) return <Card title="Camera"><StateMessage>Select a camera (junction list or map) to see its processed view.</StateMessage></Card>;
   return (
-    <Card title="Camera" subtitle={camera.name} right={camera.synthetic ? <SyntheticBadge /> : null}>
+    <Card
+      title={sample ? "Sample camera feed" : "Camera"}
+      subtitle={sample ? `${camera.name} - location unknown, not the selected road` : camera.name}
+      right={<CameraBadges synthetic={camera.synthetic} sample={sample} onClose={onClose} />}
+    >
       <div className="relative aspect-video overflow-hidden rounded-lg border border-slate-800 bg-black">
         {camera.preview_available && !imgError ? (
           <img
-            src={api.cameraFrameUrl(camera.id, tick)}
+            src={frameUrl(camera.id, tick)}
             alt={`Processed frame of ${camera.name}`}
             className="h-full w-full object-contain"
             onError={() => setImgError(true)}
@@ -63,8 +81,12 @@ export function CameraPanel({ camera }: { camera: Camera | null }) {
         <dd className="truncate text-slate-200" title={camera.device ?? ""}>
           {camera.detector ?? "—"}
         </dd>
-        <dt className="text-slate-500">Approach</dt>
-        <dd className="text-slate-200">{camera.approach_id}</dd>
+        {!sample && (
+          <>
+            <dt className="text-slate-500">Approach</dt>
+            <dd className="text-slate-200">{camera.approach_id}</dd>
+          </>
+        )}
       </dl>
       {camera.error && <div className="mt-2"><StateMessage tone="error">{camera.error}</StateMessage></div>}
       {camera.synthetic && (
@@ -73,6 +95,22 @@ export function CameraPanel({ camera }: { camera: Camera | null }) {
           tracker/feature pipeline.
         </p>
       )}
+      {sample && (
+        <p className="mt-2 text-[11px] text-slate-400">
+          Real public highway footage through the same YOLO11m + ByteTrack pipeline (video mode). The clip's location
+          is unknown, so it is an example of what a camera on this road would show, not this road's video.
+        </p>
+      )}
     </Card>
+  );
+}
+
+function CameraBadges({ synthetic, sample, onClose }: { synthetic: boolean; sample: boolean; onClose?: () => void }) {
+  return (
+    <div className="flex items-center gap-2">
+      {synthetic && <SyntheticBadge />}
+      {sample && <Badge color={ACCENT.data} title="Camera from the video-mode site, not on this map">sample feed</Badge>}
+      {onClose && <CloseButton label="Close camera feed" onClick={onClose} />}
+    </div>
   );
 }
