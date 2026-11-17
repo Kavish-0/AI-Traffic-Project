@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ApiError, api } from "../api/client";
-import type { Incident } from "../api/types";
+import type { Incident, Junction } from "../api/types";
+import type { Resource } from "../hooks/useResource";
 import { POLL } from "../config";
 import { useResource } from "../hooks/useResource";
 import { dateTime, pct, time, titleCase } from "../lib/format";
@@ -20,7 +21,7 @@ const TYPE_COLOR: Record<string, string> = {
   normal: STATUS.ok,
 };
 
-function Detail({ incident, onChanged }: { incident: Incident; onChanged: () => void }) {
+function Detail({ incident, names, onChanged }: { incident: Incident; names: Names; onChanged: () => void }) {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [note, setNote] = useState("");
@@ -54,8 +55,8 @@ function Detail({ incident, onChanged }: { incident: Incident; onChanged: () => 
         <p className="text-slate-300">{incident.message}</p>
         <StateMessage tone="info">{incident.uncertainty_note}</StateMessage>
         <dl className="grid grid-cols-2 gap-1 text-xs">
-          <dt className="text-slate-500">Road</dt><dd className="text-slate-200">{incident.road_id ?? "—"}</dd>
-          <dt className="text-slate-500">Junction</dt><dd className="text-slate-200">{incident.junction_id ?? "—"}</dd>
+          <dt className="text-slate-500">Road</dt><dd className="text-slate-200">{names.road(incident)}</dd>
+          <dt className="text-slate-500">Junction</dt><dd className="text-slate-200">{names.junction(incident.junction_id)}</dd>
           <dt className="text-slate-500">Location</dt>
           <dd className="text-slate-200">{incident.lat !== null && incident.lon !== null ? `${incident.lat.toFixed(5)}, ${incident.lon.toFixed(5)}` : "approach level"}</dd>
           <dt className="text-slate-500">First detected</dt><dd className="text-slate-200">{dateTime(incident.first_detected)}</dd>
@@ -104,7 +105,23 @@ function Detail({ incident, onChanged }: { incident: Incident; onChanged: () => 
   );
 }
 
-export function IncidentCenter() {
+/** Readable names for the ids an incident carries (road = the monitored approach, without its sensor id). */
+type Names = { road: (i: Incident) => string; junction: (id: string | null) => string };
+
+function useNames(junctions: Resource<Junction[]>): Names {
+  return useMemo(() => {
+    const js = junctions.data ?? [];
+    const approach = Object.fromEntries(js.flatMap((j) => j.approaches.map((a) => [a.id, a.name.split(" (")[0]])));
+    const junction = Object.fromEntries(js.map((j) => [j.id, j.name]));
+    return {
+      road: (i) => approach[i.approach_id] ?? i.road_id ?? i.approach_id,
+      junction: (id) => (id ? junction[id] ?? id : "—"),
+    };
+  }, [junctions.data]);
+}
+
+export function IncidentCenter({ junctions }: { junctions: Resource<Junction[]> }) {
+  const names = useNames(junctions);
   const { windowKey } = useLive();
   const sel = useSelection();
   const [filter, setFilter] = useState<"active" | "all">("active");
@@ -155,8 +172,8 @@ export function IncidentCenter() {
                       <tr key={i.incident_id} onClick={() => { setSelected(i.incident_id); sel.selectApproach(i.approach_id, i.junction_id); }}
                         className={`cursor-pointer border-t border-slate-800 ${selected === i.incident_id ? "bg-slate-800/70" : "hover:bg-slate-800/40"}`}>
                         <td className="py-1.5 text-slate-300">{time(i.timestamp, false)}</td>
-                        <td className="text-slate-200">{i.road_id ?? i.approach_id}</td>
-                        <td className="text-slate-400">{i.junction_id ?? "—"}</td>
+                        <td className="text-slate-200">{names.road(i)}</td>
+                        <td className="text-slate-400">{names.junction(i.junction_id)}</td>
                         <td><span style={{ color: TYPE_COLOR[i.incident_type] ?? TEXT.secondary }}>{i.label || titleCase(i.incident_type)}</span></td>
                         <td className="pr-4 text-right text-slate-100 tabular-nums" title={scoreLabel(i.calibrated)}>
                           {pct(i.probability)}{!i.calibrated && <span className="text-slate-500">*</span>}
@@ -176,7 +193,7 @@ export function IncidentCenter() {
       </div>
       <div>
         {current ? (
-          <Detail incident={current} onChanged={list.reload} />
+          <Detail incident={current} names={names} onChanged={list.reload} />
         ) : (
           <Card title="Incident detail"><StateMessage>Select an incident to see its evidence and give feedback.</StateMessage></Card>
         )}

@@ -3,6 +3,7 @@ import { ApiError, api } from "../api/client";
 import type { Junction, Road, SimulationRequest, SimulationResult } from "../api/types";
 import type { Resource } from "../hooks/useResource";
 import { pct } from "../lib/format";
+import { levelLabel } from "../lib/labels";
 import { useSelection } from "../state/selection";
 import { CONGESTION_COLORS } from "../theme/congestion";
 import { Badge, Card, StateMessage } from "./ui";
@@ -142,8 +143,8 @@ export function WhatIfPanel({ junctions, roads, road: pickedRoad, onRoadChange }
                       <td className="text-right text-slate-300 tabular-nums">
                         {pct(i.baseline_congestion_prob)} → {i.status === "closed" ? "—" : pct(i.scenario_congestion_prob)}
                       </td>
-                      <td className="text-right uppercase" style={{ color: CONGESTION_COLORS[i.scenario_level] }}>
-                        {i.status === "closed" ? "—" : i.scenario_level}
+                      <td className="text-right" style={{ color: CONGESTION_COLORS[i.scenario_level] }}>
+                        {i.status === "closed" ? "—" : levelLabel(i.scenario_level)}
                       </td>
                     </tr>
                   ))}

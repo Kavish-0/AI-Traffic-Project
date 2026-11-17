@@ -60,7 +60,7 @@ function Shell() {
         <div className="px-5 pt-4"><StateMessage tone="error">Database unavailable: {system.data.database.detail}</StateMessage></div>
       )}
       {page === "dashboard" && <Dashboard shared={shared} />}
-      {page === "incidents" && <IncidentCenter />}
+      {page === "incidents" && <IncidentCenter junctions={junctions} />}
       {page === "whatif" && <WhatIfPage junctions={junctions} roads={roads} network={network} />}
       {page === "models" && <ModelsPage />}
       {page === "system" && <SystemPage system={system} />}

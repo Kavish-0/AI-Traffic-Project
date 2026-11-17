@@ -361,8 +361,10 @@ class Runtime:
         tasks = [asyncio.create_task(analytics.run(), name="analytics"),
                  asyncio.create_task(self._persist_live(bus), name="persist_live"),
                  asyncio.create_task(self._heartbeats(), name="heartbeats")]
-        if self.cfg.weather.enabled:
+        if self.cfg.weather.enabled and self.network.geo_referenced:
             tasks.append(asyncio.create_task(self._weather(), name="weather"))
+        elif self.cfg.weather.enabled:
+            log.info("weather off: network %s has no real location (geo_referenced: false)", self.network.name)
         await asyncio.sleep(0)
         await asyncio.to_thread(prepare_synthetic_scenes, self.profile.cameras)
         for ref in self.profile.cameras:

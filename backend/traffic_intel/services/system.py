@@ -43,10 +43,12 @@ def status(ctx: ServiceContext) -> SystemStatusOut:
                 + ("" if serving else " - no forecast issued recently (needs history / running pipeline)"))
         if model else "no PRODUCTION forecasting model in models/forecasting/")
 
-    weather_now = ctx.store.latest_context(ctx.network.name) if db_ok else None
+    # a schematic site has no real location, so no weather belongs to it (even an older stored one)
+    weather_now = ctx.store.latest_context(ctx.network.name) if db_ok and ctx.network.geo_referenced else None
     w_age = ctx.age_s(weather_now["ts"]) if weather_now else None
     w_detail = (f"{weather_now['weather']} {weather_now['temperature_c']} C ({weather_now['source']})"
-                if weather_now else "no weather observation (optional context)")
+                if weather_now else "no weather observation (optional context)" if ctx.network.geo_referenced
+                else "not used: the site's location is unknown")
     weather = ComponentStatus(ok=weather_now is not None and (w_age or 0) < 3 * 3600,
                               status="available" if weather_now else "unavailable", detail=w_detail)
     return SystemStatusOut(

@@ -267,6 +267,7 @@ within a run.
 - `20260925-025338`: first fine-tune, plus YOLO11s zero-shot;
 - `20260930-044419`: YOLO11m zero-shot;
 - `20260930-045326`: repeat-factor fine-tune.
+- `20261025-121918`: YOLO11m fine-tune (like-for-like with the serving model), re-scored with YOLO11m zero-shot.
 
 | Model | P | R | mAP50 | mAP50-95 | car | bus | truck | ms / image |
 |---|--:|--:|--:|--:|--:|--:|--:|--:|
@@ -277,14 +278,17 @@ within a run.
 | YOLO11s fine-tuned @960 | 0.848 | 0.834 | 0.592 | 0.397 | 0.638 | 0.506 | 0.045 | 13.5 |
 | YOLO11s fine-tuned + repeat-factor sampling @960 | **0.890** | 0.829 | 0.629 | 0.434 | **0.641** | 0.559 | 0.102 | 6.5 |
 | YOLO11s fine-tuned + repeat-factor sampling @1280 | 0.891 | 0.829 | 0.617 | 0.421 | 0.644 | 0.526 | 0.094 | 12.3 |
+| YOLO11m fine-tuned @960 (`20261025-121918`) | 0.903 | 0.845 | 0.693 | 0.488 | 0.663 | 0.604 | 0.198 | 12.0 |
+| YOLO11m fine-tuned @1280 (`20261025-121918`) | 0.908 | 0.850 | 0.695 | 0.478 | 0.662 | 0.591 | 0.181 | 21.7 |
 
 **Training:**
 - The plain fine-tune took 4,092 s (best epoch 10 of 18).
 - The repeat-factor fine-tune took 3,789 s (best epoch 9 of 17), with training images resampled
   6,669 → 7,846: truck boxes ×3.8, bus boxes ×1.4. Validation and test were unchanged.
-- The YOLO11m fine-tune was stopped after one epoch. It was not rerun: the YOLO11s runs had already
-  located the problem (below) at half the cost, and a larger model trained on the same labels would
-  inherit it.
+- The YOLO11m fine-tune (`20261025-121918`) was later run to completion as a like-for-like check. It
+  confirms the YOLO11s finding: cars improve (0.663 vs 0.617) but trucks collapse (0.198 vs 0.669), so
+  test mAP50-95 falls from 0.634 to 0.488 and the zero-shot model keeps serving. Its weights stay in the
+  experiment folder, not in the registry.
 
 **Where the truck accuracy goes** (ground-truth trucks at IoU 0.5, confidence ≥ 0.25):
 

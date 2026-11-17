@@ -223,18 +223,19 @@ the current frontend does not use it. The future path is camera workers → Redi
 
 ## 8. Dashboard
 
-| Area | What it shows |
+| Page | What it shows |
 |---|---|
-| **Header** | LIVE indicator (only when the last REST poll succeeded *and* the API reports fresh live values; otherwise WAITING FOR DATA or DISCONNECTED), last update, weather, incident count |
-| **KPIs** | vehicles, average speed, congested approaches, active incidents. Built from fresh live values only; "—" otherwise. |
-| **Map (MapLibre)** | roads coloured by the backend's level (grey = no or stale data), junctions, cameras, incident markers, what-if overlay. Click a road, junction or camera. |
-| **Junction → roads → cameras** | selecting any item updates the map, road panel, charts, forecast, incidents, risk and camera view |
-| **Road panel** | current state; traffic state and reason; forecast (Current / +5 / +15 / +30, or the reason it is unavailable); incident ("Incident probability: UNCALIBRATED" unless calibrated) with evidence; risk with score, reason codes and formula |
-| **Trends (ECharts)** | speed, density, vehicle count, queue, flow, forecast vs actual, incident score vs time. Explicit loading, empty and insufficient-data states. |
-| **Camera** | latest processed frame (boxes, class, track id, speed) about once per second, with status and source. "Video stream unavailable" when there is none. |
-| **Incident center** | table with time, road, junction, type, score, risk, evidence and status; detail view with contributing signals; **TRUE INCIDENT / FALSE ALARM** feedback, stored for calibration |
-| **What-if** | junction, road and action (close road, lane closure, demand +20%) → backend NetworkX simulation. Shows affected roads, traffic change, congestion probability before → after, assumptions and a map overlay. Labelled "Simulation / Decision Support". |
-| **System** | backend, database, pipeline, forecast model, cameras and weather status from real signals; this dashboard's polling state; production models |
+| **Overview** | Three headline numbers; the map (roads coloured Flowing / Slow / Heavy / Jammed by the backend, grey = no data); **Needs attention** (roads with an open incident or congestion, worst first); the selected road (speed, next-30-minute forecast, incident score marked UNCALIBRATED, risk) beside its camera view or speed trend; the riskiest roads |
+| **Incidents** | Possible incidents with time, road, type, score, risk and evidence; detail view with **TRUE INCIDENT / FALSE ALARM** feedback, stored for calibration |
+| **Simulate** | What-if: close a road, close a lane or raise demand (pick the road on the map). The map shows the closure and where traffic moves; the panel lists affected roads, congestion before → after and the assumptions. Labelled decision support |
+| **AI models** | What each stage serves now and its measured result on real data, read from the experiment records |
+| **System** | Backend, database, pipeline, forecast model, cameras and weather status from real signals; production models |
+
+The header shows LIVE only when the last REST poll succeeded and the API reports fresh live values
+(otherwise WAITING FOR DATA or DISCONNECTED). A site without a known location (the public video clip)
+is drawn on a plain background, without a city map or weather.
+
+Presenting the project: [docs/EVALUATION_BRIEF.md](docs/EVALUATION_BRIEF.md).
 
 ## 9. Testing
 

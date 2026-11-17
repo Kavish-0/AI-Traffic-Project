@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { api } from "../api/client";
 import type { Camera, Junction, NetworkGeoJSON, Road, Summary } from "../api/types";
 import { CameraPanel } from "../components/CameraPanel";
-import { RiskPanel } from "../components/IncidentList";
+import { RiskPanel } from "../components/RiskPanel";
 import { KpiBar } from "../components/KpiBar";
 import { MapView } from "../components/MapView";
 import { RoadPanel } from "../components/RoadPanel";
@@ -129,7 +129,7 @@ export function Dashboard({ shared }: { shared: SharedData }) {
           so no space goes to an empty video box */}
       <div className="grid gap-3 xl:grid-cols-5">
         <div className="xl:col-span-2">
-          {aid ? <RoadPanel snapshot={snapshot} /> : <Card title="Selected road"><StateMessage>Select a road on the map or in the list.</StateMessage></Card>}
+          {aid ? <RoadPanel snapshot={snapshot} junctionName={shared.junctions.data?.find((j) => j.approaches.some((a) => a.id === aid))?.name} /> : <Card title="Selected road"><StateMessage>Select a road on the map or in the list.</StateMessage></Card>}
         </div>
         <div className="xl:col-span-3">
           {camera ? <CameraPanel camera={camera} /> : trends}

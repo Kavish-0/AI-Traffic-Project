@@ -71,7 +71,7 @@ function current(snap: Snapshot): { s: TrafficState | null; label: string; stale
 }
 
 /** Live values come from the snapshot (GET /approaches/{id}/snapshot, polled at the live rate). */
-export function RoadPanel({ snapshot }: { snapshot: Resource<Snapshot> }) {
+export function RoadPanel({ snapshot, junctionName }: { snapshot: Resource<Snapshot>; junctionName?: string }) {
   if (snapshot.loading) return <Card title="Selected road"><StateMessage tone="loading">Loading road…</StateMessage></Card>;
   const snap = snapshot.data;
   if (!snap) return <Card title="Selected road"><StateMessage tone="error">Road unavailable: {snapshot.error?.detail}</StateMessage></Card>;
@@ -80,7 +80,7 @@ export function RoadPanel({ snapshot }: { snapshot: Resource<Snapshot> }) {
   return (
     <Card
       title={snap.road?.name ?? snap.approach.name}
-      subtitle={`${snap.approach.direction} · into ${snap.approach.junction_id}`}
+      subtitle={`${titleCase(snap.approach.direction)} · ${junctionName ?? snap.approach.junction_id}`}
       right={snap.synthetic ? <SyntheticBadge /> : null}
     >
       {snapshot.error && (

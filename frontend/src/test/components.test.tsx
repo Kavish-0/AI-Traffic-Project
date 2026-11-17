@@ -131,7 +131,7 @@ describe("IncidentCenter", () => {
   it("lists incidents and stores operator feedback through the API", async () => {
     vi.spyOn(api, "incidents").mockResolvedValue([incident()]);
     const fb = vi.spyOn(api, "incidentFeedback").mockResolvedValue(incident({ status: "acknowledged", operator_label: "true_incident" }));
-    render(<Wrap><IncidentCenter /></Wrap>);
+    render(<Wrap><IncidentCenter junctions={res([])} /></Wrap>);
     const row = await screen.findByText("road_a_sb");
     await userEvent.click(row);
     expect(screen.getByText("Incident probability: UNCALIBRATED")).toBeInTheDocument();
@@ -143,7 +143,7 @@ describe("IncidentCenter", () => {
 
   it("shows an explicit empty state", async () => {
     vi.spyOn(api, "incidents").mockResolvedValue([]);
-    render(<Wrap><IncidentCenter /></Wrap>);
+    render(<Wrap><IncidentCenter junctions={res([])} /></Wrap>);
     expect(await screen.findByText(/^No active incidents/)).toBeInTheDocument();
   });
 });
